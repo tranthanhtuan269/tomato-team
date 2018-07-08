@@ -2016,7 +2016,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['group'],
+    props: ['group', 'iuser'],
 
     data: function data() {
         return {
@@ -2036,9 +2036,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         store: function store() {
             var _this = this;
 
+            console.log(this.iuser);
             axios.post('/conversations', { message: this.message, group_id: this.group.id }).then(function (response) {
                 _this.message = '';
-                //this.conversations.push(response.data);
+                if (_this.iuser.name == "admin") {
+                    _this.conversations.push(response.data);
+                } else {
+                    _this.conversations1.push(response.data);
+                }
             });
         },
         listenForNewMessage: function listenForNewMessage() {
@@ -2047,9 +2052,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
                 console.log(e);
                 if (e.user.name == 'admin') {
-                    _this2.conversations1.push(e);
-                } else {
                     _this2.conversations.push(e);
+                } else {
+                    _this2.conversations1.push(e);
                 }
             });
         }
@@ -2081,6 +2086,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var _this = this;
 
         this.groups = this.initialGroups;
+        this.iuser = this.user;
 
         Bus.$on('groupCreated', function (group) {
             _this.groups.push(group);
@@ -37544,20 +37550,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
-  }, _vm._l((_vm.conversations1), function(conversation1) {
-    return _c('li', [_c('div', {
-      staticClass: "chat-body clearfix"
-    }, [_c('div', {
-      staticClass: "header"
-    }, [_c('strong', {
-      staticClass: "primary-font"
-    }, [_vm._v(_vm._s(conversation1.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation1.message) + "\n                                ")])])])
-  }))])]), _vm._v(" "), _c('div', {
-    staticClass: "panel panel-primary"
-  }, [_vm._m(1), _vm._v(" "), _c('div', {
-    staticClass: "panel-body chat-panel"
-  }, [_c('ul', {
-    staticClass: "chat"
   }, _vm._l((_vm.conversations), function(conversation) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
@@ -37566,6 +37558,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('strong', {
       staticClass: "primary-font"
     }, [_vm._v(_vm._s(conversation.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation.message) + "\n                                ")])])])
+  }))])]), _vm._v(" "), _c('div', {
+    staticClass: "panel panel-primary"
+  }, [_vm._m(1), _vm._v(" "), _c('div', {
+    staticClass: "panel-body chat-panel"
+  }, [_c('ul', {
+    staticClass: "chat"
+  }, _vm._l((_vm.conversations1), function(conversation1) {
+    return _c('li', [_c('div', {
+      staticClass: "chat-body clearfix"
+    }, [_c('div', {
+      staticClass: "header"
+    }, [_c('strong', {
+      staticClass: "primary-font"
+    }, [_vm._v(_vm._s(conversation1.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation1.message) + "\n                                ")])])])
   }))])])]), _vm._v(" "), _c('div', {
     staticClass: "panel-footer"
   }, [_c('div', {
@@ -37647,7 +37653,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     return _c('group-chat', {
       key: group.id,
       attrs: {
-        "group": group
+        "group": group,
+        "iuser": _vm.user
       }
     })
   }))

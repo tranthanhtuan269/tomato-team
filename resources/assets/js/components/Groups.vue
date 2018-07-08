@@ -1,6 +1,6 @@
 <template>
     <div>
-        <group-chat v-for="group in groups" :group="group" :key="group.id"></group-chat>
+        <group-chat v-for="group in groups" :group="group" :iuser="user" :key="group.id"></group-chat>
     </div>
 </template>
 
@@ -16,6 +16,7 @@
 
         mounted() {
             this.groups = this.initialGroups;
+            this.iuser = this.user;
 
             Bus.$on('groupCreated', (group) => {
                 this.groups.push(group);

@@ -11,16 +11,16 @@
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
-                            <li v-for="conversation1 in conversations1">
+                            <li v-for="conversation in conversations">
                             <!-- <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                             </span> -->
                                 <div class="chat-body clearfix">
                                     <div class="header">
-                                        <strong class="primary-font">{{ conversation1.user.name }}</strong>
+                                        <strong class="primary-font">{{ conversation.user.name }}</strong>
                                     </div>
                                     <p>
-                                        {{ conversation1.message }}
+                                        {{ conversation.message }}
                                     </p>
                                 </div>
                             </li>
@@ -33,16 +33,16 @@
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
-                            <li v-for="conversation in conversations">
+                            <li v-for="conversation1 in conversations1">
                             <!-- <span class="chat-img pull-left">
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                             </span> -->
                                 <div class="chat-body clearfix">
                                     <div class="header">
-                                        <strong class="primary-font">{{ conversation.user.name }}</strong>
+                                        <strong class="primary-font">{{ conversation1.user.name }}</strong>
                                     </div>
                                     <p>
-                                        {{ conversation.message }}
+                                        {{ conversation1.message }}
                                     </p>
                                 </div>
                             </li>
@@ -65,7 +65,7 @@
 
 <script>
     export default {
-        props: ['group'],
+        props: ['group', 'iuser'],
 
         data() {
             return {
@@ -83,10 +83,15 @@
 
         methods: {
             store() {
+                console.log(this.iuser);
                 axios.post('/conversations', {message: this.message, group_id: this.group.id})
                 .then((response) => {
                     this.message = '';
-                    //this.conversations.push(response.data);
+                    if(this.iuser.name == "admin"){
+                        this.conversations.push(response.data);
+                    }else{
+                        this.conversations1.push(response.data);
+                    }
                 });
             },
 
@@ -95,9 +100,9 @@
                     .listen('NewMessage', (e) => {
                         console.log(e);
                         if(e.user.name == 'admin'){
-                            this.conversations1.push(e);
-                        }else{
                             this.conversations.push(e);
+                        }else{
+                            this.conversations1.push(e);
                         }
                     });
             }

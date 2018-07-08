@@ -19,8 +19,7 @@
                                     <div class="header">
                                         <strong class="primary-font">{{ conversation.user.name }}</strong>
                                     </div>
-                                    <p>
-                                        {{ conversation.message }}
+                                    <p v-html="conversation.message">
                                     </p>
                                 </div>
                             </li>
@@ -29,7 +28,7 @@
                 </div>
                 <div class="panel panel-primary col-sm-4">
                     <div class="panel-heading text-center">
-                        Group 1
+                        Source Team
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
@@ -41,8 +40,8 @@
                                     <div class="header">
                                         <strong class="primary-font">{{ conversation1.user.name }}</strong>
                                     </div>
-                                    <p>
-                                        {{ conversation1.message }}
+                                    <p v-html="conversation1.message">
+                                        
                                     </p>
                                 </div>
                             </li>
@@ -51,7 +50,7 @@
                 </div>
                 <div class="panel panel-primary col-sm-4">
                     <div class="panel-heading text-center">
-                        Group 2
+                        Target Team
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
@@ -63,8 +62,7 @@
                                     <div class="header">
                                         <strong class="primary-font">{{ conversation2.user.name }}</strong>
                                     </div>
-                                    <p>
-                                        {{ conversation2.message }}
+                                    <p v-html="conversation2.message">
                                     </p>
                                 </div>
                             </li>
@@ -74,7 +72,7 @@
             </div>
             <div class="panel-footer">
                 <div class="input-group">
-                    <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." v-model="message" @keyup.enter="store()" autofocus />
+                    <wysiwyg v-model="message" v-on:change="change"/>
                     <span class="input-group-btn">
                         <button class="btn btn-warning btn-sm" id="btn-chat" @click.prevent="store()">
                             Send</button>
@@ -108,12 +106,14 @@
                 console.log(this.iuser);
                 axios.post('/conversations', {message: this.message, group_id: this.group.id, type: this.iuser.type})
                 .then((response) => {
-                    this.message = '';
                     if(this.iuser.type == 0){
+                        this.conversations = [];
                         this.conversations.push(response.data);
                     }else if(this.iuser.type == 1){
+                        this.conversations1 = [];
                         this.conversations1.push(response.data);
                     }else if(this.iuser.type == 2){
+                        this.conversations2 = [];
                         this.conversations2.push(response.data);
                     }
                 });
@@ -123,13 +123,20 @@
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
                         if(e.type == 0){
+                            this.conversations = [];
                             this.conversations.push(e);
                         }else if(e.type == 1){
+                            this.conversations1 = [];
                             this.conversations1.push(e);
                         }else if(e.type == 2){
+                            this.conversations2 = [];
                             this.conversations2.push(e);
                         }
                     });
+            },
+
+            change(){
+                this.store();
             }
         }
     }

@@ -1,13 +1,13 @@
 <template>
     <div>
     <div class="panel panel-primary">
-            <div class="panel-heading" id="accordion">
-                <span class="glyphicon glyphicon-comment"></span> {{ group.name }}
+            <div class="panel-heading">
+                {{ group.name }}
             </div>
             <div class="panel-body chat-panel">
-                <div class="panel panel-primary">
-                    <div class="panel-heading" id="accordion">
-                        <span class="glyphicon glyphicon-comment"></span> Conversation
+                <div class="panel panel-primary col-sm-4">
+                    <div class="panel-heading text-center">
+                        Conversation
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
@@ -27,9 +27,9 @@
                         </ul>
                     </div>
                 </div>
-                <div class="panel panel-primary">
-                    <div class="panel-heading" id="accordion">
-                        <span class="glyphicon glyphicon-comment"></span> Group 1
+                <div class="panel panel-primary col-sm-4">
+                    <div class="panel-heading text-center">
+                        Group 1
                     </div>
                     <div class="panel-body chat-panel">
                         <ul class="chat">
@@ -43,6 +43,28 @@
                                     </div>
                                     <p>
                                         {{ conversation1.message }}
+                                    </p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel panel-primary col-sm-4">
+                    <div class="panel-heading text-center">
+                        Group 2
+                    </div>
+                    <div class="panel-body chat-panel">
+                        <ul class="chat">
+                            <li v-for="conversation2 in conversations2">
+                            <!-- <span class="chat-img pull-left">
+                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
+                            </span> -->
+                                <div class="chat-body clearfix">
+                                    <div class="header">
+                                        <strong class="primary-font">{{ conversation2.user.name }}</strong>
+                                    </div>
+                                    <p>
+                                        {{ conversation2.message }}
                                     </p>
                                 </div>
                             </li>
@@ -84,13 +106,15 @@
         methods: {
             store() {
                 console.log(this.iuser);
-                axios.post('/conversations', {message: this.message, group_id: this.group.id})
+                axios.post('/conversations', {message: this.message, group_id: this.group.id, type: this.iuser.type})
                 .then((response) => {
                     this.message = '';
-                    if(this.iuser.name == "admin"){
+                    if(this.iuser.type == 0){
                         this.conversations.push(response.data);
-                    }else{
+                    }else if(this.iuser.type == 1){
                         this.conversations1.push(response.data);
+                    }else if(this.iuser.type == 2){
+                        this.conversations2.push(response.data);
                     }
                 });
             },
@@ -98,11 +122,12 @@
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        console.log(e);
-                        if(e.user.name == 'admin'){
+                        if(e.type == 0){
                             this.conversations.push(e);
-                        }else{
+                        }else if(e.type == 1){
                             this.conversations1.push(e);
+                        }else if(e.type == 2){
+                            this.conversations2.push(e);
                         }
                     });
             }

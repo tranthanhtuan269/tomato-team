@@ -2014,6 +2014,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -2037,12 +2059,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this = this;
 
             console.log(this.iuser);
-            axios.post('/conversations', { message: this.message, group_id: this.group.id }).then(function (response) {
+            axios.post('/conversations', { message: this.message, group_id: this.group.id, type: this.iuser.type }).then(function (response) {
                 _this.message = '';
-                if (_this.iuser.name == "admin") {
+                if (_this.iuser.type == 0) {
                     _this.conversations.push(response.data);
-                } else {
+                } else if (_this.iuser.type == 1) {
                     _this.conversations1.push(response.data);
+                } else if (_this.iuser.type == 2) {
+                    _this.conversations2.push(response.data);
                 }
             });
         },
@@ -2050,11 +2074,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                console.log(e);
-                if (e.user.name == 'admin') {
+                if (e.type == 0) {
                     _this2.conversations.push(e);
-                } else {
+                } else if (e.type == 1) {
                     _this2.conversations1.push(e);
+                } else if (e.type == 2) {
+                    _this2.conversations2.push(e);
                 }
             });
         }
@@ -37536,17 +37561,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', [_c('div', {
     staticClass: "panel panel-primary"
   }, [_c('div', {
-    staticClass: "panel-heading",
-    attrs: {
-      "id": "accordion"
-    }
-  }, [_c('span', {
-    staticClass: "glyphicon glyphicon-comment"
-  }), _vm._v(" " + _vm._s(_vm.group.name) + "\n        ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("\n            " + _vm._s(_vm.group.name) + "\n        ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('div', {
-    staticClass: "panel panel-primary"
-  }, [_vm._m(0), _vm._v(" "), _c('div', {
+    staticClass: "panel panel-primary col-sm-4"
+  }, [_c('div', {
+    staticClass: "panel-heading text-center"
+  }, [_vm._v("\n                    Conversation\n                ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
@@ -37559,8 +37581,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "primary-font"
     }, [_vm._v(_vm._s(conversation.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation.message) + "\n                                ")])])])
   }))])]), _vm._v(" "), _c('div', {
-    staticClass: "panel panel-primary"
-  }, [_vm._m(1), _vm._v(" "), _c('div', {
+    staticClass: "panel panel-primary col-sm-4"
+  }, [_c('div', {
+    staticClass: "panel-heading text-center"
+  }, [_vm._v("\n                    Group 1\n                ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
@@ -37572,6 +37596,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('strong', {
       staticClass: "primary-font"
     }, [_vm._v(_vm._s(conversation1.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation1.message) + "\n                                ")])])])
+  }))])]), _vm._v(" "), _c('div', {
+    staticClass: "panel panel-primary col-sm-4"
+  }, [_c('div', {
+    staticClass: "panel-heading text-center"
+  }, [_vm._v("\n                    Group 2\n                ")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body chat-panel"
+  }, [_c('ul', {
+    staticClass: "chat"
+  }, _vm._l((_vm.conversations2), function(conversation2) {
+    return _c('li', [_c('div', {
+      staticClass: "chat-body clearfix"
+    }, [_c('div', {
+      staticClass: "header"
+    }, [_c('strong', {
+      staticClass: "primary-font"
+    }, [_vm._v(_vm._s(conversation2.user.name))])]), _vm._v(" "), _c('p', [_vm._v("\n                                    " + _vm._s(conversation2.message) + "\n                                ")])])])
   }))])])]), _vm._v(" "), _c('div', {
     staticClass: "panel-footer"
   }, [_c('div', {
@@ -37617,25 +37657,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }, [_vm._v("\n                        Send")])])])])])])
-},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "panel-heading",
-    attrs: {
-      "id": "accordion"
-    }
-  }, [_c('span', {
-    staticClass: "glyphicon glyphicon-comment"
-  }), _vm._v(" Conversation\n                ")])
-},function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "panel-heading",
-    attrs: {
-      "id": "accordion"
-    }
-  }, [_c('span', {
-    staticClass: "glyphicon glyphicon-comment"
-  }), _vm._v(" Group 1\n                ")])
-}]}
+},staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()

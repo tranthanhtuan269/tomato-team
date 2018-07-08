@@ -36,8 +36,8 @@
 
 .chat-panel
 {
-    overflow-y: scroll;
-    height: 350px;
+    /*overflow-y: scroll;*/
+    min-height: 350px;
 }
 
 ::-webkit-scrollbar-track

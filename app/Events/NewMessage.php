@@ -41,6 +41,7 @@ class NewMessage implements ShouldBroadcast
     {
         return [
             'message' => $this->conversation->message,
+            'type' => $this->conversation->type,
             'user' => [
                 'id' => $this->conversation->user->id,
                 'name' => $this->conversation->user->name,

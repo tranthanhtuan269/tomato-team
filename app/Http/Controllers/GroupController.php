@@ -8,6 +8,17 @@ use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
+
+	public function show($id){
+		$groups = Group::where('id', $id)->get();
+
+        $user = auth()->user();
+		$type = \DB::table('group_user')->where('group_id', $id)->where('user_id', $user->id)->first();
+		$user->type = $type->type;
+
+        return view('group.show', ['groups' => $groups, 'user' => $user]);
+	}
+
     public function store()
     {
         $group = Group::create(['name' => request('name')]);

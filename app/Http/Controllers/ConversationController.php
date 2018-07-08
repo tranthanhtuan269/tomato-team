@@ -13,6 +13,7 @@ class ConversationController extends Controller
         $conversation = Conversation::create([
             'message' => request('message'),
             'group_id' => request('group_id'),
+            'type' => request('type'),
             'user_id' => auth()->user()->id,
         ]);
 

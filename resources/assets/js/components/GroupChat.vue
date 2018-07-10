@@ -121,6 +121,7 @@
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
+                        console.log(e);
                         if(e.type == 0){
                             this.conversations = [];
                             this.conversations.push(e);

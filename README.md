@@ -9,4 +9,5 @@ This repository demonstrates the process to create a realtime *Group Chat Applic
 5. Run npm install
 6. Run npm run dev
 7. php artisan queue:listen
+php artisan queue:listen --tries=3
 

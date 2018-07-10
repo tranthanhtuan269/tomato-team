@@ -11,3 +11,6 @@ This repository demonstrates the process to create a realtime *Group Chat Applic
 7. php artisan queue:listen
 php artisan queue:listen --tries=3
 
+
+nohup php artisan queue:listen --tries=3 &
+

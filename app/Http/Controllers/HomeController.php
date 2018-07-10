@@ -27,9 +27,6 @@ class HomeController extends Controller
     {
         $groups = auth()->user()->groups;
 
-        $users = User::where('id', '<>', auth()->user()->id)->get();
-        $user = auth()->user();
-
-        return view('home', ['groups' => $groups, 'users' => $users, 'user' => $user]);
+        return view('home', ['groups' => $groups]);
     }
 }

@@ -17,10 +17,9 @@ class ViewServiceProvider extends ServiceProvider
     {
         view()->composer('*', function ($view)
         {
-            $groups = Group::get();
             $languages = Language::get();
 
-            $view->with(['groups'=> $groups, 'languages'=> $languages]);
+            $view->with(['languages'=> $languages]);
         });
     }
 

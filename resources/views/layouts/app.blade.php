@@ -40,7 +40,7 @@
                     @if (!Auth::guest())
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span></a>
+                            <a href="#" class="dropdown-toggle my-group" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span> <span class="num-group">2</span></a>
                             <ul class="dropdown-menu">
                                 <li>
                                     <a href="{{ url('/') }}/groups">Group List</a>

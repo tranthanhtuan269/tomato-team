@@ -60,3 +60,20 @@
     color:#eee;
     text-decoration: none;
 }
+
+.my-group{
+    position: relative;
+}
+
+span.num-group{
+    background-color: red;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    display: block;
+    color: #fff;
+    position: absolute;
+    right: 12px;
+    top: 8px;
+}

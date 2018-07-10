@@ -2100,8 +2100,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         listenForNewMessage: function listenForNewMessage() {
             var _this2 = this;
 
-            alert(1);
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
+                console.log(e);
                 if (e.type == 0) {
                     _this2.conversations = [];
                     _this2.conversations.push(e);

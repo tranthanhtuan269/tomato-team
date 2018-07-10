@@ -85,7 +85,7 @@
 
 <script>
     export default {
-        props: ['group', 'iuser'],
+        props: ['group', 'iuser', 'adminMessage', 'group1Message', 'group2Message'],
 
         data() {
             return {
@@ -122,6 +122,7 @@
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
+                        console.log(e);
                         if(e.type == 0){
                             this.conversations = [];
                             this.conversations.push(e);

@@ -11,27 +11,25 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            @if(Auth::user()->permission == 1)
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Channel Name</th>
-                        <th>Users</th>
+                        <th>Username</th>
+                        <th>Email</th>
                         <th>Status</th>
                         <th>Created At</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($groups as $group)
-                        <tr class="{{ $group->status == 0 ? 'info' : 'success' }}">
-                            <td>{{ $group->name }}</td>
-                            <td><?php echo $group->user_info; ?></td>
-                            <td>{{ $group->status == 0 ? 'Đang dịch...' : 'Đã dịch xong' }}</td>
-                            <td>{{ $group->created_at }}</td>
+                    @foreach($users as $user)
+                        <tr>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->email }}</td>
+                            <td>Active</td>
+                            <td>{{ $user->created_at }}</td>
                             <td>
-                                <a class="btn btn-small btn-success" href="{{ URL::to('groups/' . $group->id) }}">View</a>
-                                {{ Form::open(array('url' => 'groups/' . $group->id, 'class' => 'pull-right')) }}
+                                {{ Form::open(array('url' => 'users/' . $user->id, 'class' => 'pull-right')) }}
                                     {{ Form::hidden('_method', 'DELETE') }}
                                     {{ Form::submit('Delete', array('class' => 'btn btn-warning')) }}
                                 {{ Form::close() }}
@@ -40,11 +38,6 @@
                     @endforeach 
                 </tbody>
             </table>
-            @else
-                @foreach($groups as $group)
-                    {{ $group->name }}
-                @endforeach
-            @endif
         </div>
     </div>
 </div>

@@ -7,5 +7,6 @@ This repository demonstrates the process to create a realtime *Group Chat Applic
 3. Configure your Pusher key in the `resources/assets/js/bootstrap.js` file
 4. Install composer dependencies
 5. Run npm install
-6. Do not forget to run the queue listener to broadcast the events
-# tomato-team
+6. Run npm run dev
+7. php artisan queue:listen
+

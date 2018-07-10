@@ -31,7 +31,6 @@ Vue.use(wysiwyg, config); // config is optional. more below
 // Vue.component('example', require('./components/Example.vue'));
 Vue.component('groups', require('./components/Groups.vue'));
 Vue.component('create-group', require('./components/CreateGroup.vue'));
-Vue.component('list-group', require('./components/ListGroup.vue'));
 Vue.component('group-chat', require('./components/GroupChat.vue'));
 
 const app = new Vue({

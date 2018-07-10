@@ -16,9 +16,9 @@
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                             </span> -->
                                 <div class="chat-body clearfix">
-                                    <div class="header">
+                                    <!-- <div class="header">
                                         <strong class="primary-font">{{ conversation.user.name }}</strong>
-                                    </div>
+                                    </div> -->
                                     <p v-html="conversation.message">
                                     </p>
                                 </div>
@@ -37,9 +37,9 @@
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                             </span> -->
                                 <div class="chat-body clearfix">
-                                    <div class="header">
+                                    <!-- <div class="header">
                                         <strong class="primary-font">{{ conversation1.user.name }}</strong>
-                                    </div>
+                                    </div> -->
                                     <p v-html="conversation1.message">
                                         
                                     </p>
@@ -59,9 +59,9 @@
                                 <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
                             </span> -->
                                 <div class="chat-body clearfix">
-                                    <div class="header">
+                                    <!-- <div class="header">
                                         <strong class="primary-font">{{ conversation2.user.name }}</strong>
-                                    </div>
+                                    </div> -->
                                     <p v-html="conversation2.message">
                                     </p>
                                 </div>

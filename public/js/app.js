@@ -37609,11 +37609,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, _vm._l((_vm.conversations), function(conversation) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('div', {
-      staticClass: "header"
-    }, [_c('strong', {
-      staticClass: "primary-font"
-    }, [_vm._v(_vm._s(conversation.user.name))])]), _vm._v(" "), _c('p', {
+    }, [_c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation.message)
       }
@@ -37629,11 +37625,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, _vm._l((_vm.conversations1), function(conversation1) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('div', {
-      staticClass: "header"
-    }, [_c('strong', {
-      staticClass: "primary-font"
-    }, [_vm._v(_vm._s(conversation1.user.name))])]), _vm._v(" "), _c('p', {
+    }, [_c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation1.message)
       }
@@ -37649,11 +37641,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, _vm._l((_vm.conversations2), function(conversation2) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('div', {
-      staticClass: "header"
-    }, [_c('strong', {
-      staticClass: "primary-font"
-    }, [_vm._v(_vm._s(conversation2.user.name))])]), _vm._v(" "), _c('p', {
+    }, [_c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation2.message)
       }

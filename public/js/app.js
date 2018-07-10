@@ -2064,7 +2064,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['group', 'iuser', 'adminMessage', 'group1Message', 'group2Message'],
+    props: ['group', 'iuser'],
 
     data: function data() {
         return {
@@ -2084,7 +2084,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         store: function store() {
             var _this = this;
 
-            console.log(this.iuser);
             axios.post('/conversations', { message: this.message, group_id: this.group.id, type: this.iuser.type }).then(function (response) {
                 if (_this.iuser.type == 0) {
                     _this.conversations = [];
@@ -2101,8 +2100,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         listenForNewMessage: function listenForNewMessage() {
             var _this2 = this;
 
+            alert(1);
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                console.log(e);
                 if (e.type == 0) {
                     _this2.conversations = [];
                     _this2.conversations.push(e);
@@ -2147,10 +2146,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         this.groups = this.initialGroups;
         this.iuser = this.user;
-        //this.adminMessage = this.adminMessage;
-        //this.group1Message = this.group1Message;
-        //this.group2Message = this.group2Message;
-
 
         Bus.$on('groupCreated', function (group) {
             _this.groups.push(group);

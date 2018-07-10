@@ -17,10 +17,6 @@
         mounted() {
             this.groups = this.initialGroups;
             this.iuser = this.user;
-            //this.adminMessage = this.adminMessage;
-            //this.group1Message = this.group1Message;
-            //this.group2Message = this.group2Message;
-
 
             Bus.$on('groupCreated', (group) => {
                 this.groups.push(group);

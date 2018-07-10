@@ -47,10 +47,6 @@ class GroupController extends Controller
 
 	public function show($id){
 		$groups = Group::where('id', $id)->get();
-		$adminMessage = Conversation::where('group_id', $id)->where('type', 0)->orderBy('created_at', 'desc')->get();
-		$group1Message = Conversation::where('group_id', $id)->where('type', 1)->orderBy('created_at', 'desc')->get();
-		$group2Message = Conversation::where('group_id', $id)->where('type', 2)->orderBy('created_at', 'desc')->get();
-		dd($adminMessage->load('user'));
 		if(count($groups) == 0){
 			if(!isset($type)){
 				return view('error', ['message' => 'Group không tồn tại hoặc đã bị xóa!']);
@@ -64,7 +60,7 @@ class GroupController extends Controller
 		}
 		$user->type = $type->type;
 
-        return view('group.show', ['groups' => $groups, 'user' => $user, 'adminMessage' => $adminMessage, 'group1Message' => $group1Message, 'group2Message' => $group2Message]);
+        return view('group.show', ['groups' => $groups, 'user' => $user]);
 	}
 
     public function store()

@@ -85,7 +85,7 @@
 
 <script>
     export default {
-        props: ['group', 'iuser', 'adminMessage', 'group1Message', 'group2Message'],
+        props: ['group', 'iuser'],
 
         data() {
             return {
@@ -103,7 +103,6 @@
 
         methods: {
             store() {
-                console.log(this.iuser);
                 axios.post('/conversations', {message: this.message, group_id: this.group.id, type: this.iuser.type})
                 .then((response) => {
                     if(this.iuser.type == 0){
@@ -122,7 +121,6 @@
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        console.log(e);
                         if(e.type == 0){
                             this.conversations = [];
                             this.conversations.push(e);

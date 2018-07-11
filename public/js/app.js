@@ -2078,39 +2078,70 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mounted: function mounted() {
         this.listenForNewMessage();
     },
+    created: function created() {
+        var _this = this;
+
+        axios.get('/conversation/' + this.group.id + '/later/0').then(function (response) {
+            _this.conversations = [];
+            _this.conversations.push(response.data);
+            if (_this.iuser.type == 0) {
+                _this.message = response.data.message;
+            }
+        }).catch(function (e) {
+            _this.errors.push(e);
+        });
+        axios.get('/conversation/' + this.group.id + '/later/1').then(function (response) {
+            _this.conversations1 = [];
+            _this.conversations1.push(response.data);
+            if (_this.iuser.type == 1) {
+                _this.message = response.data.message;
+            }
+        }).catch(function (e) {
+            _this.errors.push(e);
+        });
+        axios.get('/conversation/' + this.group.id + '/later/2').then(function (response) {
+            _this.conversations2 = [];
+            _this.conversations2.push(response.data);
+            if (_this.iuser.type == 2) {
+                _this.message = response.data.message;
+            }
+        }).catch(function (e) {
+            _this.errors.push(e);
+        });
+    },
 
 
     methods: {
         store: function store() {
-            var _this = this;
+            var _this2 = this;
 
             axios.post('/conversations', { message: this.message, group_id: this.group.id, type: this.iuser.type }).then(function (response) {
-                if (_this.iuser.type == 0) {
-                    _this.conversations = [];
-                    _this.conversations.push(response.data);
-                } else if (_this.iuser.type == 1) {
-                    _this.conversations1 = [];
-                    _this.conversations1.push(response.data);
-                } else if (_this.iuser.type == 2) {
-                    _this.conversations2 = [];
-                    _this.conversations2.push(response.data);
+                if (_this2.iuser.type == 0) {
+                    _this2.conversations = [];
+                    _this2.conversations.push(response.data);
+                } else if (_this2.iuser.type == 1) {
+                    _this2.conversations1 = [];
+                    _this2.conversations1.push(response.data);
+                } else if (_this2.iuser.type == 2) {
+                    _this2.conversations2 = [];
+                    _this2.conversations2.push(response.data);
                 }
             });
         },
         listenForNewMessage: function listenForNewMessage() {
-            var _this2 = this;
+            var _this3 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
                 console.log(e);
                 if (e.type == 0) {
-                    _this2.conversations = [];
-                    _this2.conversations.push(e);
+                    _this3.conversations = [];
+                    _this3.conversations.push(e);
                 } else if (e.type == 1) {
-                    _this2.conversations1 = [];
-                    _this2.conversations1.push(e);
+                    _this3.conversations1 = [];
+                    _this3.conversations1.push(e);
                 } else if (e.type == 2) {
-                    _this2.conversations2 = [];
-                    _this2.conversations2.push(e);
+                    _this3.conversations2 = [];
+                    _this3.conversations2.push(e);
                 }
             });
         },

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Group;
 use App\User;
+use App\Conversation;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -28,5 +29,13 @@ class HomeController extends Controller
         $groups = auth()->user()->groups;
 
         return view('home', ['groups' => $groups]);
+    }
+
+    public function getLastest($group, $id){
+        $conversation = Conversation::where('group_id', $group)->where('type', $id)->orderBy('created_at','desc')->first();
+        if($conversation)
+            return $conversation->load('user');
+        else
+            return null;
     }
 }

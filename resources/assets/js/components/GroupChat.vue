@@ -101,6 +101,42 @@
             this.listenForNewMessage();
         },
 
+        created() {
+            axios.get('/conversation/' + this.group.id + '/later/0')
+            .then(response => {
+                this.conversations = [];
+                this.conversations.push(response.data);
+                if(this.iuser.type == 0){
+                    this.message = response.data.message;
+                }
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
+            axios.get('/conversation/' + this.group.id + '/later/1')
+            .then(response => {
+                this.conversations1 = [];
+                this.conversations1.push(response.data);
+                if(this.iuser.type == 1){
+                    this.message = response.data.message;
+                }
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
+            axios.get('/conversation/' + this.group.id + '/later/2')
+            .then(response => {
+                this.conversations2 = [];
+                this.conversations2.push(response.data);
+                if(this.iuser.type == 2){
+                    this.message = response.data.message;
+                }
+            })
+            .catch(e => {
+                this.errors.push(e)
+            })
+        },
+
         methods: {
             store() {
                 axios.post('/conversations', {message: this.message, group_id: this.group.id, type: this.iuser.type})

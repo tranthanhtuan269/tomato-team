@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/conversation/{group}/later/{id}', 'HomeController@getLastest')->name('home');
 Route::resource('users', 'UserController');
 Route::resource('groups', 'GroupController');
 Route::resource('conversations', 'ConversationController');

@@ -18,7 +18,7 @@
                     </div>
                     <div class="form-group">
                         <ul class="list-group col-sm-6">
-                            <li class="list-group-item list-group-item-info">Source team</li>
+                            <li class="list-group-item list-group-item-info">Target team</li>
                             <li class="list-group-item" v-for="user in users2Selected" :value="user.id" v-on:click="rollbackUserToTargetTeam(user)">{{ user.name }}</li>
                         </ul>
                     </div>

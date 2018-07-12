@@ -85,4 +85,7 @@ span.num-group{
 
 .chat-panel .conversation-panel .chat-panel{
     padding:5px;
+    height: 350px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }

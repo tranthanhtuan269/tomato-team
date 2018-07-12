@@ -71,13 +71,7 @@
                 </div>
             </div>
             <div class="panel-footer">
-                <div class="input-group">
-                    <wysiwyg v-model="message" v-on:change="change"/>
-                    <span class="input-group-btn">
-                        <button class="btn btn-warning btn-sm" id="btn-chat" @click.prevent="store()">
-                            Send</button>
-                    </span>
-                </div>
+                <wysiwyg v-model="message" v-on:change="change"/>
             </div>
         </div>
     </div>

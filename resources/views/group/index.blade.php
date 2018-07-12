@@ -54,7 +54,7 @@
                         <div class="panel panel-success">
                         @endif
                             <div class="panel-heading">{{ $group->name }} <span class="pull-right">{{ $interval->format("%Hh : %Im") }}</span></div>
-                            <div class="panel-body"><div class="btn btn-danger"><a href="{{ url('/') }}/groups/{{ $group->id }}">Join</a></div></div>
+                            <div class="panel-body"><a href="{{ url('/') }}/groups/{{ $group->id }}"><div class="btn btn-danger">Join</div></a></div>
                         </div>
                     </div>
                 @endforeach

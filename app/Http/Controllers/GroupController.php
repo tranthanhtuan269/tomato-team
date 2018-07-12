@@ -63,8 +63,9 @@ class GroupController extends Controller
         return view('group.show', ['groups' => $groups, 'user' => $user]);
 	}
 
-    public function store()
+    public function store(Request $request)
     {
+    	// dd($request);
         $group = Group::create(['name' => request('name')]);
 
         $users = collect(request('users'));

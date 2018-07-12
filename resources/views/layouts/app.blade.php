@@ -20,7 +20,7 @@
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
-
+                    
                     <!-- Collapsed Hamburger -->
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#app-navbar-collapse">
                         <span class="sr-only">Toggle Navigation</span>
@@ -40,7 +40,9 @@
                     @if (!Auth::guest())
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle my-group" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span> <span class="num-group">2</span></a>
+                            <a href="#" class="dropdown-toggle my-group" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span>@if (!Auth::guest())
+                    <notification :user="{!! Auth::user()->id !!}"></notification>
+                    @endif</a>
                             <ul class="dropdown-menu">
                                 <li>
                                     <a href="{{ url('/') }}/groups">Group List</a>

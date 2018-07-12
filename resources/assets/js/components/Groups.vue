@@ -17,21 +17,24 @@
         mounted() {
             this.groups = this.initialGroups;
             this.iuser = this.user;
-
+            /*
             Bus.$on('groupCreated', (group) => {
                 this.groups.push(group);
             });
 
             this.listenForNewGroups();
+            */
         },
 
         methods: {
+            /*
             listenForNewGroups() {
                 Echo.private('users.' + this.user.id)
                     .listen('GroupCreated', (e) => {
                         this.groups.push(e.group);
                     });
             }
+            */
         }
     }
 </script>

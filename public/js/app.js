@@ -1945,15 +1945,32 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['initialUsers'],
+    props: ['initialUsers1', 'initialUsers2'],
 
     data: function data() {
         return {
             name: '',
             users: [],
-            users2: []
+            usersSelected: [],
+            users2: [],
+            users2Selected: []
         };
     },
 
@@ -1968,6 +1985,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 _this.users2 = [];
                 Bus.$emit('groupCreated', response.data);
             });
+        },
+        addUserToSourceTeam: function addUserToSourceTeam(user) {
+            this.initialUsers1 = this.initialUsers1.filter(function (item) {
+                return user.id != item.id;
+            });
+            this.users.push(user.id);
+            this.usersSelected.push(user);
+        },
+        addUserToTargetTeam: function addUserToTargetTeam(user) {
+            this.initialUsers2 = this.initialUsers2.filter(function (item) {
+                return user.id != item.id;
+            });
+            this.users2.push(user.id);
+            this.users2Selected.push(user);
+        },
+        rollbackUserToSourceTeam: function rollbackUserToSourceTeam(user) {
+            this.initialUsers1.push(user);
+            this.users = this.users.filter(function (item) {
+                return user.id != item;
+            });
+            this.usersSelected = this.usersSelected.filter(function (item) {
+                return user.id != item.id;
+            });
+        },
+        rollbackUserToTargetTeam: function rollbackUserToTargetTeam(user) {
+            this.initialUsers2.push(user);
+            this.users2 = this.users2.filter(function (item) {
+                return user.id != item;
+            });
+            this.users2Selected = this.users2Selected.filter(function (item) {
+                return user.id != item.id;
+            });
         }
     }
 });
@@ -1978,12 +2027,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -37705,7 +37748,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("\n            " + _vm._s(_vm.group.name) + "\n        ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('div', {
-    staticClass: "panel panel-primary col-sm-4"
+    staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
   }, [_vm._v("\n                    Conversation\n                ")]), _vm._v(" "), _c('div', {
@@ -37721,7 +37764,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     })])])
   }))])]), _vm._v(" "), _c('div', {
-    staticClass: "panel panel-primary col-sm-4"
+    staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
   }, [_vm._v("\n                    Source Team\n                ")]), _vm._v(" "), _c('div', {
@@ -37737,7 +37780,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     })])])
   }))])]), _vm._v(" "), _c('div', {
-    staticClass: "panel panel-primary col-sm-4"
+    staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
   }, [_vm._v("\n                    Target Team\n                ")]), _vm._v(" "), _c('div', {
@@ -37754,8 +37797,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     })])])
   }))])])]), _vm._v(" "), _c('div', {
     staticClass: "panel-footer"
-  }, [_c('div', {
-    staticClass: "input-group"
   }, [_c('wysiwyg', {
     on: {
       "change": _vm.change
@@ -37767,20 +37808,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       expression: "message"
     }
-  }), _vm._v(" "), _c('span', {
-    staticClass: "input-group-btn"
-  }, [_c('button', {
-    staticClass: "btn btn-warning btn-sm",
-    attrs: {
-      "id": "btn-chat"
-    },
-    on: {
-      "click": function($event) {
-        $event.preventDefault();
-        _vm.store()
-      }
-    }
-  }, [_vm._v("\n                        Send")])])], 1)])])])
+  })], 1)])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -37818,7 +37846,9 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
+  return _c('div', [_c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
     staticClass: "panel panel-default"
   }, [_c('div', {
     staticClass: "panel-heading"
@@ -37853,73 +37883,41 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })]), _vm._v(" "), _c('div', {
     staticClass: "form-group"
-  }, [_c('label', {
-    attrs: {
-      "for": "exampleInputEmail1"
-    }
-  }, [_vm._v("Source Team")]), _vm._v(" "), _c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.users),
-      expression: "users"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "multiple": ""
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.users = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, _vm._l((_vm.initialUsers), function(user) {
-    return _c('option', {
-      domProps: {
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.usersSelected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
         "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToSourceTeam(user)
+        }
       }
-    }, [_vm._v("\n                        " + _vm._s(user.name) + "\n                    ")])
-  }))]), _vm._v(" "), _c('div', {
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)]), _vm._v(" "), _c('div', {
     staticClass: "form-group"
-  }, [_c('label', {
-    attrs: {
-      "for": "exampleInputEmail1"
-    }
-  }, [_vm._v("Target Team")]), _vm._v(" "), _c('select', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.users2),
-      expression: "users2"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "multiple": ""
-    },
-    on: {
-      "change": function($event) {
-        var $$selectedVal = Array.prototype.filter.call($event.target.options, function(o) {
-          return o.selected
-        }).map(function(o) {
-          var val = "_value" in o ? o._value : o.value;
-          return val
-        });
-        _vm.users2 = $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-      }
-    }
-  }, _vm._l((_vm.initialUsers), function(user) {
-    return _c('option', {
-      domProps: {
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
         "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToTargetTeam(user)
+        }
       }
-    }, [_vm._v("\n                        " + _vm._s(user.name) + "\n                    ")])
-  }))])])]), _vm._v(" "), _c('div', {
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)])])]), _vm._v(" "), _c('div', {
     staticClass: "panel-footer text-center"
   }, [_c('button', {
     staticClass: "btn btn-primary",
@@ -37932,7 +37930,47 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         return _vm.createGroup($event)
       }
     }
-  }, [_vm._v("Create Group")])])])
+  }, [_vm._v("Create Group")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("List Users")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.initialUsers1), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToSourceTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2), _vm._v(" "), _c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.initialUsers2), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToTargetTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)])])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

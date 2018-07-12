@@ -1960,6 +1960,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['initialUsers1', 'initialUsers2'],
@@ -1967,6 +1968,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     data: function data() {
         return {
             name: '',
+            created_success: false,
             users: [],
             usersSelected: [],
             users2: [],
@@ -1981,19 +1983,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             axios.post('/groups', { name: this.name, users: this.users, users2: this.users2 }).then(function (response) {
                 _this.name = '';
-                _this.users = [];
-                _this.users2 = [];
                 Bus.$emit('groupCreated', response.data);
+                _this.created_success = true;
             });
         },
         addUserToSourceTeam: function addUserToSourceTeam(user) {
             this.initialUsers1 = this.initialUsers1.filter(function (item) {
                 return user.id != item.id;
             });
+            this.initialUsers2 = this.initialUsers2.filter(function (item) {
+                return user.id != item.id;
+            });
             this.users.push(user.id);
             this.usersSelected.push(user);
         },
         addUserToTargetTeam: function addUserToTargetTeam(user) {
+            this.initialUsers1 = this.initialUsers1.filter(function (item) {
+                return user.id != item.id;
+            });
             this.initialUsers2 = this.initialUsers2.filter(function (item) {
                 return user.id != item.id;
             });
@@ -2002,6 +2009,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         rollbackUserToSourceTeam: function rollbackUserToSourceTeam(user) {
             this.initialUsers1.push(user);
+            this.initialUsers2.push(user);
             this.users = this.users.filter(function (item) {
                 return user.id != item;
             });
@@ -2010,6 +2018,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         rollbackUserToTargetTeam: function rollbackUserToTargetTeam(user) {
+            this.initialUsers1.push(user);
             this.initialUsers2.push(user);
             this.users2 = this.users2.filter(function (item) {
                 return user.id != item;
@@ -37846,7 +37855,12 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('div', {
+  return _c('div', [(_vm.created_success) ? _c('div', {
+    staticClass: "alert alert-success",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Tạo group thành công!")]) : _vm._e(), _vm._v(" "), _c('div', {
     staticClass: "col-sm-6"
   }, [_c('div', {
     staticClass: "panel panel-default"

@@ -1,5 +1,6 @@
 <template>
 <div>
+    <div class="alert alert-success" role="alert" v-if="created_success">Tạo group thành công!</div>
     <div class="col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">Create Group</div>
@@ -53,6 +54,7 @@
         data() {
             return {
                 name: '',
+                created_success: false,
                 users: [],
                 usersSelected: [],
                 users2: [],
@@ -65,19 +67,24 @@
                 axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
                 .then((response) => {
                     this.name = '';
-                    this.users = [];
-                    this.users2 = [];
                     Bus.$emit('groupCreated', response.data);
+                    this.created_success = true;
                 });
             },
             addUserToSourceTeam(user){
                 this.initialUsers1 = this.initialUsers1.filter(function (item) {
                     return user.id != item.id;
                 });
+                this.initialUsers2 = this.initialUsers2.filter(function (item) {
+                    return user.id != item.id;
+                });
                 this.users.push(user.id);
                 this.usersSelected.push(user);
             },
             addUserToTargetTeam(user){
+                this.initialUsers1 = this.initialUsers1.filter(function (item) {
+                    return user.id != item.id;
+                });
                 this.initialUsers2 = this.initialUsers2.filter(function (item) {
                     return user.id != item.id;
                 });
@@ -86,6 +93,7 @@
             },
             rollbackUserToSourceTeam(user){
                 this.initialUsers1.push(user);
+                this.initialUsers2.push(user);
                 this.users = this.users.filter(function (item) {
                     return user.id != item;
                 });
@@ -94,6 +102,7 @@
                 });
             },
             rollbackUserToTargetTeam(user){
+                this.initialUsers1.push(user);
                 this.initialUsers2.push(user);
                 this.users2 = this.users2.filter(function (item) {
                     return user.id != item;

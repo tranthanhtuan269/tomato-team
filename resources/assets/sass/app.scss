@@ -77,3 +77,12 @@ span.num-group{
     right: 12px;
     top: 8px;
 }
+
+.chat-panel .conversation-panel{
+    padding-left:0;
+    padding-right:0;
+}
+
+.chat-panel .conversation-panel .chat-panel{
+    padding:5px;
+}

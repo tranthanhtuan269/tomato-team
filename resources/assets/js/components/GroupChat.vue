@@ -5,7 +5,7 @@
                 {{ group.name }}
             </div>
             <div class="panel-body chat-panel">
-                <div class="panel panel-primary col-sm-4">
+                <div class="panel panel-primary col-sm-4 conversation-panel">
                     <div class="panel-heading text-center">
                         Conversation
                     </div>
@@ -26,7 +26,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="panel panel-primary col-sm-4">
+                <div class="panel panel-primary col-sm-4 conversation-panel">
                     <div class="panel-heading text-center">
                         Source Team
                     </div>
@@ -48,7 +48,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="panel panel-primary col-sm-4">
+                <div class="panel panel-primary col-sm-4 conversation-panel">
                     <div class="panel-heading text-center">
                         Target Team
                     </div>

@@ -20,3 +20,7 @@ Broadcast::channel('users.{id}', function ($user, $id) {
 Broadcast::channel('groups.{group}', function ($user, Group $group) {
     return $group->hasUser($user->id);
 });
+
+Broadcast::channel('chats', function ($user) {
+    return $user;
+});

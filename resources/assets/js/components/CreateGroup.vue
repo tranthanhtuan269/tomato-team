@@ -35,11 +35,11 @@
             <div class="panel-body">
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Source team</li>
-                    <li class="list-group-item" v-for="user in initialUsers1" :value="user.id" v-on:click="addUserToSourceTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsers" :value="user.id" v-on:click="addUserToSourceTeam(user)">{{ user.name }}</li>
                 </ul>
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Target team</li>
-                    <li class="list-group-item" v-for="user in initialUsers2" :value="user.id" v-on:click="addUserToTargetTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsers" :value="user.id" v-on:click="addUserToTargetTeam(user)">{{ user.name }}</li>
                 </ul>
             </div>
         </div>
@@ -57,9 +57,25 @@
                 created_success: false,
                 users: [],
                 usersSelected: [],
+                onlineUsers: [],
                 users2: [],
                 users2Selected: []
             }
+        },
+
+        created() {
+            Bus.$on('online_users', (users) => {
+                console.log(users);
+                this.onlineUsers = users;
+            });
+
+            Bus.$on('user_join', (user) => {
+                console.log(user);
+            });
+
+            Bus.$on('user_leave', (user) => {
+                console.log(user);
+            });
         },
 
         methods: {
@@ -72,28 +88,21 @@
                 });
             },
             addUserToSourceTeam(user){
-                this.initialUsers1 = this.initialUsers1.filter(function (item) {
-                    return user.id != item.id;
-                });
-                this.initialUsers2 = this.initialUsers2.filter(function (item) {
+                this.onlineUsers = this.onlineUsers.filter(function (item) {
                     return user.id != item.id;
                 });
                 this.users.push(user.id);
                 this.usersSelected.push(user);
             },
             addUserToTargetTeam(user){
-                this.initialUsers1 = this.initialUsers1.filter(function (item) {
-                    return user.id != item.id;
-                });
-                this.initialUsers2 = this.initialUsers2.filter(function (item) {
+                this.onlineUsers = this.onlineUsers.filter(function (item) {
                     return user.id != item.id;
                 });
                 this.users2.push(user.id);
                 this.users2Selected.push(user);
             },
             rollbackUserToSourceTeam(user){
-                this.initialUsers1.push(user);
-                this.initialUsers2.push(user);
+                this.onlineUsers.push(user);
                 this.users = this.users.filter(function (item) {
                     return user.id != item;
                 });
@@ -102,8 +111,7 @@
                 });
             },
             rollbackUserToTargetTeam(user){
-                this.initialUsers1.push(user);
-                this.initialUsers2.push(user);
+                this.onlineUsers.push(user);
                 this.users2 = this.users2.filter(function (item) {
                     return user.id != item;
                 });

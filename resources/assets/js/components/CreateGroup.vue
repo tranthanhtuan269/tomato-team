@@ -1,6 +1,9 @@
 <template>
 <div>
     <div class="alert alert-success" role="alert" v-if="created_success">Tạo group thành công!</div>
+    <div class="alert alert-danger" role="alert" v-if="error_name">Tên group không nên để trống!</div>
+    <div class="alert alert-danger" role="alert" v-if="error_source">Bạn chưa thêm thành viên cho source team!</div>
+    <div class="alert alert-danger" role="alert" v-if="error_target">Bạn chưa thêm thành viên cho target team!</div>
     <div class="col-sm-6">
         <div class="panel panel-default">
             <div class="panel-heading">Create Group</div>
@@ -55,6 +58,9 @@
             return {
                 name: '',
                 created_success: false,
+                error_name: false,
+                error_source: false,
+                error_target: false,
                 users: [],
                 usersSelected: [],
                 onlineUsers: [],
@@ -63,23 +69,48 @@
             }
         },
 
-        created() {
+        mounted() {
             Bus.$on('online_users', (users) => {
-                console.log(users);
+                //console.log(users);
                 this.onlineUsers = users;
             });
 
             Bus.$on('user_join', (user) => {
-                console.log(user);
+                //console.log(user);
+                this.onlineUsers.push(user);
             });
 
             Bus.$on('user_leave', (user) => {
                 console.log(user);
+                this.onlineUsers = this.onlineUsers.filter(function (item) {
+                    return user != item.id;
+                });
             });
         },
 
         methods: {
             createGroup() {
+                if(this.name == ''){ 
+                    this.error_name = true; 
+                    return;
+                }else{ 
+                    this.error_name = false;
+                }
+
+                if(this.users.length == 0){
+                    this.error_source = true; 
+                    return;
+                }else{
+                    this.error_source = false;
+                }
+
+                if(this.users2.length == 0){
+                    this.error_target = true; 
+                    return;
+                }else{
+                    this.error_target = false;
+                }
+
                 axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
                 .then((response) => {
                     this.name = '';
@@ -118,8 +149,7 @@
                 this.users2Selected = this.users2Selected.filter(function (item) {
                     return user.id != item.id;
                 });
-            },
-
+            }
         }
     }
 </script>

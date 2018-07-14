@@ -1961,55 +1961,117 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['initialUsers1', 'initialUsers2'],
-
     data: function data() {
         return {
             name: '',
             created_success: false,
+            error_name: false,
+            error_source: false,
+            error_target: false,
             users: [],
             usersSelected: [],
+            onlineUsersSource: [],
+            onlineUsersTarget: [],
             users2: [],
             users2Selected: []
         };
+    },
+    mounted: function mounted() {
+        var _this = this;
+
+        Bus.$on('online_users', function (users) {
+            var self = _this;
+            users = users.filter(function (item) {
+                console.log(item);
+                if (item.languages == 0) {
+                    self.onlineUsersSource.push(item);
+                }
+
+                if (item.languages == 1) {
+                    self.onlineUsersTarget.push(item);
+                }
+            });
+        });
+
+        Bus.$on('user_join', function (user) {
+            if (user.languages == 0) {
+                _this.onlineUsersSource.push(user);
+            }
+
+            if (user.languages == 1) {
+                _this.onlineUsersTarget.push(user);
+            }
+        });
+
+        Bus.$on('user_leave', function (user) {
+            _this.onlineUsersSource = _this.onlineUsersSource.filter(function (item) {
+                return user != item.id;
+            });
+            _this.onlineUsersTarget = _this.onlineUsersTarget.filter(function (item) {
+                return user != item.id;
+            });
+        });
     },
 
 
     methods: {
         createGroup: function createGroup() {
-            var _this = this;
+            var _this2 = this;
+
+            if (this.name == '') {
+                this.error_name = true;
+                return;
+            } else {
+                this.error_name = false;
+            }
+
+            if (this.users.length == 0) {
+                this.error_source = true;
+                return;
+            } else {
+                this.error_source = false;
+            }
+
+            if (this.users2.length == 0) {
+                this.error_target = true;
+                return;
+            } else {
+                this.error_target = false;
+            }
 
             axios.post('/groups', { name: this.name, users: this.users, users2: this.users2 }).then(function (response) {
-                _this.name = '';
+                _this2.name = '';
                 Bus.$emit('groupCreated', response.data);
-                _this.created_success = true;
+                _this2.created_success = true;
             });
         },
         addUserToSourceTeam: function addUserToSourceTeam(user) {
-            this.initialUsers1 = this.initialUsers1.filter(function (item) {
+            this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
                 return user.id != item.id;
             });
-            this.initialUsers2 = this.initialUsers2.filter(function (item) {
+            this.onlineUsersTarget = this.onlineUsersTarget.filter(function (item) {
                 return user.id != item.id;
             });
             this.users.push(user.id);
             this.usersSelected.push(user);
         },
         addUserToTargetTeam: function addUserToTargetTeam(user) {
-            this.initialUsers1 = this.initialUsers1.filter(function (item) {
+            this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
                 return user.id != item.id;
             });
-            this.initialUsers2 = this.initialUsers2.filter(function (item) {
+            this.onlineUsersTarget = this.onlineUsersTarget.filter(function (item) {
                 return user.id != item.id;
             });
             this.users2.push(user.id);
             this.users2Selected.push(user);
         },
         rollbackUserToSourceTeam: function rollbackUserToSourceTeam(user) {
-            this.initialUsers1.push(user);
-            this.initialUsers2.push(user);
+            this.onlineUsersSource.push(user);
             this.users = this.users.filter(function (item) {
                 return user.id != item;
             });
@@ -2018,8 +2080,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         rollbackUserToTargetTeam: function rollbackUserToTargetTeam(user) {
-            this.initialUsers1.push(user);
-            this.initialUsers2.push(user);
+            this.onlineUsersTarget.push(user);
             this.users2 = this.users2.filter(function (item) {
                 return user.id != item;
             });
@@ -2276,6 +2337,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
         this.listenCreateGroup();
+
+        Echo.join('chats').here(function (users) {
+            Bus.$emit('online_users', users);
+        }).joining(function (user) {
+            Bus.$emit('user_join', user);
+        }).leaving(function (user) {
+            Bus.$emit('user_leave', user.id);
+        });
     },
 
 
@@ -37860,7 +37929,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "role": "alert"
     }
-  }, [_vm._v("Tạo group thành công!")]) : _vm._e(), _vm._v(" "), _c('div', {
+  }, [_vm._v("Tạo group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
+    staticClass: "alert alert-danger",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Tên group không nên để trống!")]) : _vm._e(), _vm._v(" "), (_vm.error_source) ? _c('div', {
+    staticClass: "alert alert-danger",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Bạn chưa thêm thành viên cho source team!")]) : _vm._e(), _vm._v(" "), (_vm.error_target) ? _c('div', {
+    staticClass: "alert alert-danger",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Bạn chưa thêm thành viên cho target team!")]) : _vm._e(), _vm._v(" "), _c('div', {
     staticClass: "col-sm-6"
   }, [_c('div', {
     staticClass: "panel panel-default"
@@ -37919,7 +38003,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
     return _c('li', {
       staticClass: "list-group-item",
       attrs: {
@@ -37956,7 +38040,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.initialUsers1), function(user) {
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
     return _c('li', {
       staticClass: "list-group-item",
       attrs: {
@@ -37972,7 +38056,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.initialUsers2), function(user) {
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
     return _c('li', {
       staticClass: "list-group-item",
       attrs: {

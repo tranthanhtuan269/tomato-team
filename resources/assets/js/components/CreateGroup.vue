@@ -38,11 +38,11 @@
             <div class="panel-body">
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Source team</li>
-                    <li class="list-group-item" v-for="user in onlineUsers" :value="user.id" v-on:click="addUserToSourceTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersSource" :value="user.id" v-on:click="addUserToSourceTeam(user)">{{ user.name }}</li>
                 </ul>
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Target team</li>
-                    <li class="list-group-item" v-for="user in onlineUsers" :value="user.id" v-on:click="addUserToTargetTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)">{{ user.name }}</li>
                 </ul>
             </div>
         </div>
@@ -52,8 +52,6 @@
 
 <script>
     export default {
-        props: ['initialUsers1', 'initialUsers2'],
-
         data() {
             return {
                 name: '',
@@ -63,7 +61,8 @@
                 error_target: false,
                 users: [],
                 usersSelected: [],
-                onlineUsers: [],
+                onlineUsersSource: [],
+                onlineUsersTarget: [],
                 users2: [],
                 users2Selected: []
             }
@@ -71,18 +70,34 @@
 
         mounted() {
             Bus.$on('online_users', (users) => {
-                //console.log(users);
-                this.onlineUsers = users;
+                var self = this;
+                users = users.filter(function (item) {
+                    console.log(item);
+                    if(item.languages == 0){
+                        self.onlineUsersSource.push(item);
+                    }
+
+                    if(item.languages == 1){
+                        self.onlineUsersTarget.push(item);
+                    }
+                });
             });
 
             Bus.$on('user_join', (user) => {
-                //console.log(user);
-                this.onlineUsers.push(user);
+                if(user.languages == 0){
+                    this.onlineUsersSource.push(user);
+                }
+
+                if(user.languages == 1){
+                    this.onlineUsersTarget.push(user);
+                }
             });
 
             Bus.$on('user_leave', (user) => {
-                console.log(user);
-                this.onlineUsers = this.onlineUsers.filter(function (item) {
+                this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
+                    return user != item.id;
+                });
+                this.onlineUsersTarget = this.onlineUsersTarget.filter(function (item) {
                     return user != item.id;
                 });
             });
@@ -119,21 +134,27 @@
                 });
             },
             addUserToSourceTeam(user){
-                this.onlineUsers = this.onlineUsers.filter(function (item) {
+                this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
+                    return user.id != item.id;
+                });
+                this.onlineUsersTarget = this.onlineUsersTarget.filter(function (item) {
                     return user.id != item.id;
                 });
                 this.users.push(user.id);
                 this.usersSelected.push(user);
             },
             addUserToTargetTeam(user){
-                this.onlineUsers = this.onlineUsers.filter(function (item) {
+                this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
+                    return user.id != item.id;
+                });
+                this.onlineUsersTarget = this.onlineUsersTarget.filter(function (item) {
                     return user.id != item.id;
                 });
                 this.users2.push(user.id);
                 this.users2Selected.push(user);
             },
             rollbackUserToSourceTeam(user){
-                this.onlineUsers.push(user);
+                this.onlineUsersSource.push(user);
                 this.users = this.users.filter(function (item) {
                     return user.id != item;
                 });
@@ -142,7 +163,7 @@
                 });
             },
             rollbackUserToTargetTeam(user){
-                this.onlineUsers.push(user);
+                this.onlineUsersTarget.push(user);
                 this.users2 = this.users2.filter(function (item) {
                     return user.id != item;
                 });

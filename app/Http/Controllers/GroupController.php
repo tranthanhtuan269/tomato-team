@@ -40,9 +40,8 @@ class GroupController extends Controller
 	}
 
 	public function create(){
-        $users = User::where('id', '<>', auth()->user()->id)->get();
         $user = auth()->user();
-		return view('group.create', ['users' => $users, 'user' => $user]);
+		return view('group.create', ['user' => $user]);
 	}
 
 	public function show($id){

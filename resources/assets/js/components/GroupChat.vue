@@ -1,5 +1,13 @@
 <template>
     <div>
+    <div class="row btn-status">
+        <div class="col-sm-12">
+            <button v-if="done == 0" class="btn btn-danger pull-right" v-on:click="changeStatus()">Done</button>
+            <button v-if="done == 1" class="btn btn-success pull-right">Done</button>
+            <button v-if="done == 2" class="btn btn-warning pull-right" v-on:click="changeStatus3()">Done</button>
+            <button v-if="done == 3" class="btn btn-success pull-right">Done</button>
+        </div>
+    </div>
     <div class="panel panel-primary">
             <div class="panel-heading">
                 {{ group.name }}
@@ -87,11 +95,13 @@
                 conversations1: [],
                 conversations2: [],
                 message: '',
+                done: 0,
                 group_id: this.group.id
             }
         },
 
         mounted() {
+            this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
             this.listenForNewMessage();
         },
 
@@ -148,13 +158,15 @@
                         this.conversations2 = [];
                         this.conversations2.push(response.data);
                     }
+                    if(this.done == 1 || this.done == 3){
+                        this.changeStatus2();
+                    }
                 });
             },
 
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        console.log(e);
                         if(e.type == 0){
                             this.conversations = [];
                             this.conversations.push(e);
@@ -170,6 +182,82 @@
 
             change(){
                 this.store();
+            },
+
+            changeStatus(){
+                var self = this;
+                if(this.iuser.type == 0){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 1})
+                        .then((response) => {
+                            self.done = 1;
+                        });
+                }else if(this.iuser.type == 1){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 1;
+                        });
+                }else if(this.iuser.type == 2){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 1;
+                        });
+                }
+            },
+
+            changeStatus2(){
+                var self = this;
+                if(this.iuser.type == 0){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 2})
+                        .then((response) => {
+                            self.done = 2;
+                        });
+                }else if(this.iuser.type == 1){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 2;
+                        });
+                }else if(this.iuser.type == 2){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 2;
+                        });
+                }
+            },
+
+            changeStatus3(){
+                var self = this;
+                if(this.iuser.type == 0){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 3})
+                        .then((response) => {
+                            self.done = 3;
+                        });
+                }else if(this.iuser.type == 1){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 3;
+                        });
+                }else if(this.iuser.type == 2){
+                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3})
+                        .then((response) => {
+                            console.log(response);
+                            self.done = 3;
+                        });
+                }
+            },
+
+            setCurrentStatus(status, status_admin, status_source, status_target){
+                if(this.iuser.type == 0){
+                    this.done = status_admin;
+                }else if(this.iuser.type == 1){
+                    this.done = status_source;
+                }else if(this.iuser.type == 2){
+                    this.done = status_target;
+                }
             }
         }
     }

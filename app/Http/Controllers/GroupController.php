@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\GroupCreated;
+use App\Events\GroupUpdated;
 use App\User;
 use App\Group;
 use App\Conversation;
@@ -65,7 +66,7 @@ class GroupController extends Controller
     public function store(Request $request)
     {
     	// dd($request);
-        $group = Group::create(['name' => request('name')]);
+        $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
 
         $users = collect(request('users'));
         $users2 = collect(request('users2'));
@@ -78,6 +79,34 @@ class GroupController extends Controller
         broadcast(new GroupCreated($group))->toOthers();
 
         return $group;
+    }
+
+    public function postDone(Request $request)
+    {
+        $group = Group::find($request->group_id);
+        if(isset($group)){
+        	if($request->statusType == "admin"){
+            	$group->status_admin = $request->status;
+            }elseif ($request->statusType == "source") {
+            	$group->status_source = $request->status;
+            }elseif ($request->statusType == "target") {
+            	$group->status_target = $request->status;
+            }
+            if($group->status_admin == 1 && $group->status_source == 1 && $group->status_target == 1){
+            	$group->status = 1;
+            }else if($group->status_admin == 1 && $group->status_source == 3 && $group->status_target == 3){
+            	$group->status = 1;
+            }else if($group->status_admin == 3 && $group->status_source == 3 && $group->status_target == 3){
+            	$group->status = 1;
+            }else{
+            	$group->status = 0;
+            }
+            $group->updated_by = auth()->user()->id;
+            if($group->save()){
+                broadcast(new GroupUpdated($group))->toOthers();
+                return $group;
+            }
+        }
     }
 
     public function destroy($id)

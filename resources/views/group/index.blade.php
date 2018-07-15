@@ -24,10 +24,15 @@
                 </thead>
                 <tbody>
                     @foreach($groups as $group)
-                        <tr class="{{ $group->status == 0 ? 'info' : 'success' }}">
+                        <tr class="{{ $group->status == 0 ? 'info' : 'success' }}" id="group-{{ $group->id }}">
                             <td>{{ $group->name }}</td>
                             <td><?php echo $group->user_info; ?></td>
-                            <td>{{ $group->status == 0 ? 'Đang dịch...' : 'Đã dịch xong' }}</td>
+                            <td>
+                                @if($group->status == 0) Đang dịch... @endif
+                                @if($group->status == 1) Dịch xong @endif
+                                @if($group->status == 2) Đã sửa... @endif
+                                @if($group->status == 3) Sửa xong @endif
+                            </td>
                             <td>{{ $group->created_at }}</td>
                             <td>
                                 <a class="btn btn-small btn-success" href="{{ URL::to('groups/' . $group->id) }}">View</a>

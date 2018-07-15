@@ -40,9 +40,7 @@
                     @if (!Auth::guest())
                     <ul class="nav navbar-nav">
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle my-group" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span>@if (!Auth::guest())
-                    <notification :user="{!! Auth::user()->id !!}"></notification>
-                    @endif</a>
+                            <a href="#" class="dropdown-toggle my-group" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">My Group <span class="caret"></span>
                             <ul class="dropdown-menu">
                                 <li>
                                     <a href="{{ url('/') }}/groups">Group List</a>
@@ -73,6 +71,8 @@
                             <li><a href="{{ route('login') }}">Login</a></li>
                             <li><a href="{{ route('register') }}">Register</a></li>
                         @else
+                            
+                            <notification :user="{!! Auth::user()->id !!}"></notification>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                                     {{ Auth::user()->name }} <span class="caret"></span>

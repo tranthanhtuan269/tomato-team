@@ -19,6 +19,7 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/conversation/{group}/later/{id}', 'HomeController@getLastest')->name('home');
+Route::post('/group/{group}/done', 'GroupController@postDone');
 Route::resource('users', 'UserController');
 Route::resource('groups', 'GroupController');
 Route::resource('conversations', 'ConversationController');

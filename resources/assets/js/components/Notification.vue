@@ -4,7 +4,8 @@
         <span class="num-group" v-if="message > 0">{{ message }}</span>
         </a>
         <ul class="dropdown-menu">
-            <li v-for="mes in listMessages" class="messageNotification" v-html="mes.data" v-on:click="linkTo(mes.link)">
+            <li v-for="mes in listMessages" class="messageNotification">
+                <a v-bind:href="'/groups/'+ mes.link" v-html="mes.data"></a>
             </li>
         </ul>
     </li>
@@ -57,7 +58,6 @@
             listenUpdateStatusGroup() {
                 Echo.private('users.' + this.user)
                     .listen('GroupUpdated', (e) => {
-                        console.log(e);
                         this.message++;
                         var data = {
                             'link' : e.group.id,
@@ -65,8 +65,6 @@
                         }
                         this.listMessages.push(data);
                     });
-            }, 
-            linkTo(id){
             }
         }
     }

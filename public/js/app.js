@@ -2176,6 +2176,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -2186,10 +2194,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             conversations1: [],
             conversations2: [],
             message: '',
+            done: 0,
             group_id: this.group.id
         };
     },
     mounted: function mounted() {
+        this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target);
         this.listenForNewMessage();
     },
     created: function created() {
@@ -2242,13 +2252,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     _this2.conversations2 = [];
                     _this2.conversations2.push(response.data);
                 }
+                if (_this2.done == 1 || _this2.done == 3) {
+                    _this2.changeStatus2();
+                }
             });
         },
         listenForNewMessage: function listenForNewMessage() {
             var _this3 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                console.log(e);
                 if (e.type == 0) {
                     _this3.conversations = [];
                     _this3.conversations.push(e);
@@ -2263,6 +2275,69 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         change: function change() {
             this.store();
+        },
+        changeStatus: function changeStatus() {
+            var self = this;
+            if (this.iuser.type == 0) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 1 }).then(function (response) {
+                    self.done = 1;
+                });
+            } else if (this.iuser.type == 1) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1 }).then(function (response) {
+                    console.log(response);
+                    self.done = 1;
+                });
+            } else if (this.iuser.type == 2) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1 }).then(function (response) {
+                    console.log(response);
+                    self.done = 1;
+                });
+            }
+        },
+        changeStatus2: function changeStatus2() {
+            var self = this;
+            if (this.iuser.type == 0) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 2 }).then(function (response) {
+                    self.done = 2;
+                });
+            } else if (this.iuser.type == 1) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2 }).then(function (response) {
+                    console.log(response);
+                    self.done = 2;
+                });
+            } else if (this.iuser.type == 2) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2 }).then(function (response) {
+                    console.log(response);
+                    self.done = 2;
+                });
+            }
+        },
+        changeStatus3: function changeStatus3() {
+            var self = this;
+            if (this.iuser.type == 0) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 3 }).then(function (response) {
+                    self.done = 3;
+                });
+            } else if (this.iuser.type == 1) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3 }).then(function (response) {
+                    console.log(response);
+                    self.done = 3;
+                });
+            } else if (this.iuser.type == 2) {
+                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3 }).then(function (response) {
+                    console.log(response);
+                    self.done = 3;
+                });
+            }
+        },
+        setCurrentStatus: function setCurrentStatus(status, status_admin, status_source, status_target) {
+            if (this.iuser.type == 0) {
+                this.done = status_admin;
+            } else if (this.iuser.type == 1) {
+                this.done = status_source;
+            } else if (this.iuser.type == 2) {
+                this.done = status_target;
+            }
         }
     }
 });
@@ -2322,13 +2397,23 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    props: ['user'],
+    props: ['user', 'baseUrl'],
 
     data: function data() {
         return {
-            message: 0
+            message: 0,
+            listMessages: []
         };
     },
     mounted: function mounted() {
@@ -2337,6 +2422,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
         this.listenCreateGroup();
+        this.listenUpdateStatusGroup();
 
         Echo.join('chats').here(function (users) {
             Bus.$emit('online_users', users);
@@ -2354,6 +2440,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             Echo.private('users.' + this.user).listen('GroupCreated', function (e) {
                 _this.message++;
+                _this.message++;
+                var data = {
+                    'link': e.group.id,
+                    'data': 'Bạn đã được thêm vào group <b>' + e.group.name + '</b>.'
+                };
+                _this.listMessages.push(data);
+            });
+        },
+        listenUpdateStatusGroup: function listenUpdateStatusGroup() {
+            var _this2 = this;
+
+            Echo.private('users.' + this.user).listen('GroupUpdated', function (e) {
+                console.log(e);
+                _this2.message++;
+                var data = {
+                    'link': e.group.id,
+                    'data': 'Group <b>' + e.group.name + '</b> đã được thay đổi nội dung.'
+                };
+                _this2.listMessages.push(data);
             });
         }
     }
@@ -37820,6 +37925,28 @@ module.exports = Component.exports
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', [_c('div', {
+    staticClass: "row btn-status"
+  }, [_c('div', {
+    staticClass: "col-sm-12"
+  }, [(_vm.done == 0) ? _c('button', {
+    staticClass: "btn btn-danger pull-right",
+    on: {
+      "click": function($event) {
+        _vm.changeStatus()
+      }
+    }
+  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 1) ? _c('button', {
+    staticClass: "btn btn-success pull-right"
+  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 2) ? _c('button', {
+    staticClass: "btn btn-warning pull-right",
+    on: {
+      "click": function($event) {
+        _vm.changeStatus3()
+      }
+    }
+  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 3) ? _c('button', {
+    staticClass: "btn btn-success pull-right"
+  }, [_vm._v("Done")]) : _vm._e()])]), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary"
   }, [_c('div', {
     staticClass: "panel-heading"
@@ -38083,9 +38210,35 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return (_vm.message > 0) ? _c('span', {
+  return _c('li', {
+    staticClass: "dropdown"
+  }, [_c('a', {
+    staticClass: "dropdown-toggle",
+    attrs: {
+      "href": "#",
+      "data-toggle": "dropdown",
+      "role": "button",
+      "aria-haspopup": "true",
+      "aria-expanded": "false"
+    }
+  }, [_vm._v("Notification "), _c('span', {
+    staticClass: "caret"
+  }), _vm._v(" "), (_vm.message > 0) ? _c('span', {
     staticClass: "num-group"
-  }, [_vm._v(_vm._s(_vm.message))]) : _vm._e()
+  }, [_vm._v(_vm._s(_vm.message))]) : _vm._e()]), _vm._v(" "), _c('ul', {
+    staticClass: "dropdown-menu"
+  }, _vm._l((_vm.listMessages), function(mes) {
+    return _c('li', {
+      staticClass: "messageNotification"
+    }, [_c('a', {
+      attrs: {
+        "href": '/groups/' + mes.link
+      },
+      domProps: {
+        "innerHTML": _vm._s(mes.data)
+      }
+    })])
+  }))])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

@@ -2,10 +2,12 @@
     <div>
     <div class="row btn-status">
         <div class="col-sm-12">
-            <button v-if="done == 0" class="btn btn-danger pull-right" v-on:click="changeStatus()">Done</button>
-            <button v-if="done == 1" class="btn btn-success pull-right">Done</button>
-            <button v-if="done == 2" class="btn btn-warning pull-right" v-on:click="changeStatus3()">Done</button>
-            <button v-if="done == 3" class="btn btn-success pull-right">Done</button>
+            <button v-if="done == 0" class="btn btn-danger pull-right btn-control" v-on:click="changeStatus()">Done</button>
+            <button v-if="done == 1" class="btn btn-success pull-right btn-control">Done</button>
+            <button v-if="done == 2" class="btn btn-warning pull-right btn-control" v-on:click="changeStatus3()">Done</button>
+            <button v-if="done == 3" class="btn btn-success pull-right btn-control">Done</button>
+            <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
+            <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
         </div>
     </div>
     <div class="panel panel-primary">
@@ -258,6 +260,10 @@
                 }else if(this.iuser.type == 2){
                     this.done = status_target;
                 }
+            },
+
+            exportWord(groupID, lang){
+                alert(groupID);
             }
         }
     }

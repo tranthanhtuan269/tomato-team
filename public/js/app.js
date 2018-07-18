@@ -2184,6 +2184,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -2338,6 +2340,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             } else if (this.iuser.type == 2) {
                 this.done = status_target;
             }
+        },
+        exportWord: function exportWord(groupID, lang) {
+            alert(groupID);
         }
     }
 });
@@ -2452,7 +2457,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this2 = this;
 
             Echo.private('users.' + this.user).listen('GroupUpdated', function (e) {
-                console.log(e);
                 _this2.message++;
                 var data = {
                     'link': e.group.id,
@@ -37929,24 +37933,34 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('div', {
     staticClass: "col-sm-12"
   }, [(_vm.done == 0) ? _c('button', {
-    staticClass: "btn btn-danger pull-right",
+    staticClass: "btn btn-danger pull-right btn-control",
     on: {
       "click": function($event) {
         _vm.changeStatus()
       }
     }
   }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 1) ? _c('button', {
-    staticClass: "btn btn-success pull-right"
+    staticClass: "btn btn-success pull-right btn-control"
   }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 2) ? _c('button', {
-    staticClass: "btn btn-warning pull-right",
+    staticClass: "btn btn-warning pull-right btn-control",
     on: {
       "click": function($event) {
         _vm.changeStatus3()
       }
     }
   }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 3) ? _c('button', {
-    staticClass: "btn btn-success pull-right"
-  }, [_vm._v("Done")]) : _vm._e()])]), _vm._v(" "), _c('div', {
+    staticClass: "btn btn-success pull-right btn-control"
+  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), _c('a', {
+    staticClass: "btn btn-success pull-right btn-control",
+    attrs: {
+      "href": '/exportWord?group=' + _vm.group.id + '&lang=eng'
+    }
+  }, [_vm._v("Export ENG")]), _vm._v(" "), _c('a', {
+    staticClass: "btn btn-success pull-right btn-control",
+    attrs: {
+      "href": '/exportWord?group=' + _vm.group.id + '&lang=vie'
+    }
+  }, [_vm._v("Export VIE")])])]), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary"
   }, [_c('div', {
     staticClass: "panel-heading"

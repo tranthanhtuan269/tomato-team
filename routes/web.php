@@ -23,3 +23,5 @@ Route::post('/group/{group}/done', 'GroupController@postDone');
 Route::resource('users', 'UserController');
 Route::resource('groups', 'GroupController');
 Route::resource('conversations', 'ConversationController');
+Route::get('/test', 'TestController@test')->name('test');
+Route::get('/exportWord', 'GroupController@exportWord')->name('exportWord');

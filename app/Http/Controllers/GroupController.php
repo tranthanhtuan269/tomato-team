@@ -123,4 +123,58 @@ class GroupController extends Controller
         Session::flash('message', 'Xóa group thành công!');
         return Redirect::to('groups');
     }
+
+    public function exportWord(Request $request){
+        if(!isset($request->group) || !isset($request->lang)) return 'no file';
+
+        if($request->lang == 'vie'){
+            $langSource = 'KOR';
+            $langTarget = 'VIE';
+            $conversation = Conversation::where('group_id', $request->group)->where('type', 0)->orderBy('created_at','desc')->first();
+            $conversation2 = Conversation::where('group_id', $request->group)->where('type', 1)->orderBy('created_at','desc')->first();
+        }else{
+            $langSource = 'KOR';
+            $langTarget = 'ENG';
+            $conversation = Conversation::where('group_id', $request->group)->where('type', 0)->orderBy('created_at','desc')->first();
+            $conversation2 = Conversation::where('group_id', $request->group)->where('type', 2)->orderBy('created_at','desc')->first();
+        }
+        $group = Group::find($request->group);
+
+        if(!isset($group)) return 'no group';
+        
+        $filename = $group->name . ' - ' . strtoupper($request->lang) . '.doc';
+
+
+        header("Content-Type: application/vnd.msword");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename=" . $filename);
+
+        $doc_body ="<div>Hi</div><div>How are you?<br></div>";
+
+        echo "<html>";
+        echo "<meta charset='utf-8'>";
+        echo "<table style='border-collapse: collapse;width: 100%;'>";
+        echo "<tr>";
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ffff00;color: #000;text-align:center;'>";
+        echo "$langSource";
+        echo "</th>";
+        if($langTarget == 'VIE')
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ff0000;color: #000;text-align:center;'>";
+        else
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #009933;color: #000;text-align:center;'>";
+        echo "$langTarget";
+        echo "</th>";
+        echo "</tr>";
+        echo "<tr>";
+        echo "<td style='border: 1px solid #ddd;padding: 8px;'>";
+        echo "$conversation->message";
+        echo "</td>";
+        echo "<td style='border: 1px solid #ddd;padding: 8px;'>";
+        echo "$conversation2->message";
+        echo "</td>";
+        echo "</tr>";
+        echo "</table>";
+        echo "</html>";
+    }
 }

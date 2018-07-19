@@ -1035,8 +1035,9 @@ window.Bus = new Vue();
 
 var config = {
 
+  hideModules: { "image": true, "removeFormat": true, "code": true },
   // limit content height if you wish. If not set, editor size will grow with content.
-  maxHeight: "500px",
+  maxHeight: "100%",
 
   // set to 'true' this will insert plain text without styling when you paste something into the editor.
   forcePlainTextOnPaste: true
@@ -2169,23 +2170,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -2197,6 +2181,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             conversations2: [],
             message: '',
             done: 0,
+            showEditorAdmin: false,
+            showEditorSource: false,
+            showEditorTarget: false,
             group_id: this.group.id
         };
     },
@@ -2277,6 +2264,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         change: function change() {
             this.store();
+        },
+        onChange: function onChange(status) {
+            if (status == 0) {
+                this.showEditorAdmin = true;
+            } else if (status == 1) {
+                this.showEditorSource = true;
+            } else {
+                this.showEditorTarget = true;
+            }
         },
         changeStatus: function changeStatus() {
             var self = this;
@@ -37967,67 +37963,104 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_vm._v("\n            " + _vm._s(_vm.group.name) + "\n        ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('div', {
+    staticClass: "row"
+  }, [_c('div', {
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
-  }, [_vm._v("\n                    Conversation\n                ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n                        Conversation\n                    ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
   }, _vm._l((_vm.conversations), function(conversation) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('p', {
+    }, [((_vm.iuser.type == 0 && !_vm.showEditorAdmin) || _vm.iuser.type != 0) ? _c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation.message)
+      },
+      on: {
+        "click": function($event) {
+          _vm.onChange(0)
+        }
       }
-    })])])
+    }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 0 && _vm.showEditorAdmin) ? _c('wysiwyg', {
+      on: {
+        "change": _vm.change
+      },
+      model: {
+        value: (_vm.message),
+        callback: function($$v) {
+          _vm.message = $$v
+        },
+        expression: "message"
+      }
+    }) : _vm._e()], 1)])
   }))])]), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
-  }, [_vm._v("\n                    Source Team\n                ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n                        Source Team\n                    ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
   }, _vm._l((_vm.conversations1), function(conversation1) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('p', {
+    }, [((_vm.iuser.type == 1 && !_vm.showEditorSource) || _vm.iuser.type != 1) ? _c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation1.message)
+      },
+      on: {
+        "click": function($event) {
+          _vm.onChange(1)
+        }
       }
-    })])])
+    }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 1 && _vm.showEditorSource) ? _c('wysiwyg', {
+      on: {
+        "change": _vm.change
+      },
+      model: {
+        value: (_vm.message),
+        callback: function($$v) {
+          _vm.message = $$v
+        },
+        expression: "message"
+      }
+    }) : _vm._e()], 1)])
   }))])]), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_c('div', {
     staticClass: "panel-heading text-center"
-  }, [_vm._v("\n                    Target Team\n                ")]), _vm._v(" "), _c('div', {
+  }, [_vm._v("\n                        Target Team\n                    ")]), _vm._v(" "), _c('div', {
     staticClass: "panel-body chat-panel"
   }, [_c('ul', {
     staticClass: "chat"
   }, _vm._l((_vm.conversations2), function(conversation2) {
     return _c('li', [_c('div', {
       staticClass: "chat-body clearfix"
-    }, [_c('p', {
+    }, [((_vm.iuser.type == 2 && !_vm.showEditorTarget) || _vm.iuser.type != 2) ? _c('p', {
       domProps: {
         "innerHTML": _vm._s(conversation2.message)
-      }
-    })])])
-  }))])])]), _vm._v(" "), _c('div', {
-    staticClass: "panel-footer"
-  }, [_c('wysiwyg', {
-    on: {
-      "change": _vm.change
-    },
-    model: {
-      value: (_vm.message),
-      callback: function($$v) {
-        _vm.message = $$v
       },
-      expression: "message"
-    }
-  })], 1)])])
+      on: {
+        "click": function($event) {
+          _vm.onChange(2)
+        }
+      }
+    }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 2 && _vm.showEditorTarget) ? _c('wysiwyg', {
+      on: {
+        "change": _vm.change
+      },
+      model: {
+        value: (_vm.message),
+        callback: function($$v) {
+          _vm.message = $$v
+        },
+        expression: "message"
+      }
+    }) : _vm._e()], 1)])
+  }))])])])])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {

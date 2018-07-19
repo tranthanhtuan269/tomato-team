@@ -15,73 +15,56 @@
                 {{ group.name }}
             </div>
             <div class="panel-body chat-panel">
-                <div class="panel panel-primary col-sm-4 conversation-panel">
-                    <div class="panel-heading text-center">
-                        Conversation
+                <div class="row">
+                    <div class="panel panel-primary col-sm-4 conversation-panel">
+                        <div class="panel-heading text-center">
+                            Conversation
+                        </div>
+                        <div class="panel-body chat-panel">
+                            <ul class="chat">
+                                <li v-for="conversation in conversations">
+                                    <div class="chat-body clearfix">
+                                        <p v-html="conversation.message" v-if="(iuser.type == 0 && !showEditorAdmin) || iuser.type != 0" v-on:click="onChange(0)">
+                                        </p>
+                                        <wysiwyg v-model="message" v-on:change="change" v-if="iuser.type == 0 && showEditorAdmin"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="panel-body chat-panel">
-                        <ul class="chat">
-                            <li v-for="conversation in conversations">
-                            <!-- <span class="chat-img pull-left">
-                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-                            </span> -->
-                                <div class="chat-body clearfix">
-                                    <!-- <div class="header">
-                                        <strong class="primary-font">{{ conversation.user.name }}</strong>
-                                    </div> -->
-                                    <p v-html="conversation.message">
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
+                    <div class="panel panel-primary col-sm-4 conversation-panel">
+                        <div class="panel-heading text-center">
+                            Source Team
+                        </div>
+                        <div class="panel-body chat-panel">
+                            <ul class="chat">
+                                <li v-for="conversation1 in conversations1">
+                                    <div class="chat-body clearfix">
+                                        <p v-html="conversation1.message" v-if="(iuser.type == 1 && !showEditorSource) || iuser.type != 1" v-on:click="onChange(1)">
+                                        </p>
+                                        <wysiwyg v-model="message" v-on:change="change" v-if="iuser.type == 1 && showEditorSource"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="panel panel-primary col-sm-4 conversation-panel">
-                    <div class="panel-heading text-center">
-                        Source Team
-                    </div>
-                    <div class="panel-body chat-panel">
-                        <ul class="chat">
-                            <li v-for="conversation1 in conversations1">
-                            <!-- <span class="chat-img pull-left">
-                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-                            </span> -->
-                                <div class="chat-body clearfix">
-                                    <!-- <div class="header">
-                                        <strong class="primary-font">{{ conversation1.user.name }}</strong>
-                                    </div> -->
-                                    <p v-html="conversation1.message">
-                                        
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="panel panel-primary col-sm-4 conversation-panel">
-                    <div class="panel-heading text-center">
-                        Target Team
-                    </div>
-                    <div class="panel-body chat-panel">
-                        <ul class="chat">
-                            <li v-for="conversation2 in conversations2">
-                            <!-- <span class="chat-img pull-left">
-                                <img src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar" class="img-circle" />
-                            </span> -->
-                                <div class="chat-body clearfix">
-                                    <!-- <div class="header">
-                                        <strong class="primary-font">{{ conversation2.user.name }}</strong>
-                                    </div> -->
-                                    <p v-html="conversation2.message">
-                                    </p>
-                                </div>
-                            </li>
-                        </ul>
+                    <div class="panel panel-primary col-sm-4 conversation-panel">
+                        <div class="panel-heading text-center">
+                            Target Team
+                        </div>
+                        <div class="panel-body chat-panel">
+                            <ul class="chat">
+                                <li v-for="conversation2 in conversations2">
+                                    <div class="chat-body clearfix">
+                                        <p v-html="conversation2.message" v-if="(iuser.type == 2 && !showEditorTarget) || iuser.type != 2" v-on:click="onChange(2)">
+                                        </p>
+                                        <wysiwyg v-model="message" v-on:change="change" v-if="iuser.type == 2 && showEditorTarget"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel-footer">
-                <wysiwyg v-model="message" v-on:change="change"/>
             </div>
         </div>
     </div>
@@ -98,6 +81,9 @@
                 conversations2: [],
                 message: '',
                 done: 0,
+                showEditorAdmin: false,
+                showEditorSource: false,
+                showEditorTarget: false,
                 group_id: this.group.id
             }
         },
@@ -184,6 +170,16 @@
 
             change(){
                 this.store();
+            },
+
+            onChange(status){
+                if(status == 0){
+                    this.showEditorAdmin = true;
+                }else if(status == 1){
+                    this.showEditorSource = true;
+                }else{
+                    this.showEditorTarget = true;
+                }
             },
 
             changeStatus(){

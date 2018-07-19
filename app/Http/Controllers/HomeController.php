@@ -30,12 +30,4 @@ class HomeController extends Controller
 
         return view('home', ['groups' => $groups]);
     }
-
-    public function getLastest($group, $id){
-        $conversation = Conversation::where('group_id', $group)->where('type', $id)->orderBy('created_at','desc')->first();
-        if($conversation)
-            return $conversation->load('user');
-        else
-            return null;
-    }
 }

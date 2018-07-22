@@ -50,7 +50,11 @@ class UserController extends Controller
         $user->password     = bcrypt(Request::get('password'));
         $user->phone        = Request::get('phone');
         $user->permission   = Request::get('permission');
-        $user->languages    = Request::get('languages');
+        if(Request::get('permission') == 1){
+            $user->languages    = -1;
+        }else{
+            $user->languages    = Request::get('languages');
+        }
         $user->save();
 
         // redirect

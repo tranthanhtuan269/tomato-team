@@ -85,10 +85,10 @@ span.num-group{
 
 .chat-panel .conversation-panel .chat-panel{
     padding: 0px;
-    min-height: 100px;
-    max-height: 225px;
+    height: 185px;
     overflow-y: auto;
     overflow-x: hidden;
+    border-bottom: 1px solid #ccc;
 }
 
 .container-fuild{
@@ -111,4 +111,14 @@ span.num-group{
 
 .chat-body table{
     width: 100%!important;
+}
+
+.add-conversation{
+    float: right; 
+    color: #fff;
+    cursor: pointer;
+}
+
+.editr--content{
+    height: 150px;
 }

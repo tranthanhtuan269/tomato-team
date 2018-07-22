@@ -18,8 +18,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/conversation/{group}/later/{id}', 'ConversationController@getLastest')->name('home');
+Route::get('/conversation/{group}/getListConversation', 'ConversationController@getListConversation')->name('getListConversation');
+Route::get('/conversation/{group}/later/{conversation}/{id}', 'ConversationController@getLastest')->name('getLastest');
 Route::post('/group/{group}/done', 'GroupController@postDone');
+Route::post('/group/{group}/addConversation', 'ConversationController@addConversation');
 Route::resource('users', 'UserController');
 Route::resource('groups', 'GroupController');
 Route::resource('conversations', 'ConversationController');

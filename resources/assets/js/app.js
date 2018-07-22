@@ -11,6 +11,8 @@ window.Vue = require('vue');
 window.Bus = new Vue();
 
 import wysiwyg from "vue-wysiwyg";
+import 'vue-snotify/styles/material.css'
+import Snotify, { SnotifyPosition } from 'vue-snotify'; // 1. Import Snotify
 
 var config = {
 
@@ -22,7 +24,13 @@ var config = {
   forcePlainTextOnPaste: true
 }
 
-Vue.use(wysiwyg, config); // config is optional. more below
+Vue.use(wysiwyg, config);
+Vue.use(Snotify, {
+  toast: {
+    position: SnotifyPosition.centerCenter
+  }
+});
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

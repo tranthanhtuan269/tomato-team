@@ -55,6 +55,7 @@
                         this.listMessages.push(data);
                     });
             },
+
             listenUpdateStatusGroup() {
                 Echo.private('users.' + this.user)
                     .listen('GroupUpdated', (e) => {
@@ -65,7 +66,7 @@
                         }
                         this.listMessages.push(data);
                     });
-            }
+            },
         }
     }
 </script>

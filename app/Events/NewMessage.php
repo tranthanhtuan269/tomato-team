@@ -40,6 +40,7 @@ class NewMessage implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
+            'conversation' => $this->conversation->conversation,
             'message' => $this->conversation->message,
             'type' => $this->conversation->type,
             'user' => [

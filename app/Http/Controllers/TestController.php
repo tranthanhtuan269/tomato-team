@@ -3,34 +3,81 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Conversation;
+use DB;
 
 class TestController extends Controller
 {
-    // public function test(Request $request){
-    // 		$phpWord = new \PhpOffice\PhpWord\PhpWord();
-    //     $section = $phpWord->addSection();
-    //     $description = "How are you?";
-    //     $section->addText($description);
-    //     $objWriter = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-    //     try {
-    //         $objWriter->save(storage_path('helloWorld.docx'));
-    //     } catch (Exception $e) {
-    //     }
-    //     return response()->download(storage_path('helloWorld.docx'));
-    // }
-
     public function test(Request $request){
-    	dd($request->lang);
-    	dd($request->group);
+        if(!isset($request->group) || !isset($request->lang)){
+            return 'Yêu cầu không hợp lệ!';
+        }
 
-    	header("Content-Type: application/vnd.msword");
-		header("Expires: 0");//no-cache
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
-		header("content-disposition: attachment;filename=sampleword.doc");
+        $group = 11;
+        $groupName = $request->group;
+        $langSource = 'KOR';
+        $langTarget = 'VIE';
+        $listReturn = [];
+        $htmlOutput = "";
 
-		$doc_body ="<div>Hi</div><div>How are you?<br></div>";
-		echo "<html>";
-		echo "$doc_body";
-		echo "</html>";
+        $filename = $groupName . ' - ' . strtoupper($request->lang) . '.doc';
+
+        header("Content-Type: application/vnd.msword");
+        header("Expires: 0");//no-cache
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");//no-cache
+        header("content-disposition: attachment;filename=" . $filename);
+        
+        $listConversation = DB::table('conversations')->select('conversation')->orderBy('conversation')->where('group_id', $group)->distinct()->get();
+        foreach($listConversation as $itemConversation){
+            if($request->lang == 'vie'){
+                $langSource = 'KOR';
+                $langTarget = 'VIE';
+                $htmlOutput .= "<tr>";
+                for($i = 0; $i < 2; $i++){
+                    $conv = Conversation::where('group_id', $group)->where('conversation', $itemConversation->conversation)->where('type', $i)->orderBy('created_at','desc')->first();
+                    $htmlOutput .= "<td style='border: 1px solid #ddd;padding: 8px;'>";
+                    if($conv){
+                        $htmlOutput .= $conv->message;
+                    }else{
+                        $htmlOutput .= '';
+                    }
+                    $htmlOutput .= "</td>";
+                }
+                $htmlOutput .= "</tr>";
+            }else{
+                $langSource = 'KOR';
+                $langTarget = 'ENG';
+                $htmlOutput .= "<tr>";
+                for($i = 0; $i < 3; $i += 2){
+                    $conv = Conversation::where('group_id', $group)->where('conversation', $itemConversation->conversation)->where('type', $i)->orderBy('created_at','desc')->first();
+                    $htmlOutput .= "<td style='border: 1px solid #ddd;padding: 8px;'>";
+                    if($conv){
+                        $htmlOutput .= $conv->message;
+                    }else{
+                        $htmlOutput .= '';
+                    }
+                    $htmlOutput .= "</td>";
+                }
+                $htmlOutput .= "</tr>";
+            }
+        }
+
+        echo "<html>";
+        echo "<meta charset='utf-8'>";
+        echo "<table style='border-collapse: collapse;width: 100%;'>";
+        echo "<tr>";
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ffff00;color: #000;text-align:center;'>";
+        echo "$langSource";
+        echo "</th>";
+        if($langTarget == 'vie')
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ff0000;color: #000;text-align:center;'>";
+        else
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #009933;color: #000;text-align:center;'>";
+        echo "$langTarget";
+        echo "</th>";
+        echo "</tr>";
+        echo $htmlOutput;
+        echo "</table>";
+        echo "</html>";
     }
 }

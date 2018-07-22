@@ -59,6 +59,9 @@
                                 <li>
                                     <a href="{{ url('/') }}/users">User List</a>
                                 </li>
+                                <li>
+                                    <a href="{{ url('/') }}/users/create">Add User</a>
+                                </li>
                             </ul>
                         </li>
                         @endif

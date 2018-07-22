@@ -13214,7 +13214,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             Echo.private('groups.' + this.group.id).listen('AddConversation', function (e) {
                 _this4.$snotify.error('A conversation has been created! Refresh to update content!', {
-                    timeout: 10000,
+                    timeout: 60000,
                     showProgressBar: true,
                     closeOnClick: true,
                     pauseOnHover: true

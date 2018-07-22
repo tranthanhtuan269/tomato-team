@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
 
-<h1>Create a User</h1>
+<h1>Edit {{ $user->name }}</h1>
 
 <!-- if there are creation errors, they will show here -->
 @if(count($errors->all()) > 0)
@@ -12,7 +12,8 @@
     </div>
 @endif
 
-{{ Form::open(array('url' => 'users')) }}
+
+{{ Form::model($user, array('route' => array('users.update', $user->id), 'method' => 'PUT')) }}
 
     <div class="form-group">
         {{ Form::label('name', 'Name') }}
@@ -44,7 +45,7 @@
         {!! Form::select('languages', ['0' => 'KOREAN - VIETNAMESE', '1' => 'VIETNAMESE - ENGLISH'], 0, ['class' => 'form-control']) !!}
     </div>
 
-    {{ Form::submit('Create', array('class' => 'btn btn-primary')) }}
+    {{ Form::submit('Edit', array('class' => 'btn btn-primary')) }}
     <a href="{{ URL::to('users') }}" class="btn btn-primary">View All</a>
 {{ Form::close() }}
 

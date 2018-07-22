@@ -3,9 +3,9 @@
 @section('content')
 <div class="container">
     <div class="row">
-        @if(Session::has('flash_message'))
-            <div class="alert alert-success">
-                {{ Session::get('flash_message') }}
+        @if (Session::has('message'))
+            <div class="alert alert-info">
+                {{ Session::get('message') }}
             </div>
         @endif
     </div>
@@ -16,7 +16,7 @@
                     <tr>
                         <th>Username</th>
                         <th>Email</th>
-                        <th>Status</th>
+                        <th>Phone</th>
                         <th>Created At</th>
                         <th></th>
                     </tr>
@@ -26,11 +26,12 @@
                         <tr>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>Active</td>
+                            <td>{{ $user->phone }}</td>s
                             <td>{{ $user->created_at }}</td>
                             <td>
                                 {{ Form::open(array('url' => 'users/' . $user->id, 'class' => 'pull-right')) }}
                                     {{ Form::hidden('_method', 'DELETE') }}
+                                    <a class="btn btn-small btn-info" href="{{ URL::to('users/' . $user->id . '/edit') }}">Edit</a>
                                     {{ Form::submit('Delete', array('class' => 'btn btn-warning')) }}
                                 {{ Form::close() }}
                             </td>

@@ -37,21 +37,7 @@
                 axios.post('/group/'+this.group.id+'/import', {groupId: this.group.id, content: this.content})
                 .then((response) => {
                     location.reload();
-                    this.toggleModal();
                 });
-            },
-
-            toggleModal() {
-                this.modalShown = false;
-                document.getElementById("myModal").style.display = 'none';
-                var elements = document.getElementsByClassName("modal-backdrop");
-                var i;
-                for (i = 0; i < elements.length; i++) {
-                    elements[i].parentNode.removeChild(elements[i]);
-                }
-
-                var body = document.getElementsByTagName("body");
-                body.classList.remove("modal-open");
             }
         }
     }

@@ -26,7 +26,7 @@
                         <tr>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                            <td>{{ $user->phone }}</td>s
+                            <td>{{ $user->phone }}</td>
                             <td>{{ $user->created_at }}</td>
                             <td>
                                 {{ Form::open(array('url' => 'users/' . $user->id, 'class' => 'pull-right')) }}

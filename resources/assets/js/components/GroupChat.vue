@@ -8,6 +8,7 @@
                 <button v-if="done == 3" class="btn btn-success pull-right btn-control">Done</button>
                 <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
                 <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
+                <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
             </div>
         </div>
         <div class="panel panel-primary">
@@ -47,6 +48,7 @@
                 </div>
             </div>
         </div>
+        <vue-import :group="group" :key="group.id"></vue-import>
     </div>
 </template>
 

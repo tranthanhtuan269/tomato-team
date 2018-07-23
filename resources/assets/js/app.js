@@ -42,6 +42,7 @@ Vue.component('groups', require('./components/Groups.vue'));
 Vue.component('create-group', require('./components/CreateGroup.vue'));
 Vue.component('group-chat', require('./components/GroupChat.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
+Vue.component('vue-import', require('./components/VueImport.vue'));
 
 const app = new Vue({
     el: '#app'

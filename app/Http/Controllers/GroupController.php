@@ -124,6 +124,43 @@ class GroupController extends Controller
         return Redirect::to('groups');
     }
 
+    public function import(Request $request){
+        if(!request('groupId') || !request('content')) return '';
+        $listConv = explode("\n",request('content'));
+        $listConversation = [];
+        $max = Conversation::where('group_id', request('groupId'))->where('type', 0)->max('conversation');
+
+        if(!isset($max)) $max = -1;
+        foreach($listConv as $conv){
+            if(strlen($conv) > 0){
+                $listConversation[] = $conv;
+                $conversation = Conversation::create([
+                    'message' => $conv,
+                    'group_id' => request('groupId'),
+                    'type' => 0,
+                    'user_id' => auth()->user()->id,
+                    'conversation' => ($max + 1)
+                ]);
+                $conversation1 = Conversation::create([
+                    'message' => '',
+                    'group_id' => request('groupId'),
+                    'type' => 1,
+                    'user_id' => auth()->user()->id,
+                    'conversation' => ($max + 1)
+                ]);
+                $conversation2 = Conversation::create([
+                    'message' => '',
+                    'group_id' => request('groupId'),
+                    'type' => 2,
+                    'user_id' => auth()->user()->id,
+                    'conversation' => ($max + 1)
+                ]);
+            }
+            $max++;
+        }
+        return $listConversation;
+    }
+
     public function exportWord(Request $request){
         if(!isset($request->group) || !isset($request->lang)) return 'no file';
 

@@ -52,3 +52,114 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
     background-color: #555;
 }
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-submenu > a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #ccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+
+.dropdown-submenu:hover > a:after {
+  border-left-color: #fff;
+}
+
+.dropdown-submenu.pull-left {
+  float: none;
+}
+
+.dropdown-submenu.pull-left > .dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+
+.group-holder .panel-body a {
+  color: #eee;
+  text-decoration: none;
+}
+
+.my-group {
+  position: relative;
+}
+
+span.num-group {
+  background-color: red;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  display: block;
+  color: #fff;
+  position: absolute;
+  right: 12px;
+  top: 8px;
+}
+
+.chat-panel .conversation-panel {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.chat-panel .conversation-panel .chat-panel {
+  padding: 0px;
+  height: 185px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-bottom: 1px solid #ccc;
+}
+
+.container-fuild {
+  margin: 10px;
+}
+
+.btn-status {
+  margin-bottom: 10px;
+}
+
+.messageNotification {
+  width: 350px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.btn-control {
+  margin-left: 10px;
+}
+
+.chat-body table {
+  width: 100% !important;
+}
+
+.add-conversation {
+  float: right;
+  color: #fff;
+  cursor: pointer;
+}
+
+.editr--content {
+  height: 150px;
+}

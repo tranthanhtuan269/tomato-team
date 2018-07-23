@@ -119,6 +119,10 @@ span.num-group {
   top: 8px;
 }
 
+.chat-panel{
+  padding: 0 15px;
+}
+
 .chat-panel .conversation-panel {
   padding-left: 0;
   padding-right: 0;
@@ -130,6 +134,10 @@ span.num-group {
   overflow-y: auto;
   overflow-x: hidden;
   border-bottom: 1px solid #ccc;
+}
+
+.chat-panel .panel{
+  margin-bottom: 0;
 }
 
 .container-fuild {
@@ -162,4 +170,24 @@ span.num-group {
 
 .editr--content {
   height: 150px;
+}
+
+.conversation-panel{
+  border: 1px solid #666;
+}
+
+.conversation-panel .customize-panel1{
+  background-color: #e6e600;
+  color:#000;
+}
+
+.conversation-panel .customize-panel2{
+  background-color: #ff3300;
+  color:#000;
+}
+
+.conversation-panel .customize-panel3{
+  background-color: #00cc00;
+  color:#000;
+
 }

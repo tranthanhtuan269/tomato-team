@@ -19,8 +19,8 @@
             <div class="panel-body chat-panel">
                 <div class="row">
                     <div class="panel panel-primary col-sm-4 conversation-panel">
-                        <div class="panel-heading text-center">
-                            Conversation
+                        <div class="panel-heading text-center customize-panel1">
+                            <b>KOR</b>
                         </div>
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations">
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
@@ -28,8 +28,8 @@
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
-                        <div class="panel-heading text-center">
-                            Source Team
+                        <div class="panel-heading text-center customize-panel2">
+                            <b>VIE</b>
                         </div>
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations1">
                             <div v-html="cv.message" v-if="(iuser.type == 1 && !cv.showEditor) || iuser.type != 1"></div>
@@ -37,8 +37,8 @@
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
-                        <div class="panel-heading text-center">
-                            Target Team
+                        <div class="panel-heading text-center customize-panel3">
+                            <b>ENG</b>
                         </div>
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations2">
                             <div v-html="cv.message" v-if="(iuser.type == 2 && !cv.showEditor) || iuser.type != 2"></div>

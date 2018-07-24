@@ -217,13 +217,13 @@ class GroupController extends Controller
         echo "<meta charset='utf-8'>";
         echo "<table style='border-collapse: collapse;width: 100%;'>";
         echo "<tr>";
-        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ffff00;color: #000;text-align:center;'>";
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ffff00;color: #000;text-align:center; width:50%;'>";
         echo "$langSource";
         echo "</th>";
         if($langTarget == 'vie')
-        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ff0000;color: #000;text-align:center;'>";
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #ff0000;color: #000;text-align:center; width:50%;'>";
         else
-        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #009933;color: #000;text-align:center;'>";
+        echo "<th style='border: 1px solid #ddd;padding: 8px;padding-top: 12px;padding-bottom: 12px;text-align: left;background-color: #009933;color: #000;text-align:center; width:50%;'>";
         echo "$langTarget";
         echo "</th>";
         echo "</tr>";

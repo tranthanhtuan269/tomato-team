@@ -54,11 +54,15 @@ class GroupController extends Controller
 		}
 
         $user = auth()->user();
-		$type = \DB::table('group_user')->where('group_id', $id)->where('user_id', $user->id)->first();
-		if(!isset($type)){
-			return view('error', ['message' => 'Bạn không có quyền truy cập group này!']);
-		}
-		$user->type = $type->type;
+        if($user->permission == 2){
+    		$type = \DB::table('group_user')->where('group_id', $id)->where('user_id', $user->id)->first();
+    		if(!isset($type)){
+    			return view('error', ['message' => 'Bạn không có quyền truy cập group này!']);
+    		}
+    		$user->type = $type->type;
+        }else{
+            $user->type = 0;
+        }
 
         return view('group.show', ['groups' => $groups, 'user' => $user]);
 	}

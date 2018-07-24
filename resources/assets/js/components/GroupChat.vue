@@ -22,7 +22,8 @@
                         <div class="panel-heading text-center customize-panel1">
                             <b>KOR</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations">
+                            <div v-html="index" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
                             <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"/>
                         </div>
@@ -31,7 +32,8 @@
                         <div class="panel-heading text-center customize-panel2">
                             <b>VIE</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations1">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations1">
+                            <div v-html="index" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 1 && !cv.showEditor) || iuser.type != 1"></div>
                             <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 1 && cv.showEditor"/>
                         </div>
@@ -40,7 +42,8 @@
                         <div class="panel-heading text-center customize-panel3">
                             <b>ENG</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="cv in conversations2">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations2">
+                            <div v-html="index" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 2 && !cv.showEditor) || iuser.type != 2"></div>
                             <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 2 && cv.showEditor"/>
                         </div>

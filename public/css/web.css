@@ -134,6 +134,8 @@ span.num-group {
   overflow-y: auto;
   overflow-x: hidden;
   border-bottom: 1px solid #ccc;
+  font-family: arial;
+  font-size: 16px;
 }
 
 .chat-panel .panel{
@@ -170,6 +172,8 @@ span.num-group {
 
 .editr--content {
   height: 150px;
+  font-family: arial;
+  font-size: 16px;
 }
 
 .conversation-panel{
@@ -189,5 +193,16 @@ span.num-group {
 .conversation-panel .customize-panel3{
   background-color: #00cc00;
   color:#000;
+}
 
+.conversation-index{
+  background-color: #666;
+  color: #fff;
+  padding: 8px;
+  width: 35px;
+  border-bottom-right-radius: 3px;
+  text-align: center;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
 }

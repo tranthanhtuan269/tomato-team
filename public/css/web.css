@@ -206,3 +206,7 @@ span.num-group {
   margin-right: 10px;
   margin-bottom: 5px;
 }
+
+.ql-editor{
+  height: 113px!important;
+}

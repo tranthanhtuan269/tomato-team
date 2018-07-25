@@ -25,7 +25,10 @@
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
-                            <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"/>
+                            <!-- <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"/> -->
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"
+                                      ref="quillEditorA"
+                                      :options="editorOption"/>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -35,7 +38,7 @@
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations1">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 1 && !cv.showEditor) || iuser.type != 1"></div>
-                            <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 1 && cv.showEditor"/>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 1 && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -45,7 +48,7 @@
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations2">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 2 && !cv.showEditor) || iuser.type != 2"></div>
-                            <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 2 && cv.showEditor"/>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 2 && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
                 </div>
@@ -58,6 +61,17 @@
 <script>
     export default {
         props: ['group', 'iuser'],
+        computed: {
+          editorA() {
+            return this.$refs.quillEditorA.quill
+          },
+          editorB() {
+            return this.$refs.quillEditorB.quill
+          },
+          editorC() {
+            return this.$refs.quillEditorC.quill
+          }
+        },
 
         data() {
             return {
@@ -66,7 +80,21 @@
                 conversations2: [],
                 message: '',
                 done: 0,
-                group_id: this.group.id
+                group_id: this.group.id,
+                editorOption: {
+                    theme: 'snow',
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline'],        // toggled buttons
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                            [{ 'align': [] }]
+                        ]
+                    },
+                }
             }
         },
 
@@ -101,6 +129,15 @@
         },
 
         methods: {
+            onEditorBlur(quill) {
+                console.log('editor blur!', quill)
+            },
+            onEditorFocus(quill) {
+                console.log('editor focus!', quill)
+            },
+            onEditorReady(quill) {
+                console.log('editor ready!', quill)
+            },
             store(message, conversation) {
                 axios.post('/conversations', {message: message, group_id: this.group.id, type: this.iuser.type, conversation: conversation})
                 .then((response) => {

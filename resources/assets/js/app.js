@@ -10,26 +10,35 @@ require('./bootstrap');
 window.Vue = require('vue');
 window.Bus = new Vue();
 
-import wysiwyg from "vue-wysiwyg";
+// import wysiwyg from "vue-wysiwyg";
 import 'vue-snotify/styles/material.css'
 import Snotify, { SnotifyPosition } from 'vue-snotify'; // 1. Import Snotify
 
-var config = {
+// var config = {
 
-  hideModules: { "image": true, "removeFormat" : true, "code" : true },
-  // limit content height if you wish. If not set, editor size will grow with content.
-  maxHeight: "100%",
+//   hideModules: { "image": true, "removeFormat" : true, "code" : true },
+//   // limit content height if you wish. If not set, editor size will grow with content.
+//   maxHeight: "100%",
 
-  // set to 'true' this will insert plain text without styling when you paste something into the editor.
-  forcePlainTextOnPaste: true
-}
+//   // set to 'true' this will insert plain text without styling when you paste something into the editor.
+//   forcePlainTextOnPaste: true
+// }
 
-Vue.use(wysiwyg, config);
+// Vue.use(wysiwyg, config);
 Vue.use(Snotify, {
   toast: {
     position: SnotifyPosition.centerCenter
   }
 });
+
+import VueQuillEditor from 'vue-quill-editor'
+
+// require styles
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

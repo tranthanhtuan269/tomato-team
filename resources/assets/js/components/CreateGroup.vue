@@ -112,19 +112,19 @@
                     this.error_name = false;
                 }
 
-                if(this.users.length == 0){
-                    this.error_source = true; 
-                    return;
-                }else{
-                    this.error_source = false;
-                }
+                // if(this.users.length == 0){
+                //     this.error_source = true; 
+                //     return;
+                // }else{
+                //     this.error_source = false;
+                // }
 
-                if(this.users2.length == 0){
-                    this.error_target = true; 
-                    return;
-                }else{
-                    this.error_target = false;
-                }
+                // if(this.users2.length == 0){
+                //     this.error_target = true; 
+                //     return;
+                // }else{
+                //     this.error_target = false;
+                // }
 
                 axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
                 .then((response) => {

@@ -157,6 +157,7 @@ span.num-group {
 }
 
 .btn-control {
+  float: left;
   margin-left: 10px;
 }
 

@@ -35,8 +35,9 @@
                             </td>
                             <td>{{ $group->created_at }}</td>
                             <td>
-                                <a class="btn btn-small btn-success" href="{{ URL::to('groups/' . $group->id) }}">View</a>
-                                {{ Form::open(array('url' => 'groups/' . $group->id, 'class' => 'pull-right')) }}
+                                <a class="btn btn-small btn-success btn-control" href="{{ URL::to('groups/' . $group->id) }}">View</a>
+                                <a class="btn btn-small btn-info btn-control" href="{{ URL::to('groups/' . $group->id . '/edit') }}">Edit</a>
+                                {{ Form::open(array('url' => 'groups/' . $group->id, 'class' => 'btn-control')) }}
                                     {{ Form::hidden('_method', 'DELETE') }}
                                     {{ Form::submit('Delete', array('class' => 'btn btn-warning')) }}
                                 {{ Form::close() }}

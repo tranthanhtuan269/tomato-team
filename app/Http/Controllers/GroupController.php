@@ -40,9 +40,15 @@ class GroupController extends Controller
 		}
 	}
 
-	public function create(){
+    public function create(){
         $user = auth()->user();
-		return view('group.create', ['user' => $user]);
+        return view('group.create', ['user' => $user]);
+    }
+
+	public function edit($id){
+        $group = Group::find($id);
+        $user = auth()->user();
+		return view('group.edit', ['group' => $group, 'user' => $user, 'users' => $group->users()->get()]);
 	}
 
 	public function show($id){
@@ -69,7 +75,7 @@ class GroupController extends Controller
 
     public function store(Request $request)
     {
-    	// dd($request);
+        // dd($request);
         $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
 
         $users = collect(request('users'));
@@ -81,6 +87,31 @@ class GroupController extends Controller
         $group->users()->attach($users2, ['type' => 2]);
 
         broadcast(new GroupCreated($group))->toOthers();
+
+        return $group;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $group = Group::find($id);
+        $group->name = request('name');
+        $group->updated_by = auth()->user()->id;
+        $group->save();
+
+        $users = collect(request('users'));
+        $users2 = collect(request('users2'));
+
+        // remove attach
+        Group::deleting(function($group)
+        {
+            $group->users()->detach();
+        });
+
+        // add new attach
+        $group->users()->attach($users, ['type' => 1]);
+        $group->users()->attach($users2, ['type' => 2]);
+
+        broadcast(new GroupUpdated($group))->toOthers();
 
         return $group;
     }

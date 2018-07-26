@@ -1,17 +1,15 @@
 <template>
 <div>
-    <div class="alert alert-success" role="alert" v-if="created_success">Tạo group thành công!</div>
+    <div class="alert alert-success" role="alert" v-if="updated_success">Sửa group thành công!</div>
     <div class="alert alert-danger" role="alert" v-if="error_name">Tên group không nên để trống!</div>
-    <div class="alert alert-danger" role="alert" v-if="error_source">Bạn chưa thêm thành viên cho source team!</div>
-    <div class="alert alert-danger" role="alert" v-if="error_target">Bạn chưa thêm thành viên cho target team!</div>
     <div class="col-sm-6">
         <div class="panel panel-default">
-            <div class="panel-heading">Create Group</div>
+            <div class="panel-heading">Edit Group: <span v-html="group.name"></span></div>
             <div class="panel-body">
                 <form>
                     <div class="form-group">
                         <label for="exampleInputEmail1">Group Name</label>
-                        <input class="form-control" type="text" v-model="name" placeholder="Group Name">
+                        <input class="form-control" type="text" v-model="group.name" placeholder="Group Name">
                     </div>
                     <div class="form-group">
                         <ul class="list-group col-sm-6">
@@ -28,7 +26,7 @@
                 </form>
             </div>
             <div class="panel-footer text-center">
-                <button type="submit" @click.prevent="createGroup" class="btn btn-primary">Create Group</button>
+                <button type="submit" @click.prevent="updateGroup" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>
@@ -52,10 +50,11 @@
 
 <script>
     export default {
+        props: ['group', 'joined'],
         data() {
             return {
                 name: '',
-                created_success: false,
+                updated_success: false,
                 error_name: false,
                 error_source: false,
                 error_target: false,
@@ -69,14 +68,16 @@
         },
 
         mounted() {
+            this.addUserJoined(this.joined);
+
             Bus.$on('online_users', (users) => {
                 var self = this;
                 users = users.filter(function (item) {
-                    if(item.languages == 0){
+                    if(item.languages == 0 && !this.checkExistUser(self.onlineUsersSource, item)){
                         self.onlineUsersSource.push(item);
                     }
 
-                    if(item.languages == 1){
+                    if(item.languages == 1 && !this.checkExistUser(self.onlineUsersTarget, item)){
                         self.onlineUsersTarget.push(item);
                     }
                 });
@@ -103,33 +104,39 @@
         },
 
         methods: {
-            createGroup() {
-                if(this.name == ''){ 
+            checkExistUser(arr, user){
+                var id = arr.length + 1;
+                var found = arr.some(function (el) {
+                    return el.id === user.id;
+                });
+                if (!found) return false;
+                return true;
+            },
+            addUserJoined(joined){
+                var self = this;
+                joined = joined.filter(function (item) {
+                    if(item.languages == 0){
+                        self.usersSelected.push(item);
+                    }
+                    if(item.languages == 1){
+                        self.users2Selected.push(item);
+                    }
+                });
+            },
+
+            updateGroup() {
+                if(this.group.name == ''){ 
                     this.error_name = true; 
                     return;
                 }else{ 
                     this.error_name = false;
                 }
 
-                // if(this.users.length == 0){
-                //     this.error_source = true; 
-                //     return;
-                // }else{
-                //     this.error_source = false;
-                // }
-
-                // if(this.users2.length == 0){
-                //     this.error_target = true; 
-                //     return;
-                // }else{
-                //     this.error_target = false;
-                // }
-
-                axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
+                axios.put('/groups/' + this.group.id, {name: this.group.name, users: this.users, users2: this.users2})
                 .then((response) => {
                     this.name = '';
-                    Bus.$emit('groupCreated', response.data);
-                    this.created_success = true;
+                    Bus.$emit('groupUpdated', response.data);
+                    this.updated_success = true;
                 });
             },
             addUserToSourceTeam(user){

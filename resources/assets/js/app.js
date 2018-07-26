@@ -49,6 +49,7 @@ Vue.use(VueQuillEditor);
 // Vue.component('example', require('./components/Example.vue'));
 Vue.component('groups', require('./components/Groups.vue'));
 Vue.component('create-group', require('./components/CreateGroup.vue'));
+Vue.component('edit-group', require('./components/EditGroup.vue'));
 Vue.component('group-chat', require('./components/GroupChat.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
 Vue.component('vue-import', require('./components/VueImport.vue'));

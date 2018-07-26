@@ -62,7 +62,7 @@
                         this.message++;
                         var data = {
                             'link' : e.group.id,
-                            'data' : 'Group <b>' + e.group.name + '</b> đã được thay đổi nội dung.'
+                            'data' : 'Group <b>' + e.group.name + '</b> đã được thay đổi.'
                         }
                         this.listMessages.push(data);
                     });

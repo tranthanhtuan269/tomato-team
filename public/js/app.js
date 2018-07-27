@@ -13281,7 +13281,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             onlineUsersSource: [],
             onlineUsersTarget: [],
             users2: [],
-            users2Selected: []
+            users2Selected: [],
+            showAllUser: false
         };
     },
     mounted: function mounted() {
@@ -13464,7 +13465,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             onlineUsersSource: [],
             onlineUsersTarget: [],
             users2: [],
-            users2Selected: []
+            users2Selected: [],
+            showAllUser: false
         };
     },
     mounted: function mounted() {
@@ -13965,6 +13967,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.listenUpdateStatusGroup();
 
         Echo.join('chats').here(function (users) {
+            console.log($users);
             Bus.$emit('online_users', users);
         }).joining(function (user) {
             Bus.$emit('user_join', user);
@@ -63577,7 +63580,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
   }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
-    return _c('li', {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
       staticClass: "list-group-item",
       attrs: {
         "value": user.id
@@ -63587,13 +63590,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToSourceTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.name))])
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
   })], 2), _vm._v(" "), _c('ul', {
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
   }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
-    return _c('li', {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
       staticClass: "list-group-item",
       attrs: {
         "value": user.id
@@ -63603,7 +63606,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToTargetTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.name))])
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
   })], 2)])])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
@@ -63759,7 +63762,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
   }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
-    return _c('li', {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
       staticClass: "list-group-item",
       attrs: {
         "value": user.id
@@ -63769,13 +63772,13 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToSourceTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.name))])
+    }, [_vm._v(_vm._s(user.id))]) : _vm._e()
   })], 2), _vm._v(" "), _c('ul', {
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
     staticClass: "list-group-item list-group-item-info"
   }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
-    return _c('li', {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
       staticClass: "list-group-item",
       attrs: {
         "value": user.id
@@ -63785,7 +63788,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToTargetTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.name))])
+    }, [_vm._v(_vm._s(user.id))]) : _vm._e()
   })], 2)])])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true

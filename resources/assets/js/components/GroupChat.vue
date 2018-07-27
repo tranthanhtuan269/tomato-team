@@ -25,8 +25,7 @@
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
-                            <!-- <wysiwyg v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"/> -->
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 0 && cv.showEditor"
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 0)" v-if="iuser.type == 0 && cv.showEditor"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
                         </div>
@@ -37,8 +36,8 @@
                         </div>
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations1">
                             <div v-html="index + 1" class="conversation-index"></div>
-                            <div v-html="cv.message" v-if="(iuser.type == 1 && !cv.showEditor) || iuser.type != 1"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 1 && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2"></div>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -47,8 +46,8 @@
                         </div>
                         <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations2">
                             <div v-html="index + 1" class="conversation-index"></div>
-                            <div v-html="cv.message" v-if="(iuser.type == 2 && !cv.showEditor) || iuser.type != 2"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation)" v-if="iuser.type == 2 && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1"></div>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
                 </div>
@@ -138,8 +137,8 @@
             onEditorReady(quill) {
                 console.log('editor ready!', quill)
             },
-            store(message, conversation) {
-                axios.post('/conversations', {message: message, group_id: this.group.id, type: this.iuser.type, conversation: conversation})
+            store(message, conversation, type) {
+                axios.post('/conversations', {message: message, group_id: this.group.id, type: type, conversation: conversation})
                 .then((response) => {
                     if(this.done == 1 || this.done == 3){
                         this.changeStatus2();
@@ -187,8 +186,8 @@
                     });
             },
 
-            change(message, conversation){
-                this.store(message, conversation);
+            change(message, conversation, type){
+                this.store(message, conversation, type);
             },
 
             onChange(cv){
@@ -201,6 +200,8 @@
                     var i = 0; 
                     for(i = 0; i < this.conversations.length; i++){
                         this.conversations[i].showEditor = false;
+                        this.conversations1[i].showEditor = false;
+                        this.conversations2[i].showEditor = false;
                     }
                 }else if(this.iuser.type == 1){
                     var i = 0; 

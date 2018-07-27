@@ -43,6 +43,10 @@
                     <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.name }}</li>
                 </ul>
             </div>
+            <div class="panel-footer">
+                <div class="btn btn-primary" v-on:click="changeShowAll(true)" v-if="!showAllUser">Show all</div>
+                <div class="btn btn-primary" v-on:click="changeShowAll(false)" v-if="showAllUser">Show available</div>
+            </div>
         </div>
     </div>
 </div>
@@ -74,11 +78,11 @@
             Bus.$on('online_users', (users) => {
                 var self = this;
                 users = users.filter(function (item) {
-                    if(item.languages == 0 && !this.checkExistUser(self.onlineUsersSource, item)){
+                    if(item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item)){
                         self.onlineUsersSource.push(item);
                     }
 
-                    if(item.languages == 1 && !this.checkExistUser(self.onlineUsersTarget, item)){
+                    if(item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item)){
                         self.onlineUsersTarget.push(item);
                     }
                 });
@@ -105,6 +109,9 @@
         },
 
         methods: {
+            changeShowAll(status){
+                this.showAllUser = status;
+            },
             checkExistUser(arr, user){
                 var id = arr.length + 1;
                 var found = arr.some(function (el) {

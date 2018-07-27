@@ -45,6 +45,10 @@
                     <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.id }}</li>
                 </ul>
             </div>
+            <div class="panel-footer text-center">
+                <div class="btn btn-danger" v-on:click="changeShowAll(true)" v-if="!showAllUser">Show all</div>
+                <div class="btn btn-danger" v-on:click="changeShowAll(false)" v-if="showAllUser">Show available</div>
+            </div>
         </div>
     </div>
 </div>
@@ -104,6 +108,9 @@
         },
 
         methods: {
+            changeShowAll(status){
+                this.showAllUser = status;
+            },
             createGroup() {
                 if(this.name == ''){ 
                     this.error_name = true; 

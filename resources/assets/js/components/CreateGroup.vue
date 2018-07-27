@@ -38,11 +38,11 @@
             <div class="panel-body">
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Source team</li>
-                    <li class="list-group-item" v-for="user in onlineUsersSource" :value="user.id" v-on:click="addUserToSourceTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersSource" :value="user.id" v-on:click="addUserToSourceTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.id }}</li>
                 </ul>
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Target team</li>
-                    <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)">{{ user.name }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.id }}</li>
                 </ul>
             </div>
         </div>
@@ -64,7 +64,8 @@
                 onlineUsersSource: [],
                 onlineUsersTarget: [],
                 users2: [],
-                users2Selected: []
+                users2Selected: [],
+                showAllUser: false
             }
         },
 

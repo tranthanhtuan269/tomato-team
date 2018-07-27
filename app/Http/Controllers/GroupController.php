@@ -75,12 +75,23 @@ class GroupController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request);
-        $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
-
         $users = collect(request('users'));
         $users2 = collect(request('users2'));
-        // $users->push(auth()->user()->id);
+
+        // update busy_job
+        foreach($users as $user){
+            $user = User::find($user);
+            $user->busy_job = 1;
+            $user->save();
+        }
+
+        foreach($users2 as $user){
+            $user = User::find($user);
+            $user->busy_job = 1;
+            $user->save();
+        }
+
+        $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
 
         $group->users()->attach(auth()->user()->id, ['type' => 0]);
         $group->users()->attach($users, ['type' => 1]);
@@ -93,13 +104,26 @@ class GroupController extends Controller
 
     public function update(Request $request, $id)
     {
+        $users = collect(request('users'));
+        $users2 = collect(request('users2'));
+
+        // update busy_job
+        foreach($users as $user){
+            $user = User::find($user);
+            $user->busy_job = 1;
+            $user->save();
+        }
+
+        foreach($users2 as $user){
+            $user = User::find($user);
+            $user->busy_job = 1;
+            $user->save();
+        }
+
         $group = Group::find($id);
         $group->name = request('name');
         $group->updated_by = auth()->user()->id;
         $group->save();
-
-        $users = collect(request('users'));
-        $users2 = collect(request('users2'));
 
         // remove attach
         Group::deleting(function($group)
@@ -148,6 +172,13 @@ class GroupController extends Controller
     {
         // delete
         $group = Group::find($id);
+
+        // free user
+        foreach($group->users()->get() as $user){
+            $user->busy_job = 0;
+            $user->save();
+        }
+
         Group::deleting(function($group)
 		{
 		    $group->users()->detach();

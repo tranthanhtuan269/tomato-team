@@ -32,6 +32,7 @@
 
             Echo.join('chats')
                 .here((users) => {
+                    console.log($users);
                     Bus.$emit('online_users', users);
                 })
                 .joining((user) => {

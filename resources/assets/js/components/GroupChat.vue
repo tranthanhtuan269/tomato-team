@@ -6,9 +6,10 @@
                 <button v-if="done == 1" class="btn btn-success pull-right btn-control">Done</button>
                 <button v-if="done == 2" class="btn btn-warning pull-right btn-control" v-on:click="changeStatus3()">Done</button>
                 <button v-if="done == 3" class="btn btn-success pull-right btn-control">Done</button>
-                <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
-                <a class="btn btn-success pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
+                <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
+                <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
                 <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
+                <button type="button" class="btn btn-primary pull-right btn-control" v-on:click="toggestChat(true)">Show Chat</button>
             </div>
         </div>
         <div class="panel panel-primary">
@@ -53,6 +54,19 @@
                 </div>
             </div>
         </div>
+        <div class="panel panel-primary general-panel" v-if="showChat==true">
+            <div class="panel-heading text-center">
+                <b>General</b> <i class="fas fa-minus pull-right" v-on:click="toggestChat(false)"></i>
+            </div>
+            <div class="panel-body">
+                <ul id="general-content" class="list-group" v-chat-scroll>
+                    <message v-for="m in listMessage" :key="m.id" :user="m.user.name">
+                        {{ m.message }}
+                    </message>
+                </ul>
+                <div class="form-inline"><input type="text" v-model="message" class="form-control control-long" @keyup.enter="SendMessage()"/><button class="btn btn-default control-small pull-right" v-on:click="SendMessage()">Send</button></div>
+            </div>
+        </div>
         <vue-import :group="group" :key="group.id"></vue-import>
     </div>
 </template>
@@ -78,8 +92,10 @@
                 conversations1: [],
                 conversations2: [],
                 message: '',
+                listMessage: [],
                 done: 0,
                 group_id: this.group.id,
+                showChat: false,
                 editorOption: {
                     theme: 'snow',
                     modules: {
@@ -105,9 +121,21 @@
 
         created() {
             var sefl = this;
+            this.listMessage = [];
             this.conversations = [];
             this.conversations1 = [];
             this.conversations2 = [];
+            axios.get('/conversation/' + this.group.id + '/getListChat')
+            .then(response => {
+                var i;
+                for(i = 0; i < response.data.length; i++){
+                    this.listMessage.push(response.data[i]);
+                }
+            })
+            .catch(e => {
+                this.errors.push(e)
+            });
+
             axios.get('/conversation/' + this.group.id + '/getListConversation')
             .then(response => {
                 var i;
@@ -124,10 +152,21 @@
             })
             .catch(e => {
                 this.errors.push(e)
-            })
+            });
         },
 
         methods: {
+            SendMessage(){
+                if(this.message.length == 0) return;
+                axios.post('/conversations', {message: this.message, group_id: this.group.id, type: -1, conversation: -1})
+                .then((response) => {
+                    this.listMessage.push(response.data);
+                    this.message = "";
+                });
+            },
+            toggestChat(status) {
+                this.showChat = status;
+            },
             onEditorBlur(quill) {
                 console.log('editor blur!', quill)
             },
@@ -149,7 +188,9 @@
             listenForNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        if(e.type == 0){
+                        if(e.type == -1){
+                            this.listMessage.push(e);
+                        }else if(e.type == 0){
                             var i = 0; 
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){

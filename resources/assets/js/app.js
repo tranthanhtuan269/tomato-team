@@ -14,6 +14,9 @@ window.Bus = new Vue();
 import 'vue-snotify/styles/material.css'
 import Snotify, { SnotifyPosition } from 'vue-snotify'; // 1. Import Snotify
 
+import VueChatScroll from 'vue-chat-scroll'
+Vue.use(VueChatScroll)
+
 // var config = {
 
 //   hideModules: { "image": true, "removeFormat" : true, "code" : true },
@@ -53,6 +56,7 @@ Vue.component('edit-group', require('./components/EditGroup.vue'));
 Vue.component('group-chat', require('./components/GroupChat.vue'));
 Vue.component('notification', require('./components/Notification.vue'));
 Vue.component('vue-import', require('./components/VueImport.vue'));
+Vue.component('message', require('./components/Message.vue'));
 
 const app = new Vue({
     el: '#app'

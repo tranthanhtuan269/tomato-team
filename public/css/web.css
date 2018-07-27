@@ -211,3 +211,36 @@ span.num-group {
 .ql-editor{
   height: 113px!important;
 }
+
+.general-panel{
+  border: none;
+  width: 550px;
+  height: 400px;
+  position: fixed;
+  bottom: -20px;
+  right: 15px;
+}
+
+.fa-minus.pull-right{
+  margin-top: 6px;
+  cursor: pointer;
+}
+
+#general-content{
+  height: 260px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.control-long{
+  width: 80%!important;
+}
+
+.control-small{
+  width: 18%;
+}
+
+.message-item{
+  min-height: 63px;
+  margin-bottom: 19px;
+}

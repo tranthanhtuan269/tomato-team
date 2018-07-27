@@ -58,9 +58,15 @@ class ConversationController extends Controller
         return $listReturn;
     }
 
+    public function getListChat($group){
+        $listReturn = [];
+        $conv = Conversation::where('group_id', $group)->where('conversation', -1)->where('type', -1)->orderBy('created_at','asc')->with('user')->get();
+        return $conv;
+    }
+
     public function getListConversation($group){
         $listReturn = [];
-        $listConversation = DB::table('conversations')->select('conversation')->orderBy('conversation')->where('group_id', $group)->distinct()->get();
+        $listConversation = DB::table('conversations')->where('conversation', '>', -1)->select('conversation')->orderBy('conversation')->where('group_id', $group)->distinct()->get();
         foreach($listConversation as $itemConversation){
             for($i = 0; $i < 3; $i++){
                 $conv = Conversation::where('group_id', $group)->where('conversation', $itemConversation->conversation)->where('type', $i)->orderBy('created_at','desc')->first();

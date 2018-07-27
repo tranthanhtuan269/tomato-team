@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/conversation/{group}/getListChat', 'ConversationController@getListChat')->name('getListChat');
 Route::get('/conversation/{group}/getListConversation', 'ConversationController@getListConversation')->name('getListConversation');
 Route::get('/conversation/{group}/later/{conversation}/{id}', 'ConversationController@getLastest')->name('getLastest');
 Route::post('/group/{group}/done', 'GroupController@postDone');

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Conversation extends Model
 {
-    protected $fillable = ['message', 'user_id', 'group_id', 'type', 'conversation'];
+    protected $fillable = ['message', 'user_id', 'group_id', 'type', 'conversation', 'update_by'];
 
     public function user()
     {

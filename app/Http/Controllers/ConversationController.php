@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Conversation;
 use App\Events\NewMessage;
 use App\Events\AddConversation;
+use App\Events\ActiveConversation;
 use Illuminate\Http\Request;
 use DB;
 
@@ -103,5 +104,14 @@ class ConversationController extends Controller
             ]);
             return $conv->load('user');
         }
+    }
+
+    public function active(Request $request){
+        $conv = Conversation::where('group_id', $request->group_id)->where('conversation', $request->conversation['conversation'])->where('type', $request->type)->orderBy('created_at','desc')->first();
+        $conv->active = 1;
+        $conv->update_by = auth()->user()->id;
+        $conv->save();
+        broadcast(new ActiveConversation($conv))->toOthers();
+        return $conv;
     }
 }

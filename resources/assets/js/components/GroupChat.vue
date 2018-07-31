@@ -23,10 +23,10 @@
                         <div class="panel-heading text-center customize-panel1">
                             <b>KOR</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations">
+                        <div v-on:click="onChange(cv, 0)" v-for="(cv, index) in conversations" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 0)" v-if="iuser.type == 0 && cv.showEditor"
+                            <quill-editor v-model="cv.message" v-on:change="change(cv, 0)" v-if="iuser.type == 0 && cv.showEditor"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
                         </div>
@@ -35,20 +35,20 @@
                         <div class="panel-heading text-center customize-panel2">
                             <b>VIE</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations1">
+                        <div v-on:click="onChange(cv, 1)" v-for="(cv, index) in conversations1" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
                         <div class="panel-heading text-center customize-panel3">
                             <b>ENG</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations2">
+                        <div v-on:click="onChange(cv, 2)" v-for="(cv, index) in conversations2" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
+                            <quill-editor v-model="cv.message" v-on:change="change(cv, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
                 </div>
@@ -88,11 +88,14 @@
 
         data() {
             return {
+                activeClass: 'alert alert-danger',
+                defaultClass: 'panel-body chat-panel',
                 conversations: [],
                 conversations1: [],
                 conversations2: [],
                 message: '',
                 note_message: false,
+                timeCost: 30,
                 listMessage: [],
                 done: 0,
                 group_id: this.group.id,
@@ -116,8 +119,7 @@
 
         mounted() {
             this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
-            this.listenForNewMessage();
-            this.listenForNewConversation();
+            this.listenAll();
         },
 
         created() {
@@ -142,6 +144,8 @@
             .then(response => {
                 var i;
                 for(i = 0; i < response.data.length; i++){
+                    response.data[i].timeCount = 0;
+                    response.data[i].isActive = false;
                     response.data[i].showEditor = false;
                     if(response.data[i].type == 0){
                         this.conversations.push(response.data[i]);
@@ -188,7 +192,7 @@
                 });
             },
 
-            listenForNewMessage() {
+            listenAll() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
                         if(e.type == -1){
@@ -199,6 +203,8 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){
                                     this.conversations[i].message = e.message;
+                                    this.conversations[i].timeCount = this.timeCost;
+                                    this.conversations[i].isActive = true;
                                 }
                             }
                         }else if(e.type == 1){
@@ -206,6 +212,8 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations1[i].conversation == e.conversation){
                                     this.conversations1[i].message = e.message;
+                                    this.conversations1[i].timeCount = this.timeCost;
+                                    this.conversations1[i].isActive = true;
                                 }
                             }
                         }else if(e.type == 2){
@@ -213,13 +221,13 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations2[i].conversation == e.conversation){
                                     this.conversations2[i].message = e.message;
+                                    this.conversations2[i].timeCount = this.timeCost;
+                                    this.conversations2[i].isActive = true;
                                 }
                             }
                         }
                     });
-            },
 
-            listenForNewConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('AddConversation', (e) => {
                         this.$snotify.error('A conversation has been created! Refresh to update content!', {
@@ -229,15 +237,87 @@
                             pauseOnHover: true
                         });
                     });
+
+                Echo.private('groups.' + this.group.id)
+                    .listen('ActiveConversation', (e) => {
+                        var self = this;
+                        if(e.type == 0){
+                            this.conversations[e.conversation-1].timeCount = this.timeCost;
+                            this.conversations[e.conversation-1].isActive = true;
+                            clearInterval(this.conversations[e.conversation-1].timeDown);
+                            this.conversations[e.conversation-1].timeDown = setInterval(function(){
+                                self.funcCount(self.conversations[e.conversation-1]);
+                            }, 1000);
+
+                        }else if(e.type == 1){
+                            this.conversations1[e.conversation-1].timeCount = this.timeCost;
+                            this.conversations1[e.conversation-1].isActive = true;
+                            clearInterval(this.conversations1[e.conversation-1].timeDown);
+                            this.conversations1[e.conversation-1].timeDown = setInterval(function(){
+                                self.funcCount(self.conversations1[e.conversation-1]);
+                            }, 1000);
+                        }else if(e.type == 2){
+                            this.conversations2[e.conversation-1].timeCount = this.timeCost;
+                            this.conversations2[e.conversation-1].isActive = true;
+                            clearInterval(this.conversations2[e.conversation-1].timeDown);
+                            this.conversations2[e.conversation-1].timeDown = setInterval(function(){
+                                self.funcCount(self.conversations2[e.conversation-1]);
+                            }, 1000);
+                        }
+                    });
             },
 
-            change(message, conversation, type){
-                this.store(message, conversation, type);
+            funcCount(obj){
+                obj.timeCount -= 1;
+                console.log(obj.timeCount);
+                console.log('run funcCount');
+                if(obj.timeCount == 0){
+                    obj.isActive = false;
+                    clearInterval(obj.timeDown);
+                    obj.timeDown = false;
+                }
             },
 
-            onChange(cv){
+            change(cv, type){
+                var self = this;
+                // if(cv.isActive) return;
+                if(cv.type == this.iuser.type || this.iuser.type == 0){
+                    cv.timeCount = this.timeCost;
+                }
+                this.store(cv.message, cv.conversation, type);
+            },
+
+            onChange(cv, type){
+                var self = this;
+                if(cv.isActive) return;
+                if(cv.type == this.iuser.type || this.iuser.type == 0){
+                    cv.timeCount = this.timeCost;
+                    clearInterval(cv.timeDown);
+                    cv.timeDown = setInterval(function(){
+                        self.hideEditor(cv);
+                    }, 1000);
+                    this.sendActive(cv, this.iuser.id, type);
+                }
                 this.hideAllEditor();
                 cv.showEditor = true;
+            },
+
+            hideEditor(obj){
+                obj.timeCount -= 1;
+                console.log(obj.timeCount);
+                console.log('run hideEditor');
+                if(obj.timeCount == 0){
+                    obj.showEditor = false;
+                    clearInterval(obj.timeDown);
+                    obj.timeDown = false;
+                }
+            },
+
+            sendActive(cv, user, type){
+                axios.post('/conversation/active', {conversation: cv, group_id: this.group.id, type: type, user: user})
+                .then((response) => {
+                    // console.log(response.data);
+                });
             },
 
             hideAllEditor(){
@@ -271,13 +351,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1})
                         .then((response) => {
-                            console.log(response);
                             self.done = 1;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1})
                         .then((response) => {
-                            console.log(response);
                             self.done = 1;
                         });
                 }
@@ -293,13 +371,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2})
                         .then((response) => {
-                            console.log(response);
                             self.done = 2;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2})
                         .then((response) => {
-                            console.log(response);
                             self.done = 2;
                         });
                 }
@@ -315,13 +391,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3})
                         .then((response) => {
-                            console.log(response);
                             self.done = 3;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3})
                         .then((response) => {
-                            console.log(response);
                             self.done = 3;
                         });
                 }

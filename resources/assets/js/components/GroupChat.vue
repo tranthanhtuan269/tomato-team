@@ -9,7 +9,7 @@
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
                 <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
-                <button type="button" class="btn btn-primary pull-right btn-control" v-on:click="toggestChat(true)">Show Chat</button>
+                <button type="button" class="btn btn-primary pull-right btn-control chat-btn" v-on:click="toggestChat(true)">Show Chat <span class="note-chat" v-if="note_message == true">!</span></button>
             </div>
         </div>
         <div class="panel panel-primary">
@@ -92,6 +92,7 @@
                 conversations1: [],
                 conversations2: [],
                 message: '',
+                note_message: false,
                 listMessage: [],
                 done: 0,
                 group_id: this.group.id,
@@ -130,6 +131,7 @@
                 var i;
                 for(i = 0; i < response.data.length; i++){
                     this.listMessage.push(response.data[i]);
+                    this.note_message = true;
                 }
             })
             .catch(e => {
@@ -166,6 +168,7 @@
             },
             toggestChat(status) {
                 this.showChat = status;
+                this.note_message = false;
             },
             onEditorBlur(quill) {
                 console.log('editor blur!', quill)
@@ -190,6 +193,7 @@
                     .listen('NewMessage', (e) => {
                         if(e.type == -1){
                             this.listMessage.push(e);
+                            this.note_message = true;
                         }else if(e.type == 0){
                             var i = 0; 
                             for(i = 0; i < this.conversations.length; i++){

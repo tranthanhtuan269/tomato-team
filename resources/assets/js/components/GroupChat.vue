@@ -23,7 +23,7 @@
                         <div class="panel-heading text-center customize-panel1">
                             <b>KOR</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv, 0)" v-for="(cv, index) in conversations" v-bind:id="'conversation-' + cv.conversation + '-0'">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 0)" v-if="iuser.type == 0 && cv.showEditor"
@@ -35,7 +35,7 @@
                         <div class="panel-heading text-center customize-panel2">
                             <b>VIE</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations1">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv, 1)" v-for="(cv, index) in conversations1" v-bind:id="'conversation-' + cv.conversation + '-1'">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
@@ -45,7 +45,7 @@
                         <div class="panel-heading text-center customize-panel3">
                             <b>ENG</b>
                         </div>
-                        <div class="panel-body chat-panel" v-on:click="onChange(cv)" v-for="(cv, index) in conversations2">
+                        <div class="panel-body chat-panel" v-on:click="onChange(cv, 2)" v-for="(cv, index) in conversations2" v-bind:id="'conversation-' + cv.conversation + '-2'">
                             <div v-html="index + 1" class="conversation-index"></div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv.message, cv.conversation, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
@@ -115,8 +115,7 @@
 
         mounted() {
             this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
-            this.listenForNewMessage();
-            this.listenForNewConversation();
+            this.listenAll();
         },
 
         created() {
@@ -185,7 +184,7 @@
                 });
             },
 
-            listenForNewMessage() {
+            listenAll() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
                         if(e.type == -1){
@@ -213,9 +212,7 @@
                             }
                         }
                     });
-            },
 
-            listenForNewConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('AddConversation', (e) => {
                         this.$snotify.error('A conversation has been created! Refresh to update content!', {
@@ -225,15 +222,34 @@
                             pauseOnHover: true
                         });
                     });
+
+                Echo.private('groups.' + this.group.id)
+                    .listen('ActiveConversation', (e) => {
+                        console.log(e);
+                        console.log("conversation-" + e.conversation + "-" + e.type);
+                        document.getElementById("conversation-" + e.conversation + "-" + e.type).style.backgroundColor = "#ffd2d2";
+                    });
             },
 
             change(message, conversation, type){
                 this.store(message, conversation, type);
             },
 
-            onChange(cv){
+            onChange(cv, type){
+                console.log(cv.updated_at);
+                if(cv.active == 1) return;
+                if(cv.type == this.iuser.type || this.iuser.type == 0){
+                    this.sendActive(cv, this.iuser.id, type);
+                }
                 this.hideAllEditor();
                 cv.showEditor = true;
+            },
+
+            sendActive(cv, user, type){
+                axios.post('/conversation/active', {conversation: cv, group_id: this.group.id, type: type, user: user})
+                .then((response) => {
+                    // console.log(response.data);
+                });
             },
 
             hideAllEditor(){
@@ -267,13 +283,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1})
                         .then((response) => {
-                            console.log(response);
                             self.done = 1;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1})
                         .then((response) => {
-                            console.log(response);
                             self.done = 1;
                         });
                 }
@@ -289,13 +303,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2})
                         .then((response) => {
-                            console.log(response);
                             self.done = 2;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2})
                         .then((response) => {
-                            console.log(response);
                             self.done = 2;
                         });
                 }
@@ -311,13 +323,11 @@
                 }else if(this.iuser.type == 1){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3})
                         .then((response) => {
-                            console.log(response);
                             self.done = 3;
                         });
                 }else if(this.iuser.type == 2){
                     axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3})
                         .then((response) => {
-                            console.log(response);
                             self.done = 3;
                         });
                 }

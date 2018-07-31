@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Conversation extends Model
 {
-    protected $fillable = ['message', 'user_id', 'group_id', 'type', 'conversation'];
+    protected $fillable = ['message', 'user_id', 'group_id', 'type', 'conversation', 'active', 'update_by'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function updateBy()
+    {
+        return $this->belongsTo(User::class, 'update_by');
     }
 
     public function group()

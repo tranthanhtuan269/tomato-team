@@ -209,7 +209,7 @@ span.num-group {
 }
 
 .ql-editor{
-  height: 113px!important;
+  height: 128px!important
 }
 
 .general-panel{
@@ -243,4 +243,8 @@ span.num-group {
 .message-item{
   min-height: 63px;
   margin-bottom: 19px;
+}
+
+.chat-panel.alert{
+  margin-bottom: 0;
 }

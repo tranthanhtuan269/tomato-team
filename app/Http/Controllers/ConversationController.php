@@ -18,6 +18,7 @@ class ConversationController extends Controller
             'group_id' => request('group_id'),
             'type' => request('type'),
             'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
             'conversation' => request('conversation'),
         ]);
 

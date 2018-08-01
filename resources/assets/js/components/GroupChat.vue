@@ -95,7 +95,7 @@
                 conversations2: [],
                 message: '',
                 note_message: false,
-                timeCost: 30,
+                timeCost: 15,
                 listMessage: [],
                 done: 0,
                 group_id: this.group.id,
@@ -119,7 +119,9 @@
 
         mounted() {
             this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
-            this.listenAll();
+            this.listenNewMessage();
+            this.listenAddConversation();
+            this.listenActiveConversation();
         },
 
         created() {
@@ -192,9 +194,10 @@
                 });
             },
 
-            listenAll() {
+            listenNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
+                        console.log(e);
                         if(e.type == -1){
                             this.listMessage.push(e);
                             this.note_message = true;
@@ -227,7 +230,8 @@
                             }
                         }
                     });
-
+            },
+            listenAddConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('AddConversation', (e) => {
                         this.$snotify.error('A conversation has been created! Refresh to update content!', {
@@ -237,7 +241,8 @@
                             pauseOnHover: true
                         });
                     });
-
+            },
+            listenActiveConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
                         var self = this;
@@ -269,8 +274,6 @@
 
             funcCount(obj){
                 obj.timeCount -= 1;
-                console.log(obj.timeCount);
-                console.log('run funcCount');
                 if(obj.timeCount == 0){
                     obj.isActive = false;
                     clearInterval(obj.timeDown);
@@ -280,7 +283,6 @@
 
             change(cv, type){
                 var self = this;
-                // if(cv.isActive) return;
                 if(cv.type == this.iuser.type || this.iuser.type == 0){
                     cv.timeCount = this.timeCost;
                 }

@@ -13494,11 +13494,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         Bus.$on('online_users', function (users) {
             var self = _this;
             users = users.filter(function (item) {
-                if (item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item)) {
+                if (item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item && !self.checkExistUser(self.usersSelected, item))) {
                     self.onlineUsersSource.push(item);
                 }
 
-                if (item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item)) {
+                if (item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item && !self.checkExistUser(self.users2Selected, item))) {
                     self.onlineUsersTarget.push(item);
                 }
             });
@@ -13530,7 +13530,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.showAllUser = status;
         },
         checkExistUser: function checkExistUser(arr, user) {
-            var id = arr.length + 1;
             var found = arr.some(function (el) {
                 return el.id === user.id;
             });
@@ -13558,7 +13557,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 this.error_name = false;
             }
 
-            axios.put('/groups/' + this.group.id, { name: this.group.name, users: this.users, users2: this.users2 }).then(function (response) {
+            axios.put('/groups/' + this.group.id, { name: this.group.name, users: this.usersSelected, users2: this.users2Selected }).then(function (response) {
                 _this2.name = '';
                 Bus.$emit('groupUpdated', response.data);
                 _this2.updated_success = true;
@@ -13701,11 +13700,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
     data: function data() {
         return {
+            activeClass: 'alert alert-danger',
+            defaultClass: 'panel-body chat-panel',
             conversations: [],
             conversations1: [],
             conversations2: [],
             message: '',
             note_message: false,
+            timeCost: 15,
             listMessage: [],
             done: 0,
             group_id: this.group.id,
@@ -13723,8 +13725,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     mounted: function mounted() {
         this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target);
-        this.listenForNewMessage();
-        this.listenForNewConversation();
+        this.listenNewMessage();
+        this.listenAddConversation();
+        this.listenActiveConversation();
     },
     created: function created() {
         var _this = this;
@@ -13747,6 +13750,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         axios.get('/conversation/' + this.group.id + '/getListConversation').then(function (response) {
             var i;
             for (i = 0; i < response.data.length; i++) {
+                response.data[i].timeCount = 0;
+                response.data[i].isActive = false;
                 response.data[i].showEditor = false;
                 if (response.data[i].type == 0) {
                     _this.conversations.push(response.data[i]);
@@ -13794,10 +13799,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        listenForNewMessage: function listenForNewMessage() {
+        listenNewMessage: function listenNewMessage() {
             var _this4 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
+                console.log(e);
                 if (e.type == -1) {
                     _this4.listMessage.push(e);
                     _this4.note_message = true;
@@ -13806,6 +13812,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations[i].conversation == e.conversation) {
                             _this4.conversations[i].message = e.message;
+                            _this4.conversations[i].timeCount = _this4.timeCost;
+                            _this4.conversations[i].isActive = true;
                         }
                     }
                 } else if (e.type == 1) {
@@ -13813,6 +13821,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations1[i].conversation == e.conversation) {
                             _this4.conversations1[i].message = e.message;
+                            _this4.conversations1[i].timeCount = _this4.timeCost;
+                            _this4.conversations1[i].isActive = true;
                         }
                     }
                 } else if (e.type == 2) {
@@ -13820,12 +13830,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations2[i].conversation == e.conversation) {
                             _this4.conversations2[i].message = e.message;
+                            _this4.conversations2[i].timeCount = _this4.timeCost;
+                            _this4.conversations2[i].isActive = true;
                         }
                     }
                 }
             });
         },
-        listenForNewConversation: function listenForNewConversation() {
+        listenAddConversation: function listenAddConversation() {
             var _this5 = this;
 
             Echo.private('groups.' + this.group.id).listen('AddConversation', function (e) {
@@ -13837,12 +13849,78 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             });
         },
-        change: function change(message, conversation, type) {
-            this.store(message, conversation, type);
+        listenActiveConversation: function listenActiveConversation() {
+            var _this6 = this;
+
+            Echo.private('groups.' + this.group.id).listen('ActiveConversation', function (e) {
+                var self = _this6;
+                if (e.type == 0) {
+                    _this6.conversations[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations[e.conversation - 1].timeDown);
+                    _this6.conversations[e.conversation - 1].timeDown = setInterval(function () {
+                        self.funcCount(self.conversations[e.conversation - 1]);
+                    }, 1000);
+                } else if (e.type == 1) {
+                    _this6.conversations1[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations1[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations1[e.conversation - 1].timeDown);
+                    _this6.conversations1[e.conversation - 1].timeDown = setInterval(function () {
+                        self.funcCount(self.conversations1[e.conversation - 1]);
+                    }, 1000);
+                } else if (e.type == 2) {
+                    _this6.conversations2[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations2[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations2[e.conversation - 1].timeDown);
+                    _this6.conversations2[e.conversation - 1].timeDown = setInterval(function () {
+                        self.funcCount(self.conversations2[e.conversation - 1]);
+                    }, 1000);
+                }
+            });
         },
-        onChange: function onChange(cv) {
+        funcCount: function funcCount(obj) {
+            obj.timeCount -= 1;
+            if (obj.timeCount == 0) {
+                obj.isActive = false;
+                clearInterval(obj.timeDown);
+                obj.timeDown = false;
+            }
+        },
+        change: function change(cv, type) {
+            var self = this;
+            if (cv.type == this.iuser.type || this.iuser.type == 0) {
+                cv.timeCount = this.timeCost;
+            }
+            this.store(cv.message, cv.conversation, type);
+        },
+        onChange: function onChange(cv, type) {
+            var self = this;
+            if (cv.isActive) return;
+            if (cv.type == this.iuser.type || this.iuser.type == 0) {
+                cv.timeCount = this.timeCost;
+                clearInterval(cv.timeDown);
+                cv.timeDown = setInterval(function () {
+                    self.hideEditor(cv);
+                }, 1000);
+                this.sendActive(cv, this.iuser.id, type);
+            }
             this.hideAllEditor();
             cv.showEditor = true;
+        },
+        hideEditor: function hideEditor(obj) {
+            obj.timeCount -= 1;
+            console.log(obj.timeCount);
+            console.log('run hideEditor');
+            if (obj.timeCount == 0) {
+                obj.showEditor = false;
+                clearInterval(obj.timeDown);
+                obj.timeDown = false;
+            }
+        },
+        sendActive: function sendActive(cv, user, type) {
+            axios.post('/conversation/active', { conversation: cv, group_id: this.group.id, type: type, user: user }).then(function (response) {
+                // console.log(response.data);
+            });
         },
         hideAllEditor: function hideAllEditor() {
             if (this.iuser.type == 0) {
@@ -13872,12 +13950,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             } else if (this.iuser.type == 1) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1 }).then(function (response) {
-                    console.log(response);
                     self.done = 1;
                 });
             } else if (this.iuser.type == 2) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1 }).then(function (response) {
-                    console.log(response);
                     self.done = 1;
                 });
             }
@@ -13890,12 +13966,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             } else if (this.iuser.type == 1) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2 }).then(function (response) {
-                    console.log(response);
                     self.done = 2;
                 });
             } else if (this.iuser.type == 2) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2 }).then(function (response) {
-                    console.log(response);
                     self.done = 2;
                 });
             }
@@ -13908,12 +13982,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 });
             } else if (this.iuser.type == 1) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3 }).then(function (response) {
-                    console.log(response);
                     self.done = 3;
                 });
             } else if (this.iuser.type == 2) {
                 axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3 }).then(function (response) {
-                    console.log(response);
                     self.done = 3;
                 });
             }
@@ -13928,7 +14000,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         addConversation: function addConversation() {
-            var _this6 = this;
+            var _this7 = this;
 
             if (this.iuser.type == 0) {
                 axios.post('/group/' + this.group.id + '/addConversation', { group_id: this.group.id, type: this.iuser.type }).then(function (response) {
@@ -13936,11 +14008,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < response.data.length; i++) {
                         response.data[i].showEditor = false;
                         if (response.data[i].type == 0) {
-                            _this6.conversations.push(response.data[i]);
+                            _this7.conversations.push(response.data[i]);
                         } else if (response.data[i].type == 1) {
-                            _this6.conversations1.push(response.data[i]);
+                            _this7.conversations1.push(response.data[i]);
                         } else {
-                            _this6.conversations2.push(response.data[i]);
+                            _this7.conversations2.push(response.data[i]);
                         }
                     }
                 });
@@ -63520,10 +63592,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(0), _vm._v(" "), _vm._l((_vm.conversations), function(cv, index) {
     return _c('div', {
-      staticClass: "panel-body chat-panel",
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
       on: {
         "click": function($event) {
-          _vm.onChange(cv)
+          _vm.onChange(cv, 0)
         }
       }
     }, [_c('div', {
@@ -63543,7 +63615,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       on: {
         "change": function($event) {
-          _vm.change(cv.message, cv.conversation, 0)
+          _vm.change(cv, 0)
         }
       },
       model: {
@@ -63558,10 +63630,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(1), _vm._v(" "), _vm._l((_vm.conversations1), function(cv, index) {
     return _c('div', {
-      staticClass: "panel-body chat-panel",
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
       on: {
         "click": function($event) {
-          _vm.onChange(cv)
+          _vm.onChange(cv, 1)
         }
       }
     }, [_c('div', {
@@ -63581,7 +63653,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       on: {
         "change": function($event) {
-          _vm.change(cv.message, cv.conversation, 1)
+          _vm.change(cv, 1)
         }
       },
       model: {
@@ -63596,10 +63668,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(2), _vm._v(" "), _vm._l((_vm.conversations2), function(cv, index) {
     return _c('div', {
-      staticClass: "panel-body chat-panel",
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
       on: {
         "click": function($event) {
-          _vm.onChange(cv)
+          _vm.onChange(cv, 2)
         }
       }
     }, [_c('div', {
@@ -63619,7 +63691,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       },
       on: {
         "change": function($event) {
-          _vm.change(cv.message, cv.conversation, 2)
+          _vm.change(cv, 2)
         }
       },
       model: {

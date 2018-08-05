@@ -8,6 +8,12 @@ use DB;
 
 class TestController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function test(Request $request){
         if(!isset($request->group) || !isset($request->lang)){
             return 'Yêu cầu không hợp lệ!';

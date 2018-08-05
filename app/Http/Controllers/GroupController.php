@@ -15,6 +15,11 @@ use DB;
 
 class GroupController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
 	public function index(){
 		if(Auth::check()){
 			if(auth()->user()->permission == 1){
@@ -107,33 +112,36 @@ class GroupController extends Controller
         $users = collect(request('users'));
         $users2 = collect(request('users2'));
 
-        // update busy_job
-        foreach($users as $user){
-            $user = User::find($user);
-            $user->busy_job = 1;
-            $user->save();
-        }
-
-        foreach($users2 as $user){
-            $user = User::find($user);
-            $user->busy_job = 1;
-            $user->save();
-        }
-
         $group = Group::find($id);
         $group->name = request('name');
         $group->updated_by = auth()->user()->id;
         $group->save();
 
         // remove attach
-        Group::deleting(function($group)
-        {
-            $group->users()->detach();
-        });
+        foreach($group->users()->get() as $user){
+            $user->busy_job = 0;
+            $user->save();
+        }
+
+        $group->users()->detach();
+        // update busy_job
+        foreach($users as $user){
+            $userSelect = User::find($user['id']);
+            $userSelect->busy_job = 1;
+            $group->users()->attach($userSelect, ['type' => 1]);
+            $userSelect->save();
+        }
+
+        foreach($users2 as $user){
+            $userSelect = User::find($user['id']);
+            $userSelect->busy_job = 1;
+            $group->users()->attach($userSelect, ['type' => 2]);
+            $userSelect->save();
+        }
 
         // add new attach
-        $group->users()->attach($users, ['type' => 1]);
-        $group->users()->attach($users2, ['type' => 2]);
+        // $group->users()->attach($users, ['type' => 1]);
+        // $group->users()->attach($users2, ['type' => 2]);
 
         broadcast(new GroupUpdated($group))->toOthers();
 

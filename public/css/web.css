@@ -245,6 +245,21 @@ span.num-group {
   margin-bottom: 19px;
 }
 
+
+.chat-btn{
+  position: relative;
+}
+
+.note-chat{
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  display: block;
+  border-radius: 50%;
+  position: absolute;
+  top: -10px;
+  right: -6px;
+}
 .chat-panel.alert{
   margin-bottom: 0;
 }

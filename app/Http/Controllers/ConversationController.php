@@ -11,6 +11,12 @@ use DB;
 
 class ConversationController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function store(Request $request)
     {
         $conversation = Conversation::create([
@@ -36,6 +42,7 @@ class ConversationController extends Controller
             'group_id' => request('group_id'),
             'type' => 0,
             'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
             'conversation' => ($max + 1)
         ]);
         $conversation1 = Conversation::create([
@@ -43,6 +50,7 @@ class ConversationController extends Controller
             'group_id' => request('group_id'),
             'type' => 1,
             'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
             'conversation' => ($max + 1)
         ]);
         $conversation2 = Conversation::create([
@@ -50,6 +58,7 @@ class ConversationController extends Controller
             'group_id' => request('group_id'),
             'type' => 2,
             'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
             'conversation' => ($max + 1)
         ]);
         $listReturn[] = $conversation->load('user');

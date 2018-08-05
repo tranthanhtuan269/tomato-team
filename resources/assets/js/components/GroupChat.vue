@@ -9,7 +9,7 @@
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
                 <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
-                <button type="button" class="btn btn-primary pull-right btn-control" v-on:click="toggestChat(true)">Show Chat</button>
+                <button type="button" class="btn btn-primary pull-right btn-control chat-btn" v-on:click="toggestChat(true)">Show Chat <span class="note-chat" v-if="note_message == true">!</span></button>
             </div>
         </div>
         <div class="panel panel-primary">
@@ -94,7 +94,8 @@
                 conversations1: [],
                 conversations2: [],
                 message: '',
-                timeCost: 30,
+                note_message: false,
+                timeCost: 15,
                 listMessage: [],
                 done: 0,
                 group_id: this.group.id,
@@ -118,7 +119,9 @@
 
         mounted() {
             this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
-            this.listenAll();
+            this.listenNewMessage();
+            this.listenAddConversation();
+            this.listenActiveConversation();
         },
 
         created() {
@@ -132,6 +135,7 @@
                 var i;
                 for(i = 0; i < response.data.length; i++){
                     this.listMessage.push(response.data[i]);
+                    this.note_message = true;
                 }
             })
             .catch(e => {
@@ -170,6 +174,7 @@
             },
             toggestChat(status) {
                 this.showChat = status;
+                this.note_message = false;
             },
             onEditorBlur(quill) {
                 console.log('editor blur!', quill)
@@ -189,11 +194,13 @@
                 });
             },
 
-            listenAll() {
+            listenNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
+                        console.log(e);
                         if(e.type == -1){
                             this.listMessage.push(e);
+                            this.note_message = true;
                         }else if(e.type == 0){
                             var i = 0; 
                             for(i = 0; i < this.conversations.length; i++){
@@ -223,7 +230,8 @@
                             }
                         }
                     });
-
+            },
+            listenAddConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('AddConversation', (e) => {
                         this.$snotify.error('A conversation has been created! Refresh to update content!', {
@@ -233,7 +241,8 @@
                             pauseOnHover: true
                         });
                     });
-
+            },
+            listenActiveConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
                         var self = this;
@@ -265,8 +274,6 @@
 
             funcCount(obj){
                 obj.timeCount -= 1;
-                console.log(obj.timeCount);
-                console.log('run funcCount');
                 if(obj.timeCount == 0){
                     obj.isActive = false;
                     clearInterval(obj.timeDown);
@@ -276,7 +283,6 @@
 
             change(cv, type){
                 var self = this;
-                // if(cv.isActive) return;
                 if(cv.type == this.iuser.type || this.iuser.type == 0){
                     cv.timeCount = this.timeCost;
                 }

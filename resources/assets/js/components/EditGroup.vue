@@ -78,11 +78,11 @@
             Bus.$on('online_users', (users) => {
                 var self = this;
                 users = users.filter(function (item) {
-                    if(item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item)){
+                    if(item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item && !self.checkExistUser(self.usersSelected, item))){
                         self.onlineUsersSource.push(item);
                     }
 
-                    if(item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item)){
+                    if(item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item && !self.checkExistUser(self.users2Selected, item))){
                         self.onlineUsersTarget.push(item);
                     }
                 });
@@ -113,7 +113,6 @@
                 this.showAllUser = status;
             },
             checkExistUser(arr, user){
-                var id = arr.length + 1;
                 var found = arr.some(function (el) {
                     return el.id === user.id;
                 });
@@ -140,7 +139,7 @@
                     this.error_name = false;
                 }
 
-                axios.put('/groups/' + this.group.id, {name: this.group.name, users: this.users, users2: this.users2})
+                axios.put('/groups/' + this.group.id, {name: this.group.name, users: this.usersSelected, users2: this.users2Selected})
                 .then((response) => {
                     this.name = '';
                     Bus.$emit('groupUpdated', response.data);

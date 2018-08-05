@@ -11,6 +11,12 @@ use DB;
 
 class ConversationController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function store(Request $request)
     {
         $conversation = Conversation::create([

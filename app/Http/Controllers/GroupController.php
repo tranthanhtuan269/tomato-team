@@ -85,15 +85,15 @@ class GroupController extends Controller
 
         // update busy_job
         foreach($users as $user){
-            $user = User::find($user);
-            $user->busy_job = 1;
-            $user->save();
+            $finder = User::find($user);
+            $finder->busy_job = 1;
+            $finder->save();
         }
 
         foreach($users2 as $user){
-            $user = User::find($user);
-            $user->busy_job = 1;
-            $user->save();
+            $finder = User::find($user);
+            $finder->busy_job = 1;
+            $finder->save();
         }
 
         $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
@@ -125,6 +125,7 @@ class GroupController extends Controller
 
         $group->users()->detach();
         // update busy_job
+        $group->users()->attach(auth()->user()->id, ['type' => 0]);
         foreach($users as $user){
             $userSelect = User::find($user['id']);
             $userSelect->busy_job = 1;

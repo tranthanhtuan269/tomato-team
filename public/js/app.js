@@ -13299,6 +13299,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var _this = this;
 
         Bus.$on('online_users', function (users) {
+            console.log(users);
             var self = _this;
             users = users.filter(function (item) {
                 if (item.languages == 0) {
@@ -13312,6 +13313,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
         Bus.$on('user_join', function (user) {
+            console.log(user);
             if (user.languages == 0) {
                 _this.onlineUsersSource.push(user);
             }
@@ -13322,6 +13324,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         });
 
         Bus.$on('user_leave', function (user) {
+            console.log(user);
             _this.onlineUsersSource = _this.onlineUsersSource.filter(function (item) {
                 return user != item.id;
             });
@@ -13345,20 +13348,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             } else {
                 this.error_name = false;
             }
-
-            // if(this.users.length == 0){
-            //     this.error_source = true; 
-            //     return;
-            // }else{
-            //     this.error_source = false;
-            // }
-
-            // if(this.users2.length == 0){
-            //     this.error_target = true; 
-            //     return;
-            // }else{
-            //     this.error_target = false;
-            // }
 
             axios.post('/groups', { name: this.name, users: this.users, users2: this.users2 }).then(function (response) {
                 _this2.name = '';
@@ -13494,11 +13483,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         Bus.$on('online_users', function (users) {
             var self = _this;
             users = users.filter(function (item) {
-                if (item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item && !self.checkExistUser(self.usersSelected, item))) {
+                if (item.languages == 0 && !self.checkExistUser(self.onlineUsersSource, item) && !self.checkExistUser(self.usersSelected, item)) {
                     self.onlineUsersSource.push(item);
                 }
 
-                if (item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item && !self.checkExistUser(self.users2Selected, item))) {
+                if (item.languages == 1 && !self.checkExistUser(self.onlineUsersTarget, item) && !self.checkExistUser(self.users2Selected, item)) {
                     self.onlineUsersTarget.push(item);
                 }
             });
@@ -13530,11 +13519,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.showAllUser = status;
         },
         checkExistUser: function checkExistUser(arr, user) {
-            var found = arr.some(function (el) {
-                return el.id === user.id;
-            });
-            if (!found) return false;
-            return true;
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i].id == user.id) return true;
+            }
+            return false;
         },
         addUserJoined: function addUserJoined(joined) {
             var self = this;
@@ -64115,7 +64103,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToSourceTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.id))]) : _vm._e()
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
   })], 2), _vm._v(" "), _c('ul', {
     staticClass: "list-group col-sm-6"
   }, [_c('li', {
@@ -64131,7 +64119,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.addUserToTargetTeam(user)
         }
       }
-    }, [_vm._v(_vm._s(user.id))]) : _vm._e()
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
   })], 2)]), _vm._v(" "), _c('div', {
     staticClass: "panel-footer text-center"
   }, [(!_vm.showAllUser) ? _c('div', {

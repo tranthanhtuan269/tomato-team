@@ -38,11 +38,11 @@
             <div class="panel-body">
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Source team</li>
-                    <li class="list-group-item" v-for="user in onlineUsersSource" :value="user.id" v-on:click="addUserToSourceTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.id }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersSource" :value="user.id" v-on:click="addUserToSourceTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.name }}</li>
                 </ul>
                 <ul class="list-group col-sm-6">
                     <li class="list-group-item list-group-item-info">Target team</li>
-                    <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.id }}</li>
+                    <li class="list-group-item" v-for="user in onlineUsersTarget" :value="user.id" v-on:click="addUserToTargetTeam(user)" v-if="user.busy_job == 0 || showAllUser">{{ user.name }}</li>
                 </ul>
             </div>
             <div class="panel-footer text-center">
@@ -75,6 +75,7 @@
 
         mounted() {
             Bus.$on('online_users', (users) => {
+                console.log(users);
                 var self = this;
                 users = users.filter(function (item) {
                     if(item.languages == 0){
@@ -88,6 +89,7 @@
             });
 
             Bus.$on('user_join', (user) => {
+                console.log(user);
                 if(user.languages == 0){
                     this.onlineUsersSource.push(user);
                 }
@@ -98,6 +100,7 @@
             });
 
             Bus.$on('user_leave', (user) => {
+                console.log(user);
                 this.onlineUsersSource = this.onlineUsersSource.filter(function (item) {
                     return user != item.id;
                 });
@@ -118,20 +121,6 @@
                 }else{ 
                     this.error_name = false;
                 }
-
-                // if(this.users.length == 0){
-                //     this.error_source = true; 
-                //     return;
-                // }else{
-                //     this.error_source = false;
-                // }
-
-                // if(this.users2.length == 0){
-                //     this.error_target = true; 
-                //     return;
-                // }else{
-                //     this.error_target = false;
-                // }
 
                 axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
                 .then((response) => {

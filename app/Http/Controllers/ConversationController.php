@@ -6,6 +6,7 @@ use App\Conversation;
 use App\Events\NewMessage;
 use App\Events\AddConversation;
 use App\Events\ActiveConversation;
+use App\Events\ChangeStatusConversation;
 use Illuminate\Http\Request;
 use DB;
 
@@ -23,6 +24,7 @@ class ConversationController extends Controller
             'message' => request('message'),
             'group_id' => request('group_id'),
             'type' => request('type'),
+            'status' => 0,
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
             'conversation' => request('conversation'),
@@ -121,6 +123,14 @@ class ConversationController extends Controller
         $conv->update_by = auth()->user()->id;
         $conv->save();
         broadcast(new ActiveConversation($conv))->toOthers();
+        return $conv;
+    }
+
+    public function changeStatus(Request $request, $group){
+        $conv = Conversation::where('id', $request->cv_id)->first();
+        $conv->status = 1 - $conv->status;
+        $conv->save();
+        broadcast(new ChangeStatusConversation($conv))->toOthers();
         return $conv;
     }
 }

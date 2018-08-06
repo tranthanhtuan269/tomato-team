@@ -2,10 +2,8 @@
     <div>
         <div class="row btn-status">
             <div class="col-sm-12">
-                <button v-if="done == 0" class="btn btn-danger pull-right btn-control" v-on:click="changeStatus()">Done</button>
+                <button v-if="done == 0" class="btn btn-danger pull-right btn-control" v-on:click="changeStatus()">Processing</button>
                 <button v-if="done == 1" class="btn btn-success pull-right btn-control">Done</button>
-                <button v-if="done == 2" class="btn btn-warning pull-right btn-control" v-on:click="changeStatus3()">Done</button>
-                <button v-if="done == 3" class="btn btn-success pull-right btn-control">Done</button>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
                 <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
@@ -24,8 +22,12 @@
                             <b>KOR</b>
                         </div>
                         <div v-on:click="onChange(cv, 0)" v-for="(cv, index) in conversations" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
-                            <div v-html="index + 1" class="conversation-index"></div>
-                            <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0"></div>
+                            <div class="group-status">
+                                <div v-html="index + 1" class="conversation-index"></div>
+                                <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 0, cv.status)">P</div>
+                                <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 0, cv.status)">D</div>
+                            </div>
+                            <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0" class="conversation-content"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv, 0)" v-if="iuser.type == 0 && cv.showEditor"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
@@ -36,8 +38,12 @@
                             <b>VIE</b>
                         </div>
                         <div v-on:click="onChange(cv, 1)" v-for="(cv, index) in conversations1" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
-                            <div v-html="index + 1" class="conversation-index"></div>
-                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2"></div>
+                            <div class="group-status">
+                                <div v-html="index + 1" class="conversation-index"></div>
+                                <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 1, cv.status)">P</div>
+                                <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 1, cv.status)">D</div>
+                            </div>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2" class="conversation-content"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
@@ -46,8 +52,12 @@
                             <b>ENG</b>
                         </div>
                         <div v-on:click="onChange(cv, 2)" v-for="(cv, index) in conversations2" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
-                            <div v-html="index + 1" class="conversation-index"></div>
-                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1"></div>
+                            <div class="group-status">
+                                <div v-html="index + 1" class="conversation-index"></div>
+                                <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 2, cv.status)">P</div>
+                                <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 2, cv.status)">D</div>
+                            </div>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1" class="conversation-content"></div>
                             <quill-editor v-model="cv.message" v-on:change="change(cv, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
@@ -122,6 +132,7 @@
             this.listenNewMessage();
             this.listenAddConversation();
             this.listenActiveConversation();
+            this.listenStatusConversation();
         },
 
         created() {
@@ -185,12 +196,10 @@
             onEditorReady(quill) {
                 console.log('editor ready!', quill)
             },
-            store(message, conversation, type) {
-                axios.post('/conversations', {message: message, group_id: this.group.id, type: type, conversation: conversation})
+            store(cv, type) {
+                axios.post('/conversations', {message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation})
                 .then((response) => {
-                    if(this.done == 1 || this.done == 3){
-                        this.changeStatus2();
-                    }
+                    cv.status = 0;
                 });
             },
 
@@ -206,6 +215,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){
                                     this.conversations[i].message = e.message;
+                                    this.conversations[i].status = 0;
                                     this.conversations[i].timeCount = this.timeCost;
                                     this.conversations[i].isActive = true;
                                 }
@@ -215,6 +225,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations1[i].conversation == e.conversation){
                                     this.conversations1[i].message = e.message;
+                                    this.conversations1[i].status = 0;
                                     this.conversations1[i].timeCount = this.timeCost;
                                     this.conversations1[i].isActive = true;
                                 }
@@ -224,6 +235,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations2[i].conversation == e.conversation){
                                     this.conversations2[i].message = e.message;
+                                    this.conversations2[i].status = 0;
                                     this.conversations2[i].timeCount = this.timeCost;
                                     this.conversations2[i].isActive = true;
                                 }
@@ -271,6 +283,19 @@
                         }
                     });
             },
+            listenStatusConversation() {
+                Echo.private('groups.' + this.group.id)
+                    .listen('ChangeStatusConversation', (e) => {
+                        console.log(e);
+                        if(e.type == 0){
+                            this.conversations[e.conversation-1].status = e.status;
+                        }else if(e.type == 1){
+                            this.conversations1[e.conversation-1].status = e.status;
+                        }else if(e.type == 2){
+                            this.conversations2[e.conversation-1].status = e.status;
+                        }
+                    });
+            },
 
             funcCount(obj){
                 obj.timeCount -= 1;
@@ -286,7 +311,7 @@
                 if(cv.type == this.iuser.type || this.iuser.type == 0){
                     cv.timeCount = this.timeCost;
                 }
-                this.store(cv.message, cv.conversation, type);
+                this.store(cv, type);
             },
 
             onChange(cv, type){
@@ -343,66 +368,6 @@
                 }
             },
 
-            changeStatus(){
-                var self = this;
-                if(this.iuser.type == 0){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 1})
-                        .then((response) => {
-                            self.done = 1;
-                        });
-                }else if(this.iuser.type == 1){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1})
-                        .then((response) => {
-                            self.done = 1;
-                        });
-                }else if(this.iuser.type == 2){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1})
-                        .then((response) => {
-                            self.done = 1;
-                        });
-                }
-            },
-
-            changeStatus2(){
-                var self = this;
-                if(this.iuser.type == 0){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 2})
-                        .then((response) => {
-                            self.done = 2;
-                        });
-                }else if(this.iuser.type == 1){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2})
-                        .then((response) => {
-                            self.done = 2;
-                        });
-                }else if(this.iuser.type == 2){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2})
-                        .then((response) => {
-                            self.done = 2;
-                        });
-                }
-            },
-
-            changeStatus3(){
-                var self = this;
-                if(this.iuser.type == 0){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 3})
-                        .then((response) => {
-                            self.done = 3;
-                        });
-                }else if(this.iuser.type == 1){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3})
-                        .then((response) => {
-                            self.done = 3;
-                        });
-                }else if(this.iuser.type == 2){
-                    axios.post('/group/' + this.group.id + '/done', {group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3})
-                        .then((response) => {
-                            self.done = 3;
-                        });
-                }
-            },
-
             setCurrentStatus(status, status_admin, status_source, status_target){
                 if(this.iuser.type == 0){
                     this.done = status_admin;
@@ -430,6 +395,16 @@
                                 }
                             });
                 }
+            },
+
+            changeStatusConversation(cv, obj, status){
+                console.log(status);
+                if(cv.isActive) return;
+                cv.status = 1 - cv.status;
+                axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: status})
+                        .then((response) => {
+                            console.log(response);
+                        });
             }
         }
     }

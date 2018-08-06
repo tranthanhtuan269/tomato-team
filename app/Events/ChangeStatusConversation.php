@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewMessage implements ShouldBroadcast
+class ChangeStatusConversation implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -41,12 +41,12 @@ class NewMessage implements ShouldBroadcast
     {
         return [
             'conversation' => $this->conversation->conversation,
-            'message' => $this->conversation->message,
+            'group' => $this->conversation->group->id,
             'type' => $this->conversation->type,
             'status' => $this->conversation->status,
             'user' => [
-                'id' => $this->conversation->user->id,
-                'name' => $this->conversation->user->name,
+                'id' => $this->conversation->updateBy->id,
+                'name' => $this->conversation->updateBy->name,
             ]
         ];
     }

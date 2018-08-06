@@ -196,16 +196,40 @@ span.num-group {
   color:#000;
 }
 
+.group-status{
+  width: 35px;
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 5px;
+}
+
 .conversation-index{
   background-color: #666;
   color: #fff;
   padding: 8px;
-  width: 35px;
+  width: 100%;
   border-bottom-right-radius: 3px;
   text-align: center;
   float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
+}
+
+.conversation-status{
+  background-color: #505cff;
+  color: #fff;
+  padding: 8px;
+  width: 100%;
+  border-bottom-right-radius: 3px;
+  text-align: center;
+  float: left;
+  cursor: pointer;
+}
+
+.conversation-done{
+  background-color: #ff5050;
+}
+
+.conversation-content{
+  
 }
 
 .ql-editor{
@@ -260,6 +284,7 @@ span.num-group {
   top: -10px;
   right: -6px;
 }
+
 .chat-panel.alert{
   margin-bottom: 0;
 }

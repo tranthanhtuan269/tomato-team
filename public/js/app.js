@@ -13671,6 +13671,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -13716,6 +13726,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.listenNewMessage();
         this.listenAddConversation();
         this.listenActiveConversation();
+        this.listenStatusConversation();
     },
     created: function created() {
         var _this = this;
@@ -13778,58 +13789,57 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         onEditorReady: function onEditorReady(quill) {
             console.log('editor ready!', quill);
         },
-        store: function store(message, conversation, type) {
-            var _this3 = this;
-
-            axios.post('/conversations', { message: message, group_id: this.group.id, type: type, conversation: conversation }).then(function (response) {
-                if (_this3.done == 1 || _this3.done == 3) {
-                    _this3.changeStatus2();
-                }
+        store: function store(cv, type) {
+            axios.post('/conversations', { message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation }).then(function (response) {
+                cv.status = 0;
             });
         },
         listenNewMessage: function listenNewMessage() {
-            var _this4 = this;
+            var _this3 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
                 console.log(e);
                 if (e.type == -1) {
-                    _this4.listMessage.push(e);
-                    _this4.note_message = true;
+                    _this3.listMessage.push(e);
+                    _this3.note_message = true;
                 } else if (e.type == 0) {
                     var i = 0;
-                    for (i = 0; i < _this4.conversations.length; i++) {
-                        if (_this4.conversations[i].conversation == e.conversation) {
-                            _this4.conversations[i].message = e.message;
-                            _this4.conversations[i].timeCount = _this4.timeCost;
-                            _this4.conversations[i].isActive = true;
+                    for (i = 0; i < _this3.conversations.length; i++) {
+                        if (_this3.conversations[i].conversation == e.conversation) {
+                            _this3.conversations[i].message = e.message;
+                            _this3.conversations[i].status = 0;
+                            _this3.conversations[i].timeCount = _this3.timeCost;
+                            _this3.conversations[i].isActive = true;
                         }
                     }
                 } else if (e.type == 1) {
                     var i = 0;
-                    for (i = 0; i < _this4.conversations.length; i++) {
-                        if (_this4.conversations1[i].conversation == e.conversation) {
-                            _this4.conversations1[i].message = e.message;
-                            _this4.conversations1[i].timeCount = _this4.timeCost;
-                            _this4.conversations1[i].isActive = true;
+                    for (i = 0; i < _this3.conversations.length; i++) {
+                        if (_this3.conversations1[i].conversation == e.conversation) {
+                            _this3.conversations1[i].message = e.message;
+                            _this3.conversations1[i].status = 0;
+                            _this3.conversations1[i].timeCount = _this3.timeCost;
+                            _this3.conversations1[i].isActive = true;
                         }
                     }
                 } else if (e.type == 2) {
                     var i = 0;
-                    for (i = 0; i < _this4.conversations.length; i++) {
-                        if (_this4.conversations2[i].conversation == e.conversation) {
-                            _this4.conversations2[i].message = e.message;
-                            _this4.conversations2[i].timeCount = _this4.timeCost;
-                            _this4.conversations2[i].isActive = true;
+                    for (i = 0; i < _this3.conversations.length; i++) {
+                        if (_this3.conversations2[i].conversation == e.conversation) {
+                            _this3.conversations2[i].message = e.message;
+                            _this3.conversations2[i].status = 0;
+                            _this3.conversations2[i].timeCount = _this3.timeCost;
+                            _this3.conversations2[i].isActive = true;
                         }
                     }
                 }
             });
         },
         listenAddConversation: function listenAddConversation() {
-            var _this5 = this;
+            var _this4 = this;
 
             Echo.private('groups.' + this.group.id).listen('AddConversation', function (e) {
-                _this5.$snotify.error('A conversation has been created! Refresh to update content!', {
+                _this4.$snotify.error('A conversation has been created! Refresh to update content!', {
                     timeout: 60000,
                     showProgressBar: true,
                     closeOnClick: true,
@@ -13838,31 +13848,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         listenActiveConversation: function listenActiveConversation() {
-            var _this6 = this;
+            var _this5 = this;
 
             Echo.private('groups.' + this.group.id).listen('ActiveConversation', function (e) {
-                var self = _this6;
+                var self = _this5;
                 if (e.type == 0) {
-                    _this6.conversations[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations[e.conversation - 1].isActive = true;
-                    clearInterval(_this6.conversations[e.conversation - 1].timeDown);
-                    _this6.conversations[e.conversation - 1].timeDown = setInterval(function () {
+                    _this5.conversations[e.conversation - 1].timeCount = _this5.timeCost;
+                    _this5.conversations[e.conversation - 1].isActive = true;
+                    clearInterval(_this5.conversations[e.conversation - 1].timeDown);
+                    _this5.conversations[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 1) {
-                    _this6.conversations1[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations1[e.conversation - 1].isActive = true;
-                    clearInterval(_this6.conversations1[e.conversation - 1].timeDown);
-                    _this6.conversations1[e.conversation - 1].timeDown = setInterval(function () {
+                    _this5.conversations1[e.conversation - 1].timeCount = _this5.timeCost;
+                    _this5.conversations1[e.conversation - 1].isActive = true;
+                    clearInterval(_this5.conversations1[e.conversation - 1].timeDown);
+                    _this5.conversations1[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations1[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 2) {
-                    _this6.conversations2[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations2[e.conversation - 1].isActive = true;
-                    clearInterval(_this6.conversations2[e.conversation - 1].timeDown);
-                    _this6.conversations2[e.conversation - 1].timeDown = setInterval(function () {
+                    _this5.conversations2[e.conversation - 1].timeCount = _this5.timeCost;
+                    _this5.conversations2[e.conversation - 1].isActive = true;
+                    clearInterval(_this5.conversations2[e.conversation - 1].timeDown);
+                    _this5.conversations2[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations2[e.conversation - 1]);
                     }, 1000);
+                }
+            });
+        },
+        listenStatusConversation: function listenStatusConversation() {
+            var _this6 = this;
+
+            Echo.private('groups.' + this.group.id).listen('ChangeStatusConversation', function (e) {
+                console.log(e);
+                if (e.type == 0) {
+                    _this6.conversations[e.conversation - 1].status = e.status;
+                } else if (e.type == 1) {
+                    _this6.conversations1[e.conversation - 1].status = e.status;
+                } else if (e.type == 2) {
+                    _this6.conversations2[e.conversation - 1].status = e.status;
                 }
             });
         },
@@ -13879,7 +13903,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             if (cv.type == this.iuser.type || this.iuser.type == 0) {
                 cv.timeCount = this.timeCost;
             }
-            this.store(cv.message, cv.conversation, type);
+            this.store(cv, type);
         },
         onChange: function onChange(cv, type) {
             var self = this;
@@ -13930,54 +13954,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
         },
-        changeStatus: function changeStatus() {
-            var self = this;
-            if (this.iuser.type == 0) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 1 }).then(function (response) {
-                    self.done = 1;
-                });
-            } else if (this.iuser.type == 1) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 1 }).then(function (response) {
-                    self.done = 1;
-                });
-            } else if (this.iuser.type == 2) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 1 }).then(function (response) {
-                    self.done = 1;
-                });
-            }
-        },
-        changeStatus2: function changeStatus2() {
-            var self = this;
-            if (this.iuser.type == 0) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 2 }).then(function (response) {
-                    self.done = 2;
-                });
-            } else if (this.iuser.type == 1) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 2 }).then(function (response) {
-                    self.done = 2;
-                });
-            } else if (this.iuser.type == 2) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 2 }).then(function (response) {
-                    self.done = 2;
-                });
-            }
-        },
-        changeStatus3: function changeStatus3() {
-            var self = this;
-            if (this.iuser.type == 0) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "admin", status: 3 }).then(function (response) {
-                    self.done = 3;
-                });
-            } else if (this.iuser.type == 1) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "source", status: 3 }).then(function (response) {
-                    self.done = 3;
-                });
-            } else if (this.iuser.type == 2) {
-                axios.post('/group/' + this.group.id + '/done', { group_id: this.group.id, type: this.iuser.type, statusType: "target", status: 3 }).then(function (response) {
-                    self.done = 3;
-                });
-            }
-        },
         setCurrentStatus: function setCurrentStatus(status, status_admin, status_source, status_target) {
             if (this.iuser.type == 0) {
                 this.done = status_admin;
@@ -14005,6 +13981,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     }
                 });
             }
+        },
+        changeStatusConversation: function changeStatusConversation(cv, obj, status) {
+            console.log(status);
+            if (cv.isActive) return;
+            cv.status = 1 - cv.status;
+            axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: status }).then(function (response) {
+                console.log(response);
+            });
         }
     }
 });
@@ -14217,9 +14201,9 @@ window._ = __webpack_require__(49);
  */
 
 try {
-    window.$ = window.jQuery = __webpack_require__(47);
+  window.$ = window.jQuery = __webpack_require__(47);
 
-    __webpack_require__(41);
+  __webpack_require__(41);
 } catch (e) {}
 
 /**
@@ -14241,9 +14225,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 var token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
-    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 /**
@@ -14256,10 +14240,10 @@ if (token) {
 window.Pusher = __webpack_require__(53);
 
 window.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo___default.a({
-    broadcaster: 'pusher',
-    key: 'f8f94e4df8f94da198f4',
-    cluster: 'ap1',
-    encrypted: true
+  broadcaster: 'pusher',
+  key: 'f8f94e4df8f94da198f4',
+  cluster: 'ap1',
+  encrypted: true
 });
 
 /***/ }),
@@ -63273,13 +63257,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(33),
   /* template */
-  __webpack_require__(72),
+  __webpack_require__(71),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\CreateGroup.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/CreateGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CreateGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63290,9 +63274,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6443a75d", Component.options)
+    hotAPI.createRecord("data-v-3f6ed9f5", Component.options)
   } else {
-    hotAPI.reload("data-v-6443a75d", Component.options)
+    hotAPI.reload("data-v-3f6ed9f5", Component.options)
   }
 })()}
 
@@ -63307,13 +63291,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(34),
   /* template */
-  __webpack_require__(70),
+  __webpack_require__(72),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\EditGroup.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/EditGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63324,9 +63308,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-53c01a8f", Component.options)
+    hotAPI.createRecord("data-v-54c71327", Component.options)
   } else {
-    hotAPI.reload("data-v-53c01a8f", Component.options)
+    hotAPI.reload("data-v-54c71327", Component.options)
   }
 })()}
 
@@ -63341,13 +63325,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(35),
   /* template */
-  __webpack_require__(69),
+  __webpack_require__(70),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\GroupChat.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/GroupChat.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] GroupChat.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63358,9 +63342,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-268d3171", Component.options)
+    hotAPI.createRecord("data-v-27942a09", Component.options)
   } else {
-    hotAPI.reload("data-v-268d3171", Component.options)
+    hotAPI.reload("data-v-27942a09", Component.options)
   }
 })()}
 
@@ -63375,13 +63359,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(36),
   /* template */
-  __webpack_require__(71),
+  __webpack_require__(74),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Groups.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Groups.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Groups.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63392,9 +63376,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-5412f1ca", Component.options)
+    hotAPI.createRecord("data-v-6fa88032", Component.options)
   } else {
-    hotAPI.reload("data-v-5412f1ca", Component.options)
+    hotAPI.reload("data-v-6fa88032", Component.options)
   }
 })()}
 
@@ -63409,13 +63393,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(37),
   /* template */
-  __webpack_require__(75),
+  __webpack_require__(69),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Message.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Message.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Message.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63426,9 +63410,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-cbaa58fe", Component.options)
+    hotAPI.createRecord("data-v-1d71dbce", Component.options)
   } else {
-    hotAPI.reload("data-v-cbaa58fe", Component.options)
+    hotAPI.reload("data-v-1d71dbce", Component.options)
   }
 })()}
 
@@ -63449,7 +63433,7 @@ var Component = __webpack_require__(1)(
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Notification.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Notification.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Notification.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63460,9 +63444,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-64c2823e", Component.options)
+    hotAPI.createRecord("data-v-57d9df49", Component.options)
   } else {
-    hotAPI.reload("data-v-64c2823e", Component.options)
+    hotAPI.reload("data-v-57d9df49", Component.options)
   }
 })()}
 
@@ -63477,13 +63461,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(39),
   /* template */
-  __webpack_require__(74),
+  __webpack_require__(75),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\VueImport.vue"
+Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/VueImport.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] VueImport.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63494,9 +63478,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7ed6adc5", Component.options)
+    hotAPI.createRecord("data-v-7fdda65d", Component.options)
   } else {
-    hotAPI.reload("data-v-7ed6adc5", Component.options)
+    hotAPI.reload("data-v-7fdda65d", Component.options)
   }
 })()}
 
@@ -63505,6 +63489,27 @@ module.exports = Component.exports
 
 /***/ }),
 /* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "message-item"
+  }, [_c('li', {
+    staticClass: "list-group-item"
+  }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
+    staticClass: "badge pull-right badge-danger"
+  }, [_vm._v(_vm._s(_vm.user))])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-1d71dbce", module.exports)
+  }
+}
+
+/***/ }),
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -63519,16 +63524,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.changeStatus()
       }
     }
-  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 1) ? _c('button', {
-    staticClass: "btn btn-success pull-right btn-control"
-  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 2) ? _c('button', {
-    staticClass: "btn btn-warning pull-right btn-control",
-    on: {
-      "click": function($event) {
-        _vm.changeStatus3()
-      }
-    }
-  }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), (_vm.done == 3) ? _c('button', {
+  }, [_vm._v("Processing")]) : _vm._e(), _vm._v(" "), (_vm.done == 1) ? _c('button', {
     staticClass: "btn btn-success pull-right btn-control"
   }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), _c('a', {
     staticClass: "btn btn-primary pull-right btn-control",
@@ -63587,11 +63583,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }, [_c('div', {
+      staticClass: "group-status"
+    }, [_c('div', {
       staticClass: "conversation-index",
       domProps: {
         "innerHTML": _vm._s(index + 1)
       }
-    }), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor) || _vm.iuser.type != 0) ? _c('div', {
+    }), _vm._v(" "), (cv.status == 0) ? _c('div', {
+      staticClass: "conversation-status",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 0, cv.status)
+        }
+      }
+    }, [_vm._v("P")]) : _vm._e(), _vm._v(" "), (cv.status == 1) ? _c('div', {
+      staticClass: "conversation-status conversation-done",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 0, cv.status)
+        }
+      }
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor) || _vm.iuser.type != 0) ? _c('div', {
+      staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
       }
@@ -63625,11 +63638,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }, [_c('div', {
+      staticClass: "group-status"
+    }, [_c('div', {
       staticClass: "conversation-index",
       domProps: {
         "innerHTML": _vm._s(index + 1)
       }
-    }), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor) || _vm.iuser.type == 2) ? _c('div', {
+    }), _vm._v(" "), (cv.status == 0) ? _c('div', {
+      staticClass: "conversation-status",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 1, cv.status)
+        }
+      }
+    }, [_vm._v("P")]) : _vm._e(), _vm._v(" "), (cv.status == 1) ? _c('div', {
+      staticClass: "conversation-status conversation-done",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 1, cv.status)
+        }
+      }
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor) || _vm.iuser.type == 2) ? _c('div', {
+      staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
       }
@@ -63663,11 +63693,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }, [_c('div', {
+      staticClass: "group-status"
+    }, [_c('div', {
       staticClass: "conversation-index",
       domProps: {
         "innerHTML": _vm._s(index + 1)
       }
-    }), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor) || _vm.iuser.type == 1) ? _c('div', {
+    }), _vm._v(" "), (cv.status == 0) ? _c('div', {
+      staticClass: "conversation-status",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 2, cv.status)
+        }
+      }
+    }, [_vm._v("P")]) : _vm._e(), _vm._v(" "), (cv.status == 1) ? _c('div', {
+      staticClass: "conversation-status conversation-done",
+      on: {
+        "click": function($event) {
+          _vm.changeStatusConversation(cv, 2, cv.status)
+        }
+      }
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor) || _vm.iuser.type == 1) ? _c('div', {
+      staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
       }
@@ -63775,204 +63822,12 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-268d3171", module.exports)
-  }
-}
-
-/***/ }),
-/* 70 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [(_vm.updated_success) ? _c('div', {
-    staticClass: "alert alert-success",
-    attrs: {
-      "role": "alert"
-    }
-  }, [_vm._v("Sửa group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
-    staticClass: "alert alert-danger",
-    attrs: {
-      "role": "alert"
-    }
-  }, [_vm._v("Tên group không nên để trống!")]) : _vm._e(), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-6"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("Edit Group: "), _c('span', {
-    domProps: {
-      "innerHTML": _vm._s(_vm.group.name)
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('form', [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    attrs: {
-      "for": "exampleInputEmail1"
-    }
-  }, [_vm._v("Group Name")]), _vm._v(" "), _c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.group.name),
-      expression: "group.name"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "type": "text",
-      "placeholder": "Group Name"
-    },
-    domProps: {
-      "value": (_vm.group.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.$set(_vm.group, "name", $event.target.value)
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.usersSelected), function(user) {
-    return _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.rollbackUserToSourceTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))])
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
-    return _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.rollbackUserToTargetTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))])
-  })], 2)])])]), _vm._v(" "), _c('div', {
-    staticClass: "panel-footer text-center"
-  }, [_c('button', {
-    staticClass: "btn btn-primary",
-    attrs: {
-      "type": "submit"
-    },
-    on: {
-      "click": function($event) {
-        $event.preventDefault();
-        return _vm.updateGroup($event)
-      }
-    }
-  }, [_vm._v("Save")])])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-6"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("List Users")]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
-    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.addUserToSourceTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
-  })], 2), _vm._v(" "), _c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
-    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.addUserToTargetTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "panel-footer"
-  }, [(!_vm.showAllUser) ? _c('div', {
-    staticClass: "btn btn-primary",
-    on: {
-      "click": function($event) {
-        _vm.changeShowAll(true)
-      }
-    }
-  }, [_vm._v("Show all")]) : _vm._e(), _vm._v(" "), (_vm.showAllUser) ? _c('div', {
-    staticClass: "btn btn-primary",
-    on: {
-      "click": function($event) {
-        _vm.changeShowAll(false)
-      }
-    }
-  }, [_vm._v("Show available")]) : _vm._e()])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-53c01a8f", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-27942a09", module.exports)
   }
 }
 
 /***/ }),
 /* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', _vm._l((_vm.groups), function(group) {
-    return _c('group-chat', {
-      key: group.id,
-      attrs: {
-        "group": group,
-        "iuser": _vm.user
-      }
-    })
-  }))
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-5412f1ca", module.exports)
-  }
-}
-
-/***/ }),
-/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -64142,7 +63997,176 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6443a75d", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-3f6ed9f5", module.exports)
+  }
+}
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [(_vm.updated_success) ? _c('div', {
+    staticClass: "alert alert-success",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Sửa group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
+    staticClass: "alert alert-danger",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Tên group không nên để trống!")]) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("Edit Group: "), _c('span', {
+    domProps: {
+      "innerHTML": _vm._s(_vm.group.name)
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('form', [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    attrs: {
+      "for": "exampleInputEmail1"
+    }
+  }, [_vm._v("Group Name")]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.group.name),
+      expression: "group.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "type": "text",
+      "placeholder": "Group Name"
+    },
+    domProps: {
+      "value": (_vm.group.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.$set(_vm.group, "name", $event.target.value)
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.usersSelected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToSourceTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToTargetTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)])])]), _vm._v(" "), _c('div', {
+    staticClass: "panel-footer text-center"
+  }, [_c('button', {
+    staticClass: "btn btn-primary",
+    attrs: {
+      "type": "submit"
+    },
+    on: {
+      "click": function($event) {
+        $event.preventDefault();
+        return _vm.updateGroup($event)
+      }
+    }
+  }, [_vm._v("Save")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("List Users")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToSourceTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
+  })], 2), _vm._v(" "), _c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToTargetTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "panel-footer"
+  }, [(!_vm.showAllUser) ? _c('div', {
+    staticClass: "btn btn-primary",
+    on: {
+      "click": function($event) {
+        _vm.changeShowAll(true)
+      }
+    }
+  }, [_vm._v("Show all")]) : _vm._e(), _vm._v(" "), (_vm.showAllUser) ? _c('div', {
+    staticClass: "btn btn-primary",
+    on: {
+      "click": function($event) {
+        _vm.changeShowAll(false)
+      }
+    }
+  }, [_vm._v("Show available")]) : _vm._e()])])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-54c71327", module.exports)
   }
 }
 
@@ -64185,12 +64209,35 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-64c2823e", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-57d9df49", module.exports)
   }
 }
 
 /***/ }),
 /* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', _vm._l((_vm.groups), function(group) {
+    return _c('group-chat', {
+      key: group.id,
+      attrs: {
+        "group": group,
+        "iuser": _vm.user
+      }
+    })
+  }))
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-6fa88032", module.exports)
+  }
+}
+
+/***/ }),
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -64297,28 +64344,7 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7ed6adc5", module.exports)
-  }
-}
-
-/***/ }),
-/* 75 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "message-item"
-  }, [_c('li', {
-    staticClass: "list-group-item"
-  }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
-    staticClass: "badge pull-right badge-danger"
-  }, [_vm._v(_vm._s(_vm.user))])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-cbaa58fe", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-7fdda65d", module.exports)
   }
 }
 

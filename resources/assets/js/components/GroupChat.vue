@@ -385,6 +385,7 @@
                                 var i;
                                 for(i = 0; i < response.data.length; i++){
                                     response.data[i].showEditor = false;
+                                    response.data[i].status = false;
                                     if(response.data[i].type == 0){
                                         this.conversations.push(response.data[i]);
                                     }else if(response.data[i].type == 1){

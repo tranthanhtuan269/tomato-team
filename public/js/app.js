@@ -13971,6 +13971,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     var i;
                     for (i = 0; i < response.data.length; i++) {
                         response.data[i].showEditor = false;
+                        response.data[i].status = false;
                         if (response.data[i].type == 0) {
                             _this7.conversations.push(response.data[i]);
                         } else if (response.data[i].type == 1) {

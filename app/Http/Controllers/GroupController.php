@@ -98,7 +98,12 @@ class GroupController extends Controller
 
         $group = Group::create(['name' => request('name'), 'created_by' => auth()->user()->id, 'updated_by' => auth()->user()->id]);
 
-        $group->users()->attach(auth()->user()->id, ['type' => 0]);
+        // $group->users()->attach(auth()->user()->id, ['type' => 0]);
+        // add all user is admin
+        $admins = User::where('permission', 1)->select('id')->get();
+        foreach($admins as $admin){
+            $group->users()->attach($admin->id, ['type' => 0]);
+        }
         $group->users()->attach($users, ['type' => 1]);
         $group->users()->attach($users2, ['type' => 2]);
 
@@ -125,7 +130,11 @@ class GroupController extends Controller
 
         $group->users()->detach();
         // update busy_job
-        $group->users()->attach(auth()->user()->id, ['type' => 0]);
+        // $group->users()->attach(auth()->user()->id, ['type' => 0]);
+        $admins = User::where('permission', 1)->select('id')->get();
+        foreach($admins as $admin){
+            $group->users()->attach($admin->id, ['type' => 0]);
+        }
         foreach($users as $user){
             $userSelect = User::find($user['id']);
             $userSelect->busy_job = 1;

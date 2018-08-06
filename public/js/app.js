@@ -13983,8 +13983,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         changeStatusConversation: function changeStatusConversation(cv, obj, status) {
-            console.log(status);
-            if (cv.isActive) return;
+            if (cv.isActive || cv.showEditor) return;
             cv.status = 1 - cv.status;
             axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: status }).then(function (response) {
                 console.log(response);
@@ -14201,9 +14200,9 @@ window._ = __webpack_require__(49);
  */
 
 try {
-  window.$ = window.jQuery = __webpack_require__(47);
+    window.$ = window.jQuery = __webpack_require__(47);
 
-  __webpack_require__(41);
+    __webpack_require__(41);
 } catch (e) {}
 
 /**
@@ -14225,9 +14224,9 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 var token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
-  window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 /**
@@ -14240,10 +14239,10 @@ if (token) {
 window.Pusher = __webpack_require__(53);
 
 window.Echo = new __WEBPACK_IMPORTED_MODULE_0_laravel_echo___default.a({
-  broadcaster: 'pusher',
-  key: 'f8f94e4df8f94da198f4',
-  cluster: 'ap1',
-  encrypted: true
+    broadcaster: 'pusher',
+    key: 'f8f94e4df8f94da198f4',
+    cluster: 'ap1',
+    encrypted: true
 });
 
 /***/ }),
@@ -63257,13 +63256,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(33),
   /* template */
-  __webpack_require__(71),
+  __webpack_require__(72),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/CreateGroup.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\CreateGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CreateGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63274,9 +63273,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-3f6ed9f5", Component.options)
+    hotAPI.createRecord("data-v-6443a75d", Component.options)
   } else {
-    hotAPI.reload("data-v-3f6ed9f5", Component.options)
+    hotAPI.reload("data-v-6443a75d", Component.options)
   }
 })()}
 
@@ -63291,13 +63290,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(34),
   /* template */
-  __webpack_require__(72),
+  __webpack_require__(70),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/EditGroup.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\EditGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63308,9 +63307,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-54c71327", Component.options)
+    hotAPI.createRecord("data-v-53c01a8f", Component.options)
   } else {
-    hotAPI.reload("data-v-54c71327", Component.options)
+    hotAPI.reload("data-v-53c01a8f", Component.options)
   }
 })()}
 
@@ -63325,13 +63324,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(35),
   /* template */
-  __webpack_require__(70),
+  __webpack_require__(69),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/GroupChat.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\GroupChat.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] GroupChat.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63342,9 +63341,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-27942a09", Component.options)
+    hotAPI.createRecord("data-v-268d3171", Component.options)
   } else {
-    hotAPI.reload("data-v-27942a09", Component.options)
+    hotAPI.reload("data-v-268d3171", Component.options)
   }
 })()}
 
@@ -63359,13 +63358,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(36),
   /* template */
-  __webpack_require__(74),
+  __webpack_require__(71),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Groups.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Groups.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Groups.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63376,9 +63375,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-6fa88032", Component.options)
+    hotAPI.createRecord("data-v-5412f1ca", Component.options)
   } else {
-    hotAPI.reload("data-v-6fa88032", Component.options)
+    hotAPI.reload("data-v-5412f1ca", Component.options)
   }
 })()}
 
@@ -63393,13 +63392,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(37),
   /* template */
-  __webpack_require__(69),
+  __webpack_require__(75),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Message.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Message.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Message.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63410,9 +63409,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-1d71dbce", Component.options)
+    hotAPI.createRecord("data-v-cbaa58fe", Component.options)
   } else {
-    hotAPI.reload("data-v-1d71dbce", Component.options)
+    hotAPI.reload("data-v-cbaa58fe", Component.options)
   }
 })()}
 
@@ -63433,7 +63432,7 @@ var Component = __webpack_require__(1)(
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/Notification.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\Notification.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Notification.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63444,9 +63443,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-57d9df49", Component.options)
+    hotAPI.createRecord("data-v-64c2823e", Component.options)
   } else {
-    hotAPI.reload("data-v-57d9df49", Component.options)
+    hotAPI.reload("data-v-64c2823e", Component.options)
   }
 })()}
 
@@ -63461,13 +63460,13 @@ var Component = __webpack_require__(1)(
   /* script */
   __webpack_require__(39),
   /* template */
-  __webpack_require__(75),
+  __webpack_require__(74),
   /* scopeId */
   null,
   /* cssModules */
   null
 )
-Component.options.__file = "/var/www/html/tomato/resources/assets/js/components/VueImport.vue"
+Component.options.__file = "F:\\outsource\\group-chat-app-laravel-pusher\\resources\\assets\\js\\components\\VueImport.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] VueImport.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -63478,9 +63477,9 @@ if (false) {(function () {
   if (!hotAPI.compatible) return
   module.hot.accept()
   if (!module.hot.data) {
-    hotAPI.createRecord("data-v-7fdda65d", Component.options)
+    hotAPI.createRecord("data-v-7ed6adc5", Component.options)
   } else {
-    hotAPI.reload("data-v-7fdda65d", Component.options)
+    hotAPI.reload("data-v-7ed6adc5", Component.options)
   }
 })()}
 
@@ -63489,27 +63488,6 @@ module.exports = Component.exports
 
 /***/ }),
 /* 69 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: "message-item"
-  }, [_c('li', {
-    staticClass: "list-group-item"
-  }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
-    staticClass: "badge pull-right badge-danger"
-  }, [_vm._v(_vm._s(_vm.user))])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-1d71dbce", module.exports)
-  }
-}
-
-/***/ }),
-/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -63822,12 +63800,204 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-27942a09", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-268d3171", module.exports)
+  }
+}
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [(_vm.updated_success) ? _c('div', {
+    staticClass: "alert alert-success",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Sửa group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
+    staticClass: "alert alert-danger",
+    attrs: {
+      "role": "alert"
+    }
+  }, [_vm._v("Tên group không nên để trống!")]) : _vm._e(), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("Edit Group: "), _c('span', {
+    domProps: {
+      "innerHTML": _vm._s(_vm.group.name)
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('form', [_c('div', {
+    staticClass: "form-group"
+  }, [_c('label', {
+    attrs: {
+      "for": "exampleInputEmail1"
+    }
+  }, [_vm._v("Group Name")]), _vm._v(" "), _c('input', {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: (_vm.group.name),
+      expression: "group.name"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      "type": "text",
+      "placeholder": "Group Name"
+    },
+    domProps: {
+      "value": (_vm.group.name)
+    },
+    on: {
+      "input": function($event) {
+        if ($event.target.composing) { return; }
+        _vm.$set(_vm.group, "name", $event.target.value)
+      }
+    }
+  })]), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.usersSelected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToSourceTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "form-group"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
+    return _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.rollbackUserToTargetTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))])
+  })], 2)])])]), _vm._v(" "), _c('div', {
+    staticClass: "panel-footer text-center"
+  }, [_c('button', {
+    staticClass: "btn btn-primary",
+    attrs: {
+      "type": "submit"
+    },
+    on: {
+      "click": function($event) {
+        $event.preventDefault();
+        return _vm.updateGroup($event)
+      }
+    }
+  }, [_vm._v("Save")])])])]), _vm._v(" "), _c('div', {
+    staticClass: "col-sm-6"
+  }, [_c('div', {
+    staticClass: "panel panel-default"
+  }, [_c('div', {
+    staticClass: "panel-heading"
+  }, [_vm._v("List Users")]), _vm._v(" "), _c('div', {
+    staticClass: "panel-body"
+  }, [_c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToSourceTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
+  })], 2), _vm._v(" "), _c('ul', {
+    staticClass: "list-group col-sm-6"
+  }, [_c('li', {
+    staticClass: "list-group-item list-group-item-info"
+  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
+    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
+      staticClass: "list-group-item",
+      attrs: {
+        "value": user.id
+      },
+      on: {
+        "click": function($event) {
+          _vm.addUserToTargetTeam(user)
+        }
+      }
+    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
+  })], 2)]), _vm._v(" "), _c('div', {
+    staticClass: "panel-footer"
+  }, [(!_vm.showAllUser) ? _c('div', {
+    staticClass: "btn btn-primary",
+    on: {
+      "click": function($event) {
+        _vm.changeShowAll(true)
+      }
+    }
+  }, [_vm._v("Show all")]) : _vm._e(), _vm._v(" "), (_vm.showAllUser) ? _c('div', {
+    staticClass: "btn btn-primary",
+    on: {
+      "click": function($event) {
+        _vm.changeShowAll(false)
+      }
+    }
+  }, [_vm._v("Show available")]) : _vm._e()])])])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-53c01a8f", module.exports)
   }
 }
 
 /***/ }),
 /* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', _vm._l((_vm.groups), function(group) {
+    return _c('group-chat', {
+      key: group.id,
+      attrs: {
+        "group": group,
+        "iuser": _vm.user
+      }
+    })
+  }))
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-5412f1ca", module.exports)
+  }
+}
+
+/***/ }),
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -63997,176 +64167,7 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-3f6ed9f5", module.exports)
-  }
-}
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [(_vm.updated_success) ? _c('div', {
-    staticClass: "alert alert-success",
-    attrs: {
-      "role": "alert"
-    }
-  }, [_vm._v("Sửa group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
-    staticClass: "alert alert-danger",
-    attrs: {
-      "role": "alert"
-    }
-  }, [_vm._v("Tên group không nên để trống!")]) : _vm._e(), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-6"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("Edit Group: "), _c('span', {
-    domProps: {
-      "innerHTML": _vm._s(_vm.group.name)
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('form', [_c('div', {
-    staticClass: "form-group"
-  }, [_c('label', {
-    attrs: {
-      "for": "exampleInputEmail1"
-    }
-  }, [_vm._v("Group Name")]), _vm._v(" "), _c('input', {
-    directives: [{
-      name: "model",
-      rawName: "v-model",
-      value: (_vm.group.name),
-      expression: "group.name"
-    }],
-    staticClass: "form-control",
-    attrs: {
-      "type": "text",
-      "placeholder": "Group Name"
-    },
-    domProps: {
-      "value": (_vm.group.name)
-    },
-    on: {
-      "input": function($event) {
-        if ($event.target.composing) { return; }
-        _vm.$set(_vm.group, "name", $event.target.value)
-      }
-    }
-  })]), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.usersSelected), function(user) {
-    return _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.rollbackUserToSourceTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))])
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "form-group"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.users2Selected), function(user) {
-    return _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.rollbackUserToTargetTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))])
-  })], 2)])])]), _vm._v(" "), _c('div', {
-    staticClass: "panel-footer text-center"
-  }, [_c('button', {
-    staticClass: "btn btn-primary",
-    attrs: {
-      "type": "submit"
-    },
-    on: {
-      "click": function($event) {
-        $event.preventDefault();
-        return _vm.updateGroup($event)
-      }
-    }
-  }, [_vm._v("Save")])])])]), _vm._v(" "), _c('div', {
-    staticClass: "col-sm-6"
-  }, [_c('div', {
-    staticClass: "panel panel-default"
-  }, [_c('div', {
-    staticClass: "panel-heading"
-  }, [_vm._v("List Users")]), _vm._v(" "), _c('div', {
-    staticClass: "panel-body"
-  }, [_c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Source team")]), _vm._v(" "), _vm._l((_vm.onlineUsersSource), function(user) {
-    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.addUserToSourceTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
-  })], 2), _vm._v(" "), _c('ul', {
-    staticClass: "list-group col-sm-6"
-  }, [_c('li', {
-    staticClass: "list-group-item list-group-item-info"
-  }, [_vm._v("Target team")]), _vm._v(" "), _vm._l((_vm.onlineUsersTarget), function(user) {
-    return (user.busy_job == 0 || _vm.showAllUser) ? _c('li', {
-      staticClass: "list-group-item",
-      attrs: {
-        "value": user.id
-      },
-      on: {
-        "click": function($event) {
-          _vm.addUserToTargetTeam(user)
-        }
-      }
-    }, [_vm._v(_vm._s(user.name))]) : _vm._e()
-  })], 2)]), _vm._v(" "), _c('div', {
-    staticClass: "panel-footer"
-  }, [(!_vm.showAllUser) ? _c('div', {
-    staticClass: "btn btn-primary",
-    on: {
-      "click": function($event) {
-        _vm.changeShowAll(true)
-      }
-    }
-  }, [_vm._v("Show all")]) : _vm._e(), _vm._v(" "), (_vm.showAllUser) ? _c('div', {
-    staticClass: "btn btn-primary",
-    on: {
-      "click": function($event) {
-        _vm.changeShowAll(false)
-      }
-    }
-  }, [_vm._v("Show available")]) : _vm._e()])])])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-54c71327", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-6443a75d", module.exports)
   }
 }
 
@@ -64209,35 +64210,12 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-57d9df49", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-64c2823e", module.exports)
   }
 }
 
 /***/ }),
 /* 74 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', _vm._l((_vm.groups), function(group) {
-    return _c('group-chat', {
-      key: group.id,
-      attrs: {
-        "group": group,
-        "iuser": _vm.user
-      }
-    })
-  }))
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-6fa88032", module.exports)
-  }
-}
-
-/***/ }),
-/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -64344,7 +64322,28 @@ module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()
   if (module.hot.data) {
-     require("vue-hot-reload-api").rerender("data-v-7fdda65d", module.exports)
+     require("vue-hot-reload-api").rerender("data-v-7ed6adc5", module.exports)
+  }
+}
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: "message-item"
+  }, [_c('li', {
+    staticClass: "list-group-item"
+  }, [_vm._t("default")], 2), _vm._v(" "), _c('small', {
+    staticClass: "badge pull-right badge-danger"
+  }, [_vm._v(_vm._s(_vm.user))])])
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-hot-reload-api").rerender("data-v-cbaa58fe", module.exports)
   }
 }
 

@@ -398,8 +398,7 @@
             },
 
             changeStatusConversation(cv, obj, status){
-                console.log(status);
-                if(cv.isActive) return;
+                if(cv.isActive || cv.showEditor) return;
                 cv.status = 1 - cv.status;
                 axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: status})
                         .then((response) => {

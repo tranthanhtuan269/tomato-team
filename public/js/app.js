@@ -13908,6 +13908,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.store(cv, type);
         },
         onChange: function onChange(cv, type) {
+            console.log(1);
             var self = this;
             if (cv.isActive) return;
             if (cv.type == this.iuser.type || this.iuser.type == 0) {
@@ -13976,6 +13977,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         changeStatusConversation: function changeStatusConversation(cv, obj, status) {
             var _this8 = this;
 
+            console.log(2);
             if (cv.isActive || cv.showEditor) return;
             cv.status = 1 - cv.status;
             axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: status }).then(function (response) {
@@ -63562,12 +63564,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(0), _vm._v(" "), _vm._l((_vm.conversations), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
-      on: {
-        "click": function($event) {
-          _vm.onChange(cv, 0)
-        }
-      }
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63593,6 +63590,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
+      },
+      on: {
+        "click": function($event) {
+          _vm.onChange(cv, 0)
+        }
       }
     }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 0 && cv.showEditor) ? _c('quill-editor', {
       ref: "quillEditorA",
@@ -63617,12 +63619,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(1), _vm._v(" "), _vm._l((_vm.conversations1), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
-      on: {
-        "click": function($event) {
-          _vm.onChange(cv, 1)
-        }
-      }
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63648,6 +63645,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
+      },
+      on: {
+        "click": function($event) {
+          _vm.onChange(cv, 1)
+        }
       }
     }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 1) && cv.showEditor) ? _c('quill-editor', {
       ref: "quillEditorB",
@@ -63672,12 +63674,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(2), _vm._v(" "), _vm._l((_vm.conversations2), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : ''],
-      on: {
-        "click": function($event) {
-          _vm.onChange(cv, 2)
-        }
-      }
+      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63703,6 +63700,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
+      },
+      on: {
+        "click": function($event) {
+          _vm.onChange(cv, 2)
+        }
       }
     }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 2) && cv.showEditor) ? _c('quill-editor', {
       ref: "quillEditorC",

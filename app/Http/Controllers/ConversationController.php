@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Conversation;
+use App\Common\Helper;
 use App\Events\NewMessage;
 use App\Events\AddConversation;
 use App\Events\ActiveConversation;
@@ -130,6 +132,11 @@ class ConversationController extends Controller
         $conv = Conversation::where('id', $request->cv_id)->first();
         $conv->status = 1 - $conv->status;
         $conv->save();
+
+        $g = Group::find($group);
+        $g->status = Helper::CheckStatusGroup($group);
+        $g->save();
+
         broadcast(new ChangeStatusConversation($conv))->toOthers();
         return $conv;
     }

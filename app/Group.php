@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Group extends Model
 {
-    protected $fillable = ['name', 'status', 'status_admin', 'status_source', 'status_target', 'created_by', 'updated_by'];
+    protected $fillable = ['name', 'status', 'created_by', 'updated_by'];
 
     public function users()
     {

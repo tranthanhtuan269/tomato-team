@@ -35,11 +35,13 @@
                             </td>
                             <td>{{ $group->created_at }}</td>
                             <td>
+                                <a class="btn btn-small btn-primary btn-control" href="{{ URL::to('/exportWord?group=' . $group->id . '&lang=vie') }}">Export VIE</a>
+                                <a class="btn btn-small btn-warning btn-control" href="{{ URL::to('/exportWord?group=' . $group->id . '&lang=eng') }}">Export ENG</a>
                                 <a class="btn btn-small btn-success btn-control" href="{{ URL::to('groups/' . $group->id) }}">View</a>
                                 <a class="btn btn-small btn-info btn-control" href="{{ URL::to('groups/' . $group->id . '/edit') }}">Edit</a>
                                 {{ Form::open(array('url' => 'groups/' . $group->id, 'class' => 'btn-control')) }}
                                     {{ Form::hidden('_method', 'DELETE') }}
-                                    {{ Form::submit('Delete', array('class' => 'btn btn-warning')) }}
+                                    {{ Form::submit('Delete', array('class' => 'btn btn-danger')) }}
                                 {{ Form::close() }}
                             </td>
                         </tr>

@@ -229,7 +229,8 @@ span.num-group {
 }
 
 .conversation-content{
-  
+  width: 100%;
+  height: 100%;
 }
 
 .ql-editor{

@@ -2,8 +2,8 @@
     <div>
         <div class="row btn-status">
             <div class="col-sm-12">
-                <button v-if="done == 0" class="btn btn-danger pull-right btn-control" v-on:click="changeStatus()">Processing</button>
-                <button v-if="done == 1" class="btn btn-success pull-right btn-control">Done</button>
+                <button v-if="!done" class="btn btn-danger pull-right btn-control">Processing</button>
+                <button v-if="done" class="btn btn-success pull-right btn-control">Done</button>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=eng'">Export ENG</a>
                 <a class="btn btn-primary pull-right btn-control" v-bind:href="'/exportWord?group='+ group.id +'&lang=vie'">Export VIE</a>
                 <button type="button" class="btn btn-primary pull-right btn-control" data-toggle="modal" data-target="#myModal">Import data</button>
@@ -107,7 +107,7 @@
                 note_message: false,
                 timeCost: 15,
                 listMessage: [],
-                done: 0,
+                done: false,
                 group_id: this.group.id,
                 showChat: false,
                 editorOption: {
@@ -128,7 +128,7 @@
         },
 
         mounted() {
-            this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target)
+            this.done = this.group.status;
             this.listenNewMessage();
             this.listenAddConversation();
             this.listenActiveConversation();
@@ -168,6 +168,7 @@
                         this.conversations2.push(response.data[i]);
                     }
                 }
+                this.checkStatusGroup();
             })
             .catch(e => {
                 this.errors.push(e)
@@ -206,7 +207,7 @@
             listenNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        console.log(e);
+                        // console.log(e);
                         if(e.type == -1){
                             this.listMessage.push(e);
                             this.note_message = true;
@@ -286,7 +287,7 @@
             listenStatusConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ChangeStatusConversation', (e) => {
-                        console.log(e);
+                        // console.log(e);
                         if(e.type == 0){
                             this.conversations[e.conversation-1].status = e.status;
                         }else if(e.type == 1){
@@ -294,6 +295,7 @@
                         }else if(e.type == 2){
                             this.conversations2[e.conversation-1].status = e.status;
                         }
+                        this.checkStatusGroup();
                     });
             },
 
@@ -331,8 +333,6 @@
 
             hideEditor(obj){
                 obj.timeCount -= 1;
-                console.log(obj.timeCount);
-                console.log('run hideEditor');
                 if(obj.timeCount == 0){
                     obj.showEditor = false;
                     clearInterval(obj.timeDown);
@@ -343,7 +343,6 @@
             sendActive(cv, user, type){
                 axios.post('/conversation/active', {conversation: cv, group_id: this.group.id, type: type, user: user})
                 .then((response) => {
-                    // console.log(response.data);
                 });
             },
 
@@ -368,16 +367,6 @@
                 }
             },
 
-            setCurrentStatus(status, status_admin, status_source, status_target){
-                if(this.iuser.type == 0){
-                    this.done = status_admin;
-                }else if(this.iuser.type == 1){
-                    this.done = status_source;
-                }else if(this.iuser.type == 2){
-                    this.done = status_target;
-                }
-            },
-
             addConversation(){
                 if(this.iuser.type == 0){
                     axios.post('/group/' + this.group.id + '/addConversation', {group_id: this.group.id, type: this.iuser.type})
@@ -394,6 +383,7 @@
                                         this.conversations2.push(response.data[i]);
                                     }
                                 }
+                                this.checkStatusGroup();
                             });
                 }
             },
@@ -403,8 +393,29 @@
                 cv.status = 1 - cv.status;
                 axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: status})
                         .then((response) => {
-                            console.log(response);
+                            this.checkStatusGroup();
                         });
+            },
+
+            checkStatusGroup(){
+                var i;
+                for(i = 0; i < this.conversations.length; i++){
+                    if(this.conversations[i].status == 0){
+                        this.done = false;
+                        return false;
+                    }
+                    if(this.conversations1[i].status == 0){
+                        this.done = false;
+                        return false;
+                    }
+                    if(this.conversations2[i].status == 0){
+                        this.done = false;
+                        return false;
+                    }
+                }
+
+                this.done = true;
+                return false;
             }
         }
     }

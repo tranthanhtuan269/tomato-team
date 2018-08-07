@@ -13707,7 +13707,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             note_message: false,
             timeCost: 15,
             listMessage: [],
-            done: 0,
+            done: false,
             group_id: this.group.id,
             showChat: false,
             editorOption: {
@@ -13722,7 +13722,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         };
     },
     mounted: function mounted() {
-        this.setCurrentStatus(this.group.status, this.group.status_admin, this.group.status_source, this.group.status_target);
+        this.done = this.group.status;
         this.listenNewMessage();
         this.listenAddConversation();
         this.listenActiveConversation();
@@ -13760,6 +13760,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     _this.conversations2.push(response.data[i]);
                 }
             }
+            _this.checkStatusGroup();
         }).catch(function (e) {
             _this.errors.push(e);
         });
@@ -13798,7 +13799,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this3 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                console.log(e);
+                // console.log(e);
                 if (e.type == -1) {
                     _this3.listMessage.push(e);
                     _this3.note_message = true;
@@ -13880,7 +13881,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this6 = this;
 
             Echo.private('groups.' + this.group.id).listen('ChangeStatusConversation', function (e) {
-                console.log(e);
+                // console.log(e);
                 if (e.type == 0) {
                     _this6.conversations[e.conversation - 1].status = e.status;
                 } else if (e.type == 1) {
@@ -13888,6 +13889,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 } else if (e.type == 2) {
                     _this6.conversations2[e.conversation - 1].status = e.status;
                 }
+                _this6.checkStatusGroup();
             });
         },
         funcCount: function funcCount(obj) {
@@ -13921,8 +13923,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         hideEditor: function hideEditor(obj) {
             obj.timeCount -= 1;
-            console.log(obj.timeCount);
-            console.log('run hideEditor');
             if (obj.timeCount == 0) {
                 obj.showEditor = false;
                 clearInterval(obj.timeDown);
@@ -13930,9 +13930,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         sendActive: function sendActive(cv, user, type) {
-            axios.post('/conversation/active', { conversation: cv, group_id: this.group.id, type: type, user: user }).then(function (response) {
-                // console.log(response.data);
-            });
+            axios.post('/conversation/active', { conversation: cv, group_id: this.group.id, type: type, user: user }).then(function (response) {});
         },
         hideAllEditor: function hideAllEditor() {
             if (this.iuser.type == 0) {
@@ -13954,15 +13952,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             }
         },
-        setCurrentStatus: function setCurrentStatus(status, status_admin, status_source, status_target) {
-            if (this.iuser.type == 0) {
-                this.done = status_admin;
-            } else if (this.iuser.type == 1) {
-                this.done = status_source;
-            } else if (this.iuser.type == 2) {
-                this.done = status_target;
-            }
-        },
         addConversation: function addConversation() {
             var _this7 = this;
 
@@ -13980,15 +13969,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                             _this7.conversations2.push(response.data[i]);
                         }
                     }
+                    _this7.checkStatusGroup();
                 });
             }
         },
         changeStatusConversation: function changeStatusConversation(cv, obj, status) {
+            var _this8 = this;
+
             if (cv.isActive || cv.showEditor) return;
             cv.status = 1 - cv.status;
             axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: status }).then(function (response) {
-                console.log(response);
+                _this8.checkStatusGroup();
             });
+        },
+        checkStatusGroup: function checkStatusGroup() {
+            var i;
+            for (i = 0; i < this.conversations.length; i++) {
+                if (this.conversations[i].status == 0) {
+                    this.done = false;
+                    return false;
+                }
+                if (this.conversations1[i].status == 0) {
+                    this.done = false;
+                    return false;
+                }
+                if (this.conversations2[i].status == 0) {
+                    this.done = false;
+                    return false;
+                }
+            }
+
+            this.done = true;
+            return false;
         }
     }
 });
@@ -63496,14 +63508,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "row btn-status"
   }, [_c('div', {
     staticClass: "col-sm-12"
-  }, [(_vm.done == 0) ? _c('button', {
-    staticClass: "btn btn-danger pull-right btn-control",
-    on: {
-      "click": function($event) {
-        _vm.changeStatus()
-      }
-    }
-  }, [_vm._v("Processing")]) : _vm._e(), _vm._v(" "), (_vm.done == 1) ? _c('button', {
+  }, [(!_vm.done) ? _c('button', {
+    staticClass: "btn btn-danger pull-right btn-control"
+  }, [_vm._v("Processing")]) : _vm._e(), _vm._v(" "), (_vm.done) ? _c('button', {
     staticClass: "btn btn-success pull-right btn-control"
   }, [_vm._v("Done")]) : _vm._e(), _vm._v(" "), _c('a', {
     staticClass: "btn btn-primary pull-right btn-control",

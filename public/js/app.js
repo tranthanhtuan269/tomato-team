@@ -13685,6 +13685,27 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -13912,7 +13933,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.store(cv, type);
         },
         onChange: function onChange(cv, type) {
-            console.log(1);
             var self = this;
             if (cv.isActive) return;
             if (cv.type == this.iuser.type || this.iuser.type == 0) {
@@ -63606,10 +63626,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "options": _vm.editorOption
       },
-      on: {
-        "change": function($event) {
+      nativeOn: {
+        "!keyup": [function($event) {
+          if (!('button' in $event) && _vm._k($event.keyCode, "space", 32, $event.key, " ")) { return null; }
+          $event.preventDefault();
           _vm.change(cv, 0)
-        }
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 191) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 0)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 190) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 0)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 188) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 0)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 49) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 0)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 13) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 0)
+        }]
       },
       model: {
         value: (cv.message),
@@ -63661,10 +63703,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "options": _vm.editorOption
       },
-      on: {
-        "change": function($event) {
+      nativeOn: {
+        "!keyup": [function($event) {
+          if (!('button' in $event) && _vm._k($event.keyCode, "space", 32, $event.key, " ")) { return null; }
+          $event.preventDefault();
           _vm.change(cv, 1)
-        }
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 191) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 1)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 190) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 1)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 188) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 1)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 49) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 1)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 13) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 1)
+        }]
       },
       model: {
         value: (cv.message),
@@ -63716,10 +63780,32 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "options": _vm.editorOption
       },
-      on: {
-        "change": function($event) {
+      nativeOn: {
+        "!keyup": [function($event) {
+          if (!('button' in $event) && _vm._k($event.keyCode, "space", 32, $event.key, " ")) { return null; }
+          $event.preventDefault();
           _vm.change(cv, 2)
-        }
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 191) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 2)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 190) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 2)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 188) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 2)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 49) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 2)
+        }, function($event) {
+          if (!('button' in $event) && $event.keyCode !== 13) { return null; }
+          $event.preventDefault();
+          _vm.change(cv, 2)
+        }]
       },
       model: {
         value: (cv.message),

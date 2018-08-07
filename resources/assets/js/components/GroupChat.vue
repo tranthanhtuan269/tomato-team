@@ -28,7 +28,14 @@
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 0, cv.status)">D</div>
                             </div>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0" class="conversation-content" v-on:click="onChange(cv, 0)"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv, 0)" v-if="iuser.type == 0 && cv.showEditor"
+                            <quill-editor v-model="cv.message" 
+                            @keyup.space.native.capture.prevent="change(cv, 0)" 
+                            @keyup.191.native.capture.prevent="change(cv, 0)" 
+                            @keyup.190.native.capture.prevent="change(cv, 0)" 
+                            @keyup.188.native.capture.prevent="change(cv, 0)" 
+                            @keyup.49.native.capture.prevent="change(cv, 0)" 
+                            @keyup.13.native.capture.prevent="change(cv, 0)" 
+                            v-if="iuser.type == 0 && cv.showEditor"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
                         </div>
@@ -44,7 +51,14 @@
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 1, cv.status)">D</div>
                             </div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2" class="conversation-content" v-on:click="onChange(cv, 1)"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv, 1)" v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
+                            <quill-editor v-model="cv.message" 
+                            @keyup.space.native.capture.prevent="change(cv, 1)" 
+                            @keyup.191.native.capture.prevent="change(cv, 1)" 
+                            @keyup.190.native.capture.prevent="change(cv, 1)" 
+                            @keyup.188.native.capture.prevent="change(cv, 1)" 
+                            @keyup.49.native.capture.prevent="change(cv, 1)" 
+                            @keyup.13.native.capture.prevent="change(cv, 1)" 
+                            v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -58,7 +72,14 @@
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 2, cv.status)">D</div>
                             </div>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1" class="conversation-content" v-on:click="onChange(cv, 2)"></div>
-                            <quill-editor v-model="cv.message" v-on:change="change(cv, 2)" v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
+                            <quill-editor v-model="cv.message" 
+                            @keyup.space.native.capture.prevent="change(cv, 2)" 
+                            @keyup.191.native.capture.prevent="change(cv, 2)" 
+                            @keyup.190.native.capture.prevent="change(cv, 2)" 
+                            @keyup.188.native.capture.prevent="change(cv, 2)" 
+                            @keyup.49.native.capture.prevent="change(cv, 2)" 
+                            @keyup.13.native.capture.prevent="change(cv, 2)" 
+                            v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
                 </div>
@@ -317,7 +338,6 @@
             },
 
             onChange(cv, type){
-                console.log(1);
                 var self = this;
                 if(cv.isActive) return;
                 if(cv.type == this.iuser.type || this.iuser.type == 0){

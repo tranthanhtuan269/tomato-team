@@ -13469,6 +13469,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             error_source: false,
             error_target: false,
             users: [],
+            group_id: 0,
             usersSelected: [],
             onlineUsersSource: [],
             onlineUsersTarget: [],
@@ -13548,6 +13549,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
 
             axios.put('/groups/' + this.group.id, { name: this.group.name, users: this.usersSelected, users2: this.users2Selected }).then(function (response) {
+                _this2.group_id = response.data.id;
                 _this2.name = '';
                 Bus.$emit('groupUpdated', response.data);
                 _this2.updated_success = true;
@@ -63826,7 +63828,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "role": "alert"
     }
-  }, [_vm._v("Sửa group thành công!")]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
+  }, [_vm._v("Sửa group thành công! "), (_vm.group_id != 0) ? _c('span', [_c('a', {
+    attrs: {
+      "href": '/groups/' + _vm.group_id
+    }
+  }, [_vm._v("Click link để chuyển sang group.")])]) : _vm._e()]) : _vm._e(), _vm._v(" "), (_vm.error_name) ? _c('div', {
     staticClass: "alert alert-danger",
     attrs: {
       "role": "alert"

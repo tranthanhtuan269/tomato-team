@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="alert alert-success" role="alert" v-if="updated_success">Sửa group thành công!</div>
+    <div class="alert alert-success" role="alert" v-if="updated_success">Sửa group thành công! <span v-if="group_id != 0"><a v-bind:href="'/groups/' + group_id">Click link để chuyển sang group.</a></span></div>
     <div class="alert alert-danger" role="alert" v-if="error_name">Tên group không nên để trống!</div>
     <div class="col-sm-6">
         <div class="panel panel-default">
@@ -63,6 +63,7 @@
                 error_source: false,
                 error_target: false,
                 users: [],
+                group_id: 0,
                 usersSelected: [],
                 onlineUsersSource: [],
                 onlineUsersTarget: [],
@@ -140,6 +141,7 @@
 
                 axios.put('/groups/' + this.group.id, {name: this.group.name, users: this.usersSelected, users2: this.users2Selected})
                 .then((response) => {
+                    this.group_id = response.data.id;
                     this.name = '';
                     Bus.$emit('groupUpdated', response.data);
                     this.updated_success = true;

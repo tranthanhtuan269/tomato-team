@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="alert alert-success" role="alert" v-if="created_success">Tạo group thành công!</div>
+    <div class="alert alert-success" role="alert" v-if="created_success">Tạo group thành công! <span v-if="group_id != 0"><a v-bind:href="'/groups/' + group_id">Click link để chuyển sang group.</a></span></div>
     <div class="alert alert-danger" role="alert" v-if="error_name">Tên group không nên để trống!</div>
     <div class="alert alert-danger" role="alert" v-if="error_source">Bạn chưa thêm thành viên cho source team!</div>
     <div class="alert alert-danger" role="alert" v-if="error_target">Bạn chưa thêm thành viên cho target team!</div>
@@ -64,6 +64,7 @@
                 error_source: false,
                 error_target: false,
                 users: [],
+                group_id: 0,
                 usersSelected: [],
                 onlineUsersSource: [],
                 onlineUsersTarget: [],
@@ -124,6 +125,7 @@
 
                 axios.post('/groups', {name: this.name, users: this.users, users2: this.users2})
                 .then((response) => {
+                    this.group_id = response.data.id;
                     this.name = '';
                     Bus.$emit('groupCreated', response.data);
                     this.created_success = true;

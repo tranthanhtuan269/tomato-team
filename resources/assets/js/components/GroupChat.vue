@@ -35,6 +35,7 @@
                             @keyup.188.native.capture.prevent="change(cv, 0)" 
                             @keyup.49.native.capture.prevent="change(cv, 0)" 
                             @keyup.13.native.capture.prevent="change(cv, 0)" 
+                            v-on:change="save(cv, 0)"
                             v-if="iuser.type == 0 && cv.showEditor"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
@@ -58,6 +59,7 @@
                             @keyup.188.native.capture.prevent="change(cv, 1)" 
                             @keyup.49.native.capture.prevent="change(cv, 1)" 
                             @keyup.13.native.capture.prevent="change(cv, 1)" 
+                            v-on:change="save(cv, 1)"
                             v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
                         </div>
                     </div>
@@ -79,6 +81,7 @@
                             @keyup.188.native.capture.prevent="change(cv, 2)" 
                             @keyup.49.native.capture.prevent="change(cv, 2)" 
                             @keyup.13.native.capture.prevent="change(cv, 2)" 
+                            v-on:change="save(cv, 2)"
                             v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
                         </div>
                     </div>
@@ -151,6 +154,7 @@
         mounted() {
             this.done = this.group.status;
             this.listenNewMessage();
+            this.listenUpdateMessage();
             this.listenAddConversation();
             this.listenActiveConversation();
             this.listenStatusConversation();
@@ -224,11 +228,53 @@
                     cv.status = 0;
                 });
             },
+            save(cv, type) {
+                cv.timeCount = this.timeCost;
+            },
 
             listenNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
-                        // console.log(e);
+                        if(e.type == -1){
+                            this.listMessage.push(e);
+                            this.note_message = true;
+                        }else if(e.type == 0){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations[i].conversation == e.conversation){
+                                    this.conversations[i].message = e.message;
+                                    this.conversations[i].status = 0;
+                                    this.conversations[i].timeCount = this.timeCost;
+                                    this.conversations[i].isActive = true;
+                                }
+                            }
+                        }else if(e.type == 1){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations1[i].conversation == e.conversation){
+                                    this.conversations1[i].message = e.message;
+                                    this.conversations1[i].status = 0;
+                                    this.conversations1[i].timeCount = this.timeCost;
+                                    this.conversations1[i].isActive = true;
+                                }
+                            }
+                        }else if(e.type == 2){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations2[i].conversation == e.conversation){
+                                    this.conversations2[i].message = e.message;
+                                    this.conversations2[i].status = 0;
+                                    this.conversations2[i].timeCount = this.timeCost;
+                                    this.conversations2[i].isActive = true;
+                                }
+                            }
+                        }
+                    });
+            },
+
+            listenUpdateMessage() {
+                Echo.private('groups.' + this.group.id)
+                    .listen('UpdateMessage', (e) => {
                         if(e.type == -1){
                             this.listMessage.push(e);
                             this.note_message = true;
@@ -354,6 +400,13 @@
 
             hideEditor(obj){
                 obj.timeCount -= 1;
+                console.log(obj.timeCount);
+                if(obj.timeCount == 10){
+                    axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
+                    .then((response) => {
+                        // cv.status = 0;
+                    });
+                }
                 if(obj.timeCount == 0){
                     obj.showEditor = false;
                     clearInterval(obj.timeDown);

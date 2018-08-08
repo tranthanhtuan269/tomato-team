@@ -13706,6 +13706,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -13749,6 +13752,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     mounted: function mounted() {
         this.done = this.group.status;
         this.listenNewMessage();
+        this.listenUpdateMessage();
         this.listenAddConversation();
         this.listenActiveConversation();
         this.listenStatusConversation();
@@ -13820,11 +13824,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 cv.status = 0;
             });
         },
+        save: function save(cv, type) {
+            cv.timeCount = this.timeCost;
+        },
         listenNewMessage: function listenNewMessage() {
             var _this3 = this;
 
             Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                // console.log(e);
                 if (e.type == -1) {
                     _this3.listMessage.push(e);
                     _this3.note_message = true;
@@ -13861,11 +13867,51 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 }
             });
         },
-        listenAddConversation: function listenAddConversation() {
+        listenUpdateMessage: function listenUpdateMessage() {
             var _this4 = this;
 
+            Echo.private('groups.' + this.group.id).listen('UpdateMessage', function (e) {
+                if (e.type == -1) {
+                    _this4.listMessage.push(e);
+                    _this4.note_message = true;
+                } else if (e.type == 0) {
+                    var i = 0;
+                    for (i = 0; i < _this4.conversations.length; i++) {
+                        if (_this4.conversations[i].conversation == e.conversation) {
+                            _this4.conversations[i].message = e.message;
+                            _this4.conversations[i].status = 0;
+                            _this4.conversations[i].timeCount = _this4.timeCost;
+                            _this4.conversations[i].isActive = true;
+                        }
+                    }
+                } else if (e.type == 1) {
+                    var i = 0;
+                    for (i = 0; i < _this4.conversations.length; i++) {
+                        if (_this4.conversations1[i].conversation == e.conversation) {
+                            _this4.conversations1[i].message = e.message;
+                            _this4.conversations1[i].status = 0;
+                            _this4.conversations1[i].timeCount = _this4.timeCost;
+                            _this4.conversations1[i].isActive = true;
+                        }
+                    }
+                } else if (e.type == 2) {
+                    var i = 0;
+                    for (i = 0; i < _this4.conversations.length; i++) {
+                        if (_this4.conversations2[i].conversation == e.conversation) {
+                            _this4.conversations2[i].message = e.message;
+                            _this4.conversations2[i].status = 0;
+                            _this4.conversations2[i].timeCount = _this4.timeCost;
+                            _this4.conversations2[i].isActive = true;
+                        }
+                    }
+                }
+            });
+        },
+        listenAddConversation: function listenAddConversation() {
+            var _this5 = this;
+
             Echo.private('groups.' + this.group.id).listen('AddConversation', function (e) {
-                _this4.$snotify.error('A conversation has been created! Refresh to update content!', {
+                _this5.$snotify.error('A conversation has been created! Refresh to update content!', {
                     timeout: 60000,
                     showProgressBar: true,
                     closeOnClick: true,
@@ -13874,47 +13920,47 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         listenActiveConversation: function listenActiveConversation() {
-            var _this5 = this;
+            var _this6 = this;
 
             Echo.private('groups.' + this.group.id).listen('ActiveConversation', function (e) {
-                var self = _this5;
+                var self = _this6;
                 if (e.type == 0) {
-                    _this5.conversations[e.conversation - 1].timeCount = _this5.timeCost;
-                    _this5.conversations[e.conversation - 1].isActive = true;
-                    clearInterval(_this5.conversations[e.conversation - 1].timeDown);
-                    _this5.conversations[e.conversation - 1].timeDown = setInterval(function () {
+                    _this6.conversations[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations[e.conversation - 1].timeDown);
+                    _this6.conversations[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 1) {
-                    _this5.conversations1[e.conversation - 1].timeCount = _this5.timeCost;
-                    _this5.conversations1[e.conversation - 1].isActive = true;
-                    clearInterval(_this5.conversations1[e.conversation - 1].timeDown);
-                    _this5.conversations1[e.conversation - 1].timeDown = setInterval(function () {
+                    _this6.conversations1[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations1[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations1[e.conversation - 1].timeDown);
+                    _this6.conversations1[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations1[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 2) {
-                    _this5.conversations2[e.conversation - 1].timeCount = _this5.timeCost;
-                    _this5.conversations2[e.conversation - 1].isActive = true;
-                    clearInterval(_this5.conversations2[e.conversation - 1].timeDown);
-                    _this5.conversations2[e.conversation - 1].timeDown = setInterval(function () {
+                    _this6.conversations2[e.conversation - 1].timeCount = _this6.timeCost;
+                    _this6.conversations2[e.conversation - 1].isActive = true;
+                    clearInterval(_this6.conversations2[e.conversation - 1].timeDown);
+                    _this6.conversations2[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations2[e.conversation - 1]);
                     }, 1000);
                 }
             });
         },
         listenStatusConversation: function listenStatusConversation() {
-            var _this6 = this;
+            var _this7 = this;
 
             Echo.private('groups.' + this.group.id).listen('ChangeStatusConversation', function (e) {
                 // console.log(e);
                 if (e.type == 0) {
-                    _this6.conversations[e.conversation - 1].status = e.status;
+                    _this7.conversations[e.conversation - 1].status = e.status;
                 } else if (e.type == 1) {
-                    _this6.conversations1[e.conversation - 1].status = e.status;
+                    _this7.conversations1[e.conversation - 1].status = e.status;
                 } else if (e.type == 2) {
-                    _this6.conversations2[e.conversation - 1].status = e.status;
+                    _this7.conversations2[e.conversation - 1].status = e.status;
                 }
-                _this6.checkStatusGroup();
+                _this7.checkStatusGroup();
             });
         },
         funcCount: function funcCount(obj) {
@@ -13948,6 +13994,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         hideEditor: function hideEditor(obj) {
             obj.timeCount -= 1;
+            console.log(obj.timeCount);
+            if (obj.timeCount == 10) {
+                axios.post('/conversation/save', { message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation }).then(function (response) {
+                    // cv.status = 0;
+                });
+            }
             if (obj.timeCount == 0) {
                 obj.showEditor = false;
                 clearInterval(obj.timeDown);
@@ -13978,7 +14030,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         addConversation: function addConversation() {
-            var _this7 = this;
+            var _this8 = this;
 
             if (this.iuser.type == 0) {
                 axios.post('/group/' + this.group.id + '/addConversation', { group_id: this.group.id, type: this.iuser.type }).then(function (response) {
@@ -13987,25 +14039,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         response.data[i].showEditor = false;
                         response.data[i].status = false;
                         if (response.data[i].type == 0) {
-                            _this7.conversations.push(response.data[i]);
+                            _this8.conversations.push(response.data[i]);
                         } else if (response.data[i].type == 1) {
-                            _this7.conversations1.push(response.data[i]);
+                            _this8.conversations1.push(response.data[i]);
                         } else {
-                            _this7.conversations2.push(response.data[i]);
+                            _this8.conversations2.push(response.data[i]);
                         }
                     }
-                    _this7.checkStatusGroup();
+                    _this8.checkStatusGroup();
                 });
             }
         },
         changeStatusConversation: function changeStatusConversation(cv, obj, status) {
-            var _this8 = this;
+            var _this9 = this;
 
             console.log(2);
             if (cv.isActive || cv.showEditor) return;
             cv.status = 1 - cv.status;
             axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: status }).then(function (response) {
-                _this8.checkStatusGroup();
+                _this9.checkStatusGroup();
             });
         },
         checkStatusGroup: function checkStatusGroup() {
@@ -63626,6 +63678,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "options": _vm.editorOption
       },
+      on: {
+        "change": function($event) {
+          _vm.save(cv, 0)
+        }
+      },
       nativeOn: {
         "!keyup": [function($event) {
           if (!('button' in $event) && _vm._k($event.keyCode, "space", 32, $event.key, " ")) { return null; }
@@ -63703,6 +63760,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "options": _vm.editorOption
       },
+      on: {
+        "change": function($event) {
+          _vm.save(cv, 1)
+        }
+      },
       nativeOn: {
         "!keyup": [function($event) {
           if (!('button' in $event) && _vm._k($event.keyCode, "space", 32, $event.key, " ")) { return null; }
@@ -63779,6 +63841,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       refInFor: true,
       attrs: {
         "options": _vm.editorOption
+      },
+      on: {
+        "change": function($event) {
+          _vm.save(cv, 2)
+        }
       },
       nativeOn: {
         "!keyup": [function($event) {

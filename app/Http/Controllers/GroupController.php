@@ -195,6 +195,7 @@ class GroupController extends Controller
                     'group_id' => request('groupId'),
                     'type' => 0,
                     'user_id' => auth()->user()->id,
+                    'update_by' => auth()->user()->id,
                     'conversation' => ($max + 1)
                 ]);
                 $conversation1 = Conversation::create([
@@ -202,6 +203,7 @@ class GroupController extends Controller
                     'group_id' => request('groupId'),
                     'type' => 1,
                     'user_id' => auth()->user()->id,
+                    'update_by' => auth()->user()->id,
                     'conversation' => ($max + 1)
                 ]);
                 $conversation2 = Conversation::create([
@@ -209,6 +211,7 @@ class GroupController extends Controller
                     'group_id' => request('groupId'),
                     'type' => 2,
                     'user_id' => auth()->user()->id,
+                    'update_by' => auth()->user()->id,
                     'conversation' => ($max + 1)
                 ]);
             }

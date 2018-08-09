@@ -27,6 +27,7 @@
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 0, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 0, cv.status)">D</div>
                             </div>
+                            <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
                             <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0" class="conversation-content" v-on:click="onChange(cv, 0)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 0)" 
@@ -51,6 +52,7 @@
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 1, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 1, cv.status)">D</div>
                             </div>
+                            <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2" class="conversation-content" v-on:click="onChange(cv, 1)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 1)" 
@@ -73,6 +75,7 @@
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 2, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 2, cv.status)">D</div>
                             </div>
+                            <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
                             <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1" class="conversation-content" v-on:click="onChange(cv, 2)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 2)" 
@@ -185,6 +188,7 @@
                     response.data[i].timeCount = 0;
                     response.data[i].isActive = false;
                     response.data[i].showEditor = false;
+                    response.data[i].userActive = '';
                     if(response.data[i].type == 0){
                         this.conversations.push(response.data[i]);
                     }else if(response.data[i].type == 1){
@@ -325,10 +329,12 @@
             listenActiveConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
+                        console.log(e);
                         var self = this;
                         if(e.type == 0){
                             this.conversations[e.conversation-1].timeCount = this.timeCost;
                             this.conversations[e.conversation-1].isActive = true;
+                            this.conversations[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations[e.conversation-1].timeDown);
                             this.conversations[e.conversation-1].timeDown = setInterval(function(){
                                 self.funcCount(self.conversations[e.conversation-1]);
@@ -337,6 +343,7 @@
                         }else if(e.type == 1){
                             this.conversations1[e.conversation-1].timeCount = this.timeCost;
                             this.conversations1[e.conversation-1].isActive = true;
+                            this.conversations1[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations1[e.conversation-1].timeDown);
                             this.conversations1[e.conversation-1].timeDown = setInterval(function(){
                                 self.funcCount(self.conversations1[e.conversation-1]);
@@ -344,6 +351,7 @@
                         }else if(e.type == 2){
                             this.conversations2[e.conversation-1].timeCount = this.timeCost;
                             this.conversations2[e.conversation-1].isActive = true;
+                            this.conversations2[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations2[e.conversation-1].timeDown);
                             this.conversations2[e.conversation-1].timeDown = setInterval(function(){
                                 self.funcCount(self.conversations2[e.conversation-1]);
@@ -370,6 +378,7 @@
                 obj.timeCount -= 1;
                 if(obj.timeCount == 0){
                     obj.isActive = false;
+                    obj.userActive = "";
                     clearInterval(obj.timeDown);
                     obj.timeDown = false;
                 }

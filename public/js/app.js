@@ -13709,6 +13709,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -13781,6 +13784,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 response.data[i].timeCount = 0;
                 response.data[i].isActive = false;
                 response.data[i].showEditor = false;
+                response.data[i].userActive = '';
                 if (response.data[i].type == 0) {
                     _this.conversations.push(response.data[i]);
                 } else if (response.data[i].type == 1) {
@@ -13923,10 +13927,12 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var _this6 = this;
 
             Echo.private('groups.' + this.group.id).listen('ActiveConversation', function (e) {
+                console.log(e);
                 var self = _this6;
                 if (e.type == 0) {
                     _this6.conversations[e.conversation - 1].timeCount = _this6.timeCost;
                     _this6.conversations[e.conversation - 1].isActive = true;
+                    _this6.conversations[e.conversation - 1].userActive = e.user.name;
                     clearInterval(_this6.conversations[e.conversation - 1].timeDown);
                     _this6.conversations[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations[e.conversation - 1]);
@@ -13934,6 +13940,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 } else if (e.type == 1) {
                     _this6.conversations1[e.conversation - 1].timeCount = _this6.timeCost;
                     _this6.conversations1[e.conversation - 1].isActive = true;
+                    _this6.conversations1[e.conversation - 1].userActive = e.user.name;
                     clearInterval(_this6.conversations1[e.conversation - 1].timeDown);
                     _this6.conversations1[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations1[e.conversation - 1]);
@@ -13941,6 +13948,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 } else if (e.type == 2) {
                     _this6.conversations2[e.conversation - 1].timeCount = _this6.timeCost;
                     _this6.conversations2[e.conversation - 1].isActive = true;
+                    _this6.conversations2[e.conversation - 1].userActive = e.user.name;
                     clearInterval(_this6.conversations2[e.conversation - 1].timeDown);
                     _this6.conversations2[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations2[e.conversation - 1]);
@@ -13967,6 +13975,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             obj.timeCount -= 1;
             if (obj.timeCount == 0) {
                 obj.isActive = false;
+                obj.userActive = "";
                 clearInterval(obj.timeDown);
                 obj.timeDown = false;
             }
@@ -63662,7 +63671,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 0, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor) || _vm.iuser.type != 0) ? _c('div', {
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+      staticClass: "user-active",
+      domProps: {
+        "innerHTML": _vm._s(cv.userActive)
+      }
+    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor) || _vm.iuser.type != 0) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
@@ -63744,7 +63758,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 1, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor) || _vm.iuser.type == 2) ? _c('div', {
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+      staticClass: "user-active",
+      domProps: {
+        "innerHTML": _vm._s(cv.userActive)
+      }
+    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor) || _vm.iuser.type == 2) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
@@ -63826,7 +63845,12 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 2, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor) || _vm.iuser.type == 1) ? _c('div', {
+    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+      staticClass: "user-active",
+      domProps: {
+        "innerHTML": _vm._s(cv.userActive)
+      }
+    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor) || _vm.iuser.type == 1) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)

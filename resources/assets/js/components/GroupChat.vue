@@ -132,7 +132,7 @@
                 conversations2: [],
                 message: '',
                 note_message: false,
-                timeCost: 15,
+                timeCost: 6,
                 listMessage: [],
                 done: false,
                 group_id: this.group.id,
@@ -329,7 +329,6 @@
             listenActiveConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
-                        console.log(e);
                         var self = this;
                         if(e.type == 0){
                             this.conversations[e.conversation-1].timeCount = this.timeCost;
@@ -362,7 +361,6 @@
             listenStatusConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ChangeStatusConversation', (e) => {
-                        // console.log(e);
                         if(e.type == 0){
                             this.conversations[e.conversation-1].status = e.status;
                         }else if(e.type == 1){
@@ -376,6 +374,7 @@
 
             funcCount(obj){
                 obj.timeCount -= 1;
+                console.log(obj.timeCount);
                 if(obj.timeCount == 0){
                     obj.isActive = false;
                     obj.userActive = "";
@@ -410,7 +409,7 @@
             hideEditor(obj){
                 obj.timeCount -= 1;
                 console.log(obj.timeCount);
-                if(obj.timeCount == 10){
+                if(obj.timeCount == this.timeCost/2){
                     axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
                     .then((response) => {
                         // cv.status = 0;
@@ -472,7 +471,6 @@
             },
 
             changeStatusConversation(cv, obj, status){
-                console.log(2);
                 if(cv.isActive || cv.showEditor) return;
                 cv.status = 1 - cv.status;
                 axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: status})

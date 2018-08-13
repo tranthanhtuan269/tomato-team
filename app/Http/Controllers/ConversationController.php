@@ -140,6 +140,7 @@ class ConversationController extends Controller
     public function active(Request $request){
         $conv = Conversation::where('group_id', $request->group_id)->where('conversation', $request->conversation['conversation'])->where('type', $request->type)->orderBy('created_at','desc')->first();
         $conv->active = 1;
+        $conv->status = 0;
         $conv->update_by = auth()->user()->id;
         $conv->save();
         broadcast(new ActiveConversation($conv))->toOthers();
@@ -148,7 +149,7 @@ class ConversationController extends Controller
 
     public function changeStatus(Request $request, $group){
         $conv = Conversation::where('id', $request->cv_id)->first();
-        $conv->status = 1 - $conv->status;
+        $conv->status = $request->status;
         $conv->save();
 
         $g = Group::find($group);

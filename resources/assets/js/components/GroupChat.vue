@@ -331,8 +331,10 @@
                     .listen('ActiveConversation', (e) => {
                         var self = this;
                         if(e.type == 0){
+                            this.inActiveConversation(e);
                             this.conversations[e.conversation-1].timeCount = this.timeCost;
                             this.conversations[e.conversation-1].isActive = true;
+                            this.conversations[e.conversation-1].status = 0;
                             this.conversations[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations[e.conversation-1].timeDown);
                             this.conversations[e.conversation-1].timeDown = setInterval(function(){
@@ -340,16 +342,20 @@
                             }, 1000);
 
                         }else if(e.type == 1){
+                            this.inActiveConversation(e);
                             this.conversations1[e.conversation-1].timeCount = this.timeCost;
                             this.conversations1[e.conversation-1].isActive = true;
+                            this.conversations1[e.conversation-1].status = 0;
                             this.conversations1[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations1[e.conversation-1].timeDown);
                             this.conversations1[e.conversation-1].timeDown = setInterval(function(){
                                 self.funcCount(self.conversations1[e.conversation-1]);
                             }, 1000);
                         }else if(e.type == 2){
+                            this.inActiveConversation(e);
                             this.conversations2[e.conversation-1].timeCount = this.timeCost;
                             this.conversations2[e.conversation-1].isActive = true;
+                            this.conversations2[e.conversation-1].status = 0;
                             this.conversations2[e.conversation-1].userActive = e.user.name;
                             clearInterval(this.conversations2[e.conversation-1].timeDown);
                             this.conversations2[e.conversation-1].timeDown = setInterval(function(){
@@ -361,6 +367,8 @@
             listenStatusConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ChangeStatusConversation', (e) => {
+                        console.log('ChangeStatusConversation');
+                        console.log(e.status);
                         if(e.type == 0){
                             this.conversations[e.conversation-1].status = e.status;
                         }else if(e.type == 1){
@@ -412,7 +420,7 @@
                 if(obj.timeCount == this.timeCost/2){
                     axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
                     .then((response) => {
-                        // cv.status = 0;
+                        obj.status = 0;
                     });
                 }
                 if(obj.timeCount == 0){
@@ -425,6 +433,7 @@
             sendActive(cv, user, type){
                 axios.post('/conversation/active', {conversation: cv, group_id: this.group.id, type: type, user: user})
                 .then((response) => {
+                    cv.status = 0;
                 });
             },
 
@@ -473,7 +482,7 @@
             changeStatusConversation(cv, obj, status){
                 if(cv.isActive || cv.showEditor) return;
                 cv.status = 1 - cv.status;
-                axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: status})
+                axios.post('/conversation/' + this.group.id + '/change-status', {cv_id: cv.id, statusType: obj, status: cv.status})
                         .then((response) => {
                             this.checkStatusGroup();
                         });
@@ -498,6 +507,59 @@
 
                 this.done = true;
                 return false;
+            },
+
+            inActiveConversation(obj){
+                if(obj.type == 0){
+                    var i = 0;
+                    // check 0
+                    for(i = 0; i < this.conversations.length; i++){
+                        if(this.conversations[i].isActive){
+                            if(this.conversations[i].userActive == obj.user.name){
+                                this.conversations[i].status = 0;
+                                clearInterval(this.conversations[i].timeDown);
+                            }
+                        }
+                    }
+                    // check 1
+                    for(i = 0; i < this.conversations1.length; i++){
+                        if(this.conversations1[i].isActive){
+                            if(this.conversations1[i].userActive == obj.user.name){
+                                this.conversations1[i].status = 0;
+                                clearInterval(this.conversations1[i].timeDown);
+                            }
+                        }
+                    }
+                    // check 2
+                    for(i = 0; i < this.conversations2.length; i++){
+                        if(this.conversations2[i].isActive){
+                            if(this.conversations2[i].userActive == obj.user.name){
+                                this.conversations2[i].status = 0;
+                                clearInterval(this.conversations2[i].timeDown);
+                            }
+                        }
+                    }
+                }else if(obj.type == 1){
+                    // check 1
+                    for(i = 0; i < this.conversations1.length; i++){
+                        if(this.conversations1[i].isActive){
+                            if(this.conversations1[i].userActive == obj.user.name){
+                                this.conversations1[i].status = 0;
+                                clearInterval(this.conversations1[i].timeDown);
+                            }
+                        }
+                    }
+                }else{
+                    // check 2
+                    for(i = 0; i < this.conversations2.length; i++){
+                        if(this.conversations2[i].isActive){
+                            if(this.conversations2[i].userActive == obj.user.name){
+                                this.conversations2[i].status = 0;
+                                clearInterval(this.conversations2[i].timeDown);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

@@ -234,7 +234,8 @@ span.num-group {
 }
 
 .ql-editor{
-  height: 128px!important
+  height: 128px!important;
+  color: #000000;
 }
 
 .general-panel{
@@ -299,4 +300,8 @@ span.num-group {
   padding: 0px 10px;
   right: 8px;
   margin-top: -2px;
+}
+
+.conversation-content{
+  color:#000000;
 }

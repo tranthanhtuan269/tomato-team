@@ -132,7 +132,7 @@
                 conversations2: [],
                 message: '',
                 note_message: false,
-                timeCost: 6,
+                timeCost: 10,
                 listMessage: [],
                 done: false,
                 group_id: this.group.id,
@@ -161,6 +161,7 @@
             this.listenAddConversation();
             this.listenActiveConversation();
             this.listenStatusConversation();
+            this.listenAutoSaveConversation();
         },
 
         created() {
@@ -289,7 +290,7 @@
                                     this.conversations[i].message = e.message;
                                     this.conversations[i].status = 0;
                                     this.conversations[i].timeCount = this.timeCost;
-                                    this.conversations[i].isActive = true;
+                                    // this.conversations[i].isActive = true;
                                 }
                             }
                         }else if(e.type == 1){
@@ -299,7 +300,7 @@
                                     this.conversations1[i].message = e.message;
                                     this.conversations1[i].status = 0;
                                     this.conversations1[i].timeCount = this.timeCost;
-                                    this.conversations1[i].isActive = true;
+                                    // this.conversations1[i].isActive = true;
                                 }
                             }
                         }else if(e.type == 2){
@@ -309,7 +310,7 @@
                                     this.conversations2[i].message = e.message;
                                     this.conversations2[i].status = 0;
                                     this.conversations2[i].timeCount = this.timeCost;
-                                    this.conversations2[i].isActive = true;
+                                    // this.conversations2[i].isActive = true;
                                 }
                             }
                         }
@@ -330,6 +331,7 @@
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
                         var self = this;
+                        console.log(e);
                         if(e.type == 0){
                             this.inActiveConversation(e);
                             this.conversations[e.conversation-1].timeCount = this.timeCost;
@@ -379,6 +381,33 @@
                         this.checkStatusGroup();
                     });
             },
+            listenAutoSaveConversation() {
+                Echo.private('groups.' + this.group.id)
+                    .listen('UpdateMessage', (e) => {
+                        if(e.type == 0){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations[i].conversation == e.conversation){
+                                    this.conversations[i].message = e.message;
+                                }
+                            }
+                        }else if(e.type == 1){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations1[i].conversation == e.conversation){
+                                    this.conversations1[i].message = e.message;
+                                }
+                            }
+                        }else if(e.type == 2){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations2[i].conversation == e.conversation){
+                                    this.conversations2[i].message = e.message;
+                                }
+                            }
+                        }
+                    });
+            },
 
             funcCount(obj){
                 obj.timeCount -= 1;
@@ -416,12 +445,14 @@
 
             hideEditor(obj){
                 obj.timeCount -= 1;
-                console.log(obj.timeCount);
+                console.log(obj.isActive);
                 if(obj.timeCount == this.timeCost/2){
-                    axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
-                    .then((response) => {
-                        obj.status = 0;
-                    });
+                    if(obj.showEditor){
+                        axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
+                        .then((response) => {
+                            obj.status = 0;
+                        });
+                    }
                 }
                 if(obj.timeCount == 0){
                     obj.showEditor = false;
@@ -440,20 +471,53 @@
             hideAllEditor(){
                 if(this.iuser.type == 0){
                     var i = 0; 
+                    var _sefl = this;
                     for(i = 0; i < this.conversations.length; i++){
-                        this.conversations[i].showEditor = false;
-                        this.conversations1[i].showEditor = false;
-                        this.conversations2[i].showEditor = false;
+                        if(this.conversations[i].showEditor){
+                            this.conversations[i].status = 0;
+                            this.conversations[i].showEditor = false;
+                            axios.post('/conversation/save', {message: this.conversations[i].message, group_id: this.group.id, type: this.conversations[i].type, conversation: this.conversations[i].conversation})
+                            .then((response) => {
+                            });
+                        }
+
+                        if(this.conversations1[i].showEditor){
+                            this.conversations1[i].status = 0;
+                            this.conversations1[i].showEditor = false;
+                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation})
+                            .then((response) => {
+                            });
+                        }
+
+                        if(this.conversations2[i].showEditor){
+                            this.conversations2[i].status = 0;
+                            this.conversations2[i].showEditor = false;
+                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation})
+                            .then((response) => {
+                            });
+                        }
                     }
                 }else if(this.iuser.type == 1){
-                    var i = 0; 
+                    var i = 0;
                     for(i = 0; i < this.conversations1.length; i++){
-                        this.conversations1[i].showEditor = false;
+                        if(this.conversations1[i].showEditor){
+                            this.conversations1[i].status = 0;
+                            this.conversations1[i].showEditor = false;
+                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation})
+                            .then((response) => {
+                            });
+                        }
                     }
                 }else if(this.iuser.type == 2){
-                    var i = 0; 
+                    var i = 0;
                     for(i = 0; i < this.conversations2.length; i++){
-                        this.conversations2[i].showEditor = false;
+                        if(this.conversations2[i].showEditor){
+                            this.conversations2[i].status = 0;
+                            this.conversations2[i].showEditor = false;
+                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation})
+                            .then((response) => {
+                            });
+                        }
                     }
                 }
             },
@@ -465,7 +529,7 @@
                                 var i;
                                 for(i = 0; i < response.data.length; i++){
                                     response.data[i].showEditor = false;
-                                    response.data[i].status = false;
+                                    response.data[i].status = 0;
                                     if(response.data[i].type == 0){
                                         this.conversations.push(response.data[i]);
                                     }else if(response.data[i].type == 1){
@@ -510,53 +574,37 @@
             },
 
             inActiveConversation(obj){
-                if(obj.type == 0){
-                    var i = 0;
-                    // check 0
-                    for(i = 0; i < this.conversations.length; i++){
-                        if(this.conversations[i].isActive){
-                            if(this.conversations[i].userActive == obj.user.name){
-                                this.conversations[i].status = 0;
-                                clearInterval(this.conversations[i].timeDown);
-                            }
+                var i = 0;
+                // check 0
+                for(i = 0; i < this.conversations.length; i++){
+                    if(this.conversations[i].isActive){
+                        if(this.conversations[i].userActive == obj.user.name){
+                            this.conversations[i].status = 0;
+                            this.conversations[i].isActive = false;
+                            this.conversations[i].userActive = "";
+                            clearInterval(this.conversations[i].timeDown);
                         }
                     }
-                    // check 1
-                    for(i = 0; i < this.conversations1.length; i++){
-                        if(this.conversations1[i].isActive){
-                            if(this.conversations1[i].userActive == obj.user.name){
-                                this.conversations1[i].status = 0;
-                                clearInterval(this.conversations1[i].timeDown);
-                            }
+                }
+                // check 1
+                for(i = 0; i < this.conversations1.length; i++){
+                    if(this.conversations1[i].isActive){
+                        if(this.conversations1[i].userActive == obj.user.name){
+                            this.conversations1[i].status = 0;
+                            this.conversations1[i].isActive = false;
+                            this.conversations1[i].userActive = "";
+                            clearInterval(this.conversations1[i].timeDown);
                         }
                     }
-                    // check 2
-                    for(i = 0; i < this.conversations2.length; i++){
-                        if(this.conversations2[i].isActive){
-                            if(this.conversations2[i].userActive == obj.user.name){
-                                this.conversations2[i].status = 0;
-                                clearInterval(this.conversations2[i].timeDown);
-                            }
-                        }
-                    }
-                }else if(obj.type == 1){
-                    // check 1
-                    for(i = 0; i < this.conversations1.length; i++){
-                        if(this.conversations1[i].isActive){
-                            if(this.conversations1[i].userActive == obj.user.name){
-                                this.conversations1[i].status = 0;
-                                clearInterval(this.conversations1[i].timeDown);
-                            }
-                        }
-                    }
-                }else{
-                    // check 2
-                    for(i = 0; i < this.conversations2.length; i++){
-                        if(this.conversations2[i].isActive){
-                            if(this.conversations2[i].userActive == obj.user.name){
-                                this.conversations2[i].status = 0;
-                                clearInterval(this.conversations2[i].timeDown);
-                            }
+                }
+                // check 2
+                for(i = 0; i < this.conversations2.length; i++){
+                    if(this.conversations2[i].isActive){
+                        if(this.conversations2[i].userActive == obj.user.name){
+                            this.conversations2[i].status = 0;
+                            this.conversations2[i].isActive = false;
+                            this.conversations2[i].userActive = "";
+                            clearInterval(this.conversations2[i].timeDown);
                         }
                     }
                 }

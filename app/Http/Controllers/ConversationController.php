@@ -10,6 +10,7 @@ use App\Events\UpdateMessage;
 use App\Events\AddConversation;
 use App\Events\ActiveConversation;
 use App\Events\ChangeStatusConversation;
+use App\Events\UpdateMessageWithoutActive;
 use Illuminate\Http\Request;
 use DB;
 
@@ -51,6 +52,23 @@ class ConversationController extends Controller
         ]);
 
         broadcast(new UpdateMessage($conversation))->toOthers();
+
+        return $conversation->load('user');
+    }
+
+    public function autoSave(Request $request)
+    {
+        $conversation = Conversation::create([
+            'message' => request('message'),
+            'group_id' => request('group_id'),
+            'type' => request('type'),
+            'status' => 0,
+            'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
+            'conversation' => request('conversation'),
+        ]);
+
+        broadcast(new UpdateMessageWithoutActive($conversation))->toOthers();
 
         return $conversation->load('user');
     }

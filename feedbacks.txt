@@ -1,0 +1,15 @@
+Bên anh có test và phản hồi như sau:
+1.	Tương tác trong quá trình dịch:
+-	Chỉ có thể trao đổi qua phần chat => Không bám sát được các line cần trao đổi
+-	Đối với tin có nhiều người dịch sẽ bị loạn vì đang không biết ai đang nói với ai
+-	Thời gian để chuột của 1 người ở line rất lâu, người khác không edit được line đó dù người dịch đã ra khỏi line. (ô vẫn hiện hồng dù không còn ai ở trong line)
+2.	Vấn đề hiển thị
+-	Mất khá lâu mới load được tên ai đang ở line nào
+-	Đôi khi hiện nhiều ô báo có người đang dịch (màu hồng) nhưng hiện tên của cùng 1 người hoặc nhiều ô đổi màu nhiều hơn số người có trong group đó.
+-	Line dịch nhỏ, sau khi dịch ra VIE có thể dài ra, phải kéo chuột khó theo dõi
+-	Do ô để số dòng và ô chọn P/D to và đậm màu hơn so với chữ nên khó tập trung và dễ gây hoa mắt. Mình đã chỉnh chữ thành màu đen nhưng nó vẫn cứ xám xám chứ không nhìn rõ được. Nếu được có thể ẩn hai ô đó đi và chỉnh chữ đậm hơn.
+-	Không hiện tên người đang dịch 100%
+-	Đã bấm done nhưng load lại thì ô tự chuyển về P
+3.	Lỗi save dữ liệu
+-	Thỉnh thoảng nhấn F5 trang load lại và có thể nhìn được tên mỗi người đang dịch ở các line + các edit + các ô tick D, có lúc lại không.
+-	Đôi khi nhấn F5 tự động bị out ra, phải login lại

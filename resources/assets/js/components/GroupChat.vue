@@ -21,7 +21,7 @@
                         <div class="panel-heading text-center customize-panel1">
                             <b>KOR</b>
                         </div>
-                        <div v-for="(cv, index) in conversations" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
+                        <div v-for="(cv, index) in conversations" v-bind:class="[defaultClass, 'conversation-'+index, cv.isActive? activeClass: '']">
                             <div class="group-status">
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 0, cv.status)">P</div>
@@ -46,7 +46,7 @@
                         <div class="panel-heading text-center customize-panel2">
                             <b>VIE</b>
                         </div>
-                        <div v-for="(cv, index) in conversations1" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
+                        <div v-for="(cv, index) in conversations1" v-bind:class="[defaultClass, 'conversation-'+index, cv.isActive? activeClass: '']">
                             <div class="group-status">
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 1, cv.status)">P</div>
@@ -69,7 +69,7 @@
                         <div class="panel-heading text-center customize-panel3">
                             <b>ENG</b>
                         </div>
-                        <div v-for="(cv, index) in conversations2" v-bind:class="[defaultClass, cv.isActive? activeClass: '']">
+                        <div v-for="(cv, index) in conversations2" v-bind:class="[defaultClass, 'conversation-'+index, cv.isActive? activeClass: '']">
                             <div class="group-status">
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 2, cv.status)">P</div>
@@ -132,7 +132,9 @@
                 conversations2: [],
                 message: '',
                 note_message: false,
-                timeCost: 10,
+                // timeCost: 10,
+                timeCost: 1000,
+                min_height: 184,
                 listMessage: [],
                 done: false,
                 group_id: this.group.id,
@@ -203,6 +205,25 @@
             .catch(e => {
                 this.errors.push(e)
             });
+        },
+
+        updated(){
+            console.log("run updated");
+            var i = 0;
+            for(i = 0; i < this.conversations.length; i++){
+                var maxHeight = this.min_height;
+                $(".conversation-"+i).each(function(){
+                    if ($(this).find('.quill-editor').height() > maxHeight) { 
+                        maxHeight = $(this).find('.quill-editor').height(); 
+                    }
+                    if ($(this).find('.conversation-content>p').height() > maxHeight) { 
+                        maxHeight = $(this).find('.conversation-content>p').height(); 
+                    }
+                    console.log(maxHeight);
+                });
+                $(".conversation-"+i).height(maxHeight);
+            }
+
         },
 
         methods: {
@@ -331,7 +352,6 @@
                 Echo.private('groups.' + this.group.id)
                     .listen('ActiveConversation', (e) => {
                         var self = this;
-                        console.log(e);
                         if(e.type == 0){
                             this.inActiveConversation(e);
                             this.conversations[e.conversation-1].timeCount = this.timeCost;
@@ -369,8 +389,6 @@
             listenStatusConversation() {
                 Echo.private('groups.' + this.group.id)
                     .listen('ChangeStatusConversation', (e) => {
-                        console.log('ChangeStatusConversation');
-                        console.log(e.status);
                         if(e.type == 0){
                             this.conversations[e.conversation-1].status = e.status;
                         }else if(e.type == 1){
@@ -411,7 +429,6 @@
 
             funcCount(obj){
                 obj.timeCount -= 1;
-                console.log(obj.timeCount);
                 if(obj.timeCount == 0){
                     obj.isActive = false;
                     obj.userActive = "";
@@ -445,7 +462,6 @@
 
             hideEditor(obj){
                 obj.timeCount -= 1;
-                console.log(obj.isActive);
                 if(obj.timeCount == this.timeCost/2){
                     if(obj.showEditor){
                         axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})

@@ -130,9 +130,6 @@ span.num-group {
 
 .chat-panel .conversation-panel .chat-panel {
   padding: 0px;
-  height: 185px;
-  overflow-y: auto;
-  overflow-x: hidden;
   border-bottom: 1px solid #ccc;
   font-family: arial;
   font-size: 16px;
@@ -197,10 +194,10 @@ span.num-group {
 }
 
 .group-status{
-  width: 35px;
+  position: absolute;
+  width: 8%;
   float: left;
-  margin-right: 10px;
-  margin-bottom: 5px;
+  margin-right: 5px;
 }
 
 .conversation-index{
@@ -229,12 +226,14 @@ span.num-group {
 }
 
 .conversation-content{
-  width: 100%;
+  width: 91%;
   height: 100%;
+  color: #000000;
+  margin-left: 9%;
 }
 
 .ql-editor{
-  height: 128px!important;
+  height: auto!important;
   color: #000000;
 }
 
@@ -301,7 +300,22 @@ span.num-group {
   right: 8px;
   margin-top: -2px;
 }
+.conversation-content p,
+.conversation-content span,
+.conversation-content li,
+.conversation-content ol{
+  line-height: 18px;
+  margin: 0;
+}
 
-.conversation-content{
-  color:#000000;
+.ql-toolbar.ql-snow{
+  padding: 0!important;
+}
+
+.ql-container.ql-snow{
+  border: none!important;
+}
+
+.quill-editor{
+  margin-left: 8%;
 }

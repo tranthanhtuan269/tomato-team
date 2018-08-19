@@ -26,9 +26,10 @@
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 0, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 0, cv.status)">D</div>
+                                <div v-bind:class="['conversation-comment', cv.newComment? 'new-comment': '', cv.showComment? 'show-comment': '']" v-on:click="toggestComment(cv)">C</div>
                             </div>
                             <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
-                            <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor) || iuser.type != 0" class="conversation-content" v-on:click="onChange(cv, 0)"></div>
+                            <div v-html="cv.message" v-if="(iuser.type == 0 && !cv.showEditor && !cv.showComment) || (iuser.type != 0 && !cv.showComment)" class="conversation-content" v-on:click="onChange(cv, 0)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 0)" 
                             @keyup.191.native.capture.prevent="change(cv, 0)" 
@@ -37,9 +38,12 @@
                             @keyup.49.native.capture.prevent="change(cv, 0)" 
                             @keyup.13.native.capture.prevent="change(cv, 0)" 
                             v-on:change="save(cv, 0)"
-                            v-if="iuser.type == 0 && cv.showEditor"
+                            v-if="iuser.type == 0 && cv.showEditor && !cv.showComment"
                                       ref="quillEditorA"
                                       :options="editorOption"/>
+                            <textarea v-model="cv.comment" v-if="cv.showComment" class="comment-content" 
+                            v-on:change="saveComment(cv, 0)" placeholder="add comment in here" 
+                            contenteditable></textarea>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -51,9 +55,10 @@
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 1, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 1, cv.status)">D</div>
+                                <div v-bind:class="['conversation-comment', cv.newComment? 'new-comment': '', cv.showComment? 'show-comment': '']" v-on:click="toggestComment(cv)">C</div>
                             </div>
                             <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
-                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor) || iuser.type == 2" class="conversation-content" v-on:click="onChange(cv, 1)"></div>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 1) && !cv.showEditor && !cv.showComment) || (iuser.type == 2 && !cv.showComment)" class="conversation-content" v-on:click="onChange(cv, 1)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 1)" 
                             @keyup.191.native.capture.prevent="change(cv, 1)" 
@@ -62,7 +67,10 @@
                             @keyup.49.native.capture.prevent="change(cv, 1)" 
                             @keyup.13.native.capture.prevent="change(cv, 1)" 
                             v-on:change="save(cv, 1)"
-                            v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor" ref="quillEditorB" :options="editorOption"/>
+                            v-if="(iuser.type == 0 || iuser.type == 1) && cv.showEditor && !cv.showComment" ref="quillEditorB" :options="editorOption"/>
+                            <textarea v-model="cv.comment" v-if="cv.showComment" class="comment-content"
+                            v-on:change="saveComment(cv, 1)" placeholder="add comment in here" 
+                            contenteditable></textarea>
                         </div>
                     </div>
                     <div class="panel panel-primary col-sm-4 conversation-panel">
@@ -74,9 +82,10 @@
                                 <div v-html="index + 1" class="conversation-index"></div>
                                 <div v-if="cv.status==0" class="conversation-status" v-on:click="changeStatusConversation(cv, 2, cv.status)">P</div>
                                 <div v-if="cv.status==1" class="conversation-status conversation-done" v-on:click="changeStatusConversation(cv, 2, cv.status)">D</div>
+                                <div v-bind:class="['conversation-comment', cv.newComment? 'new-comment': '', cv.showComment? 'show-comment': '']" v-on:click="toggestComment(cv)">C</div>
                             </div>
                             <span class="user-active" v-html="cv.userActive" v-if="cv.userActive.length > 0"></span>
-                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor) || iuser.type == 1" class="conversation-content" v-on:click="onChange(cv, 2)"></div>
+                            <div v-html="cv.message" v-if="((iuser.type == 0 || iuser.type == 2) && !cv.showEditor  && !cv.showComment) || (iuser.type == 1 && !cv.showComment)" class="conversation-content" v-on:click="onChange(cv, 2)"></div>
                             <quill-editor v-model="cv.message" 
                             @keyup.space.native.capture.prevent="change(cv, 2)" 
                             @keyup.191.native.capture.prevent="change(cv, 2)" 
@@ -85,7 +94,10 @@
                             @keyup.49.native.capture.prevent="change(cv, 2)" 
                             @keyup.13.native.capture.prevent="change(cv, 2)" 
                             v-on:change="save(cv, 2)"
-                            v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor" ref="quillEditorC" :options="editorOption"/>
+                            v-if="(iuser.type == 0 || iuser.type == 2) && cv.showEditor && !cv.showComment" ref="quillEditorC" :options="editorOption"/>
+                            <textarea v-model="cv.comment" v-if="cv.showComment" class="comment-content"
+                            v-on:change="saveComment(cv, 2)" placeholder="add comment in here" 
+                            contenteditable></textarea>
                         </div>
                     </div>
                 </div>
@@ -132,8 +144,7 @@
                 conversations2: [],
                 message: '',
                 note_message: false,
-                // timeCost: 10,
-                timeCost: 1000,
+                timeCost: 10,
                 min_height: 184,
                 listMessage: [],
                 done: false,
@@ -160,6 +171,7 @@
             this.done = this.group.status;
             this.listenNewMessage();
             this.listenUpdateMessage();
+            this.listenAddComment();
             this.listenAddConversation();
             this.listenActiveConversation();
             this.listenStatusConversation();
@@ -191,6 +203,16 @@
                     response.data[i].timeCount = 0;
                     response.data[i].isActive = false;
                     response.data[i].showEditor = false;
+                    response.data[i].showComment = false;
+                    if(response.data[i].comment == null){
+                        response.data[i].newComment = false;
+                    }else{
+                        if(response.data[i].comment.length == 0){
+                            response.data[i].newComment = false;
+                        }else{
+                            response.data[i].newComment = true;
+                        }
+                    }
                     response.data[i].userActive = '';
                     if(response.data[i].type == 0){
                         this.conversations.push(response.data[i]);
@@ -208,7 +230,6 @@
         },
 
         updated(){
-            console.log("run updated");
             var i = 0;
             for(i = 0; i < this.conversations.length; i++){
                 var maxHeight = this.min_height;
@@ -219,11 +240,9 @@
                     if ($(this).find('.conversation-content>p').height() > maxHeight) { 
                         maxHeight = $(this).find('.conversation-content>p').height(); 
                     }
-                    console.log(maxHeight);
                 });
                 $(".conversation-"+i).height(maxHeight);
             }
-
         },
 
         methods: {
@@ -239,6 +258,10 @@
                 this.showChat = status;
                 this.note_message = false;
             },
+            toggestComment(cv) {
+                cv.newComment = false;
+                cv.showComment = !cv.showComment;
+            },
             onEditorBlur(quill) {
                 console.log('editor blur!', quill)
             },
@@ -249,13 +272,60 @@
                 console.log('editor ready!', quill)
             },
             store(cv, type) {
-                axios.post('/conversations', {message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation})
+                axios.post('/conversations', {message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation, comment: cv.comment})
+                .then((response) => {
+                    cv.status = 0;
+                });
+            },
+            storeComment(cv, type) {
+                axios.post('/conversation/saveComment', {message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation, comment: cv.comment})
                 .then((response) => {
                     cv.status = 0;
                 });
             },
             save(cv, type) {
                 cv.timeCount = this.timeCost;
+            },
+            saveComment(cv, type) {
+                console.log("run Comment");
+                this.storeComment(cv, type);
+            },
+
+            listenAddComment() {
+                Echo.private('groups.' + this.group.id)
+                    .listen('AddComment', (e) => {
+                        if(e.type == 0){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations[i].conversation == e.conversation){
+                                    this.conversations[i].message = e.message;
+                                    this.conversations[i].comment = e.comment;
+                                    this.conversations[i].newComment = true;
+                                    this.conversations[i].status = 0;
+                                }
+                            }
+                        }else if(e.type == 1){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations1[i].conversation == e.conversation){
+                                    this.conversations1[i].message = e.message;
+                                    this.conversations1[i].comment = e.comment;
+                                    this.conversations1[i].newComment = true;
+                                    this.conversations1[i].status = 0;
+                                }
+                            }
+                        }else if(e.type == 2){
+                            var i = 0; 
+                            for(i = 0; i < this.conversations.length; i++){
+                                if(this.conversations2[i].conversation == e.conversation){
+                                    this.conversations2[i].message = e.message;
+                                    this.conversations2[i].comment = e.comment;
+                                    this.conversations2[i].newComment = true;
+                                    this.conversations2[i].status = 0;
+                                }
+                            }
+                        }
+                    });
             },
 
             listenNewMessage() {
@@ -269,6 +339,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){
                                     this.conversations[i].message = e.message;
+                                    this.conversations[i].comment = e.comment;
                                     this.conversations[i].status = 0;
                                     this.conversations[i].timeCount = this.timeCost;
                                     this.conversations[i].isActive = true;
@@ -279,6 +350,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations1[i].conversation == e.conversation){
                                     this.conversations1[i].message = e.message;
+                                    this.conversations1[i].comment = e.comment;
                                     this.conversations1[i].status = 0;
                                     this.conversations1[i].timeCount = this.timeCost;
                                     this.conversations1[i].isActive = true;
@@ -289,6 +361,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations2[i].conversation == e.conversation){
                                     this.conversations2[i].message = e.message;
+                                    this.conversations2[i].comment = e.comment;
                                     this.conversations2[i].status = 0;
                                     this.conversations2[i].timeCount = this.timeCost;
                                     this.conversations2[i].isActive = true;
@@ -309,6 +382,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){
                                     this.conversations[i].message = e.message;
+                                    this.conversations[i].comment = e.comment;
                                     this.conversations[i].status = 0;
                                     this.conversations[i].timeCount = this.timeCost;
                                     // this.conversations[i].isActive = true;
@@ -319,6 +393,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations1[i].conversation == e.conversation){
                                     this.conversations1[i].message = e.message;
+                                    this.conversations1[i].comment = e.comment;
                                     this.conversations1[i].status = 0;
                                     this.conversations1[i].timeCount = this.timeCost;
                                     // this.conversations1[i].isActive = true;
@@ -329,6 +404,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations2[i].conversation == e.conversation){
                                     this.conversations2[i].message = e.message;
+                                    this.conversations2[i].comment = e.comment;
                                     this.conversations2[i].status = 0;
                                     this.conversations2[i].timeCount = this.timeCost;
                                     // this.conversations2[i].isActive = true;
@@ -407,6 +483,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations[i].conversation == e.conversation){
                                     this.conversations[i].message = e.message;
+                                    this.conversations[i].comment = e.comment;
                                 }
                             }
                         }else if(e.type == 1){
@@ -414,6 +491,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations1[i].conversation == e.conversation){
                                     this.conversations1[i].message = e.message;
+                                    this.conversations1[i].comment = e.comment;
                                 }
                             }
                         }else if(e.type == 2){
@@ -421,6 +499,7 @@
                             for(i = 0; i < this.conversations.length; i++){
                                 if(this.conversations2[i].conversation == e.conversation){
                                     this.conversations2[i].message = e.message;
+                                    this.conversations2[i].comment = e.comment;
                                 }
                             }
                         }
@@ -464,7 +543,7 @@
                 obj.timeCount -= 1;
                 if(obj.timeCount == this.timeCost/2){
                     if(obj.showEditor){
-                        axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation})
+                        axios.post('/conversation/save', {message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation, comment: obj.comment})
                         .then((response) => {
                             obj.status = 0;
                         });
@@ -492,7 +571,7 @@
                         if(this.conversations[i].showEditor){
                             this.conversations[i].status = 0;
                             this.conversations[i].showEditor = false;
-                            axios.post('/conversation/save', {message: this.conversations[i].message, group_id: this.group.id, type: this.conversations[i].type, conversation: this.conversations[i].conversation})
+                            axios.post('/conversation/save', {message: this.conversations[i].message, group_id: this.group.id, type: this.conversations[i].type, conversation: this.conversations[i].conversation, comment: this.conversations[i].comment})
                             .then((response) => {
                             });
                         }
@@ -500,7 +579,7 @@
                         if(this.conversations1[i].showEditor){
                             this.conversations1[i].status = 0;
                             this.conversations1[i].showEditor = false;
-                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation})
+                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation, comment: this.conversations1[i].comment})
                             .then((response) => {
                             });
                         }
@@ -508,7 +587,7 @@
                         if(this.conversations2[i].showEditor){
                             this.conversations2[i].status = 0;
                             this.conversations2[i].showEditor = false;
-                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation})
+                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation, comment: this.conversations2[i].comment})
                             .then((response) => {
                             });
                         }
@@ -519,7 +598,7 @@
                         if(this.conversations1[i].showEditor){
                             this.conversations1[i].status = 0;
                             this.conversations1[i].showEditor = false;
-                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation})
+                            axios.post('/conversation/save', {message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation, comment: this.conversations1[i].comment})
                             .then((response) => {
                             });
                         }
@@ -530,7 +609,7 @@
                         if(this.conversations2[i].showEditor){
                             this.conversations2[i].status = 0;
                             this.conversations2[i].showEditor = false;
-                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation})
+                            axios.post('/conversation/save', {message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation, comment: this.conversations2[i].comment})
                             .then((response) => {
                             });
                         }

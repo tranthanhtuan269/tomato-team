@@ -42,6 +42,7 @@ class UpdateMessage implements ShouldBroadcast
         return [
             'conversation' => $this->conversation->conversation,
             'message' => $this->conversation->message,
+            'comment' => $this->conversation->comment,
             'type' => $this->conversation->type,
             'status' => $this->conversation->status,
             'user' => [

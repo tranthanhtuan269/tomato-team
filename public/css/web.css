@@ -201,28 +201,42 @@ span.num-group {
 }
 
 .conversation-index{
-  background-color: #666;
-  color: #fff;
+  background-color: #ddd;
+  color: #333;
   padding: 8px;
   width: 100%;
   border-bottom-right-radius: 3px;
+  border-bottom: 1px solid #333;
   text-align: center;
   float: left;
 }
 
 .conversation-status{
-  background-color: #505cff;
-  color: #fff;
+  background-color: #b8bcff;
+  color: #333;
   padding: 8px;
   width: 100%;
   border-bottom-right-radius: 3px;
+  border-bottom: 1px solid #333;
+  text-align: center;
+  float: left;
+  cursor: pointer;
+}
+
+.conversation-comment{
+  background-color: #fff38c;
+  color: #333;
+  padding: 8px;
+  width: 100%;
+  border-bottom-right-radius: 3px;
+  border-bottom: 1px solid #333;
   text-align: center;
   float: left;
   cursor: pointer;
 }
 
 .conversation-done{
-  background-color: #ff5050;
+  background-color: #ffabab;
 }
 
 .conversation-content{
@@ -318,4 +332,18 @@ span.num-group {
 
 .quill-editor{
   margin-left: 8%;
+}
+
+.comment-content{
+  height: 100%;
+  width: 92%;
+  margin-left: 8%;
+}
+
+.new-comment{
+  background-color: #ffabab;
+}
+
+.show-comment{
+  background-color: #c3b966;
 }

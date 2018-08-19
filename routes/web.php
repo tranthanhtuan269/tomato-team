@@ -25,6 +25,7 @@ Route::get('/conversation/{group}/later/{conversation}/{id}', 'ConversationContr
 Route::post('/conversation/active', 'ConversationController@active')->name('active');
 Route::post('/conversation/save', 'ConversationController@save')->name('save');
 Route::post('/conversation/autoSave', 'ConversationController@autoSave')->name('autoSave');
+Route::post('/conversation/saveComment', 'ConversationController@saveComment')->name('saveComment');
 Route::post('/group/{group}/done', 'GroupController@postDone');
 Route::post('/group/{group}/import', 'GroupController@import');
 Route::post('/group/{group}/addConversation', 'ConversationController@addConversation');

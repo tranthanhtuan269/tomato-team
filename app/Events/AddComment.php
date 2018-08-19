@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AddConversation implements ShouldBroadcast
+class AddComment implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -40,11 +40,11 @@ class AddConversation implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'group' => $this->conversation->group,
             'conversation' => $this->conversation->conversation,
             'message' => $this->conversation->message,
             'comment' => $this->conversation->comment,
             'type' => $this->conversation->type,
+            'status' => $this->conversation->status,
             'user' => [
                 'id' => $this->conversation->user->id,
                 'name' => $this->conversation->user->name,

@@ -13712,6 +13712,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     props: ['group', 'iuser'],
@@ -13737,6 +13749,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             message: '',
             note_message: false,
             timeCost: 10,
+            min_height: 184,
             listMessage: [],
             done: false,
             group_id: this.group.id,
@@ -13756,6 +13769,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.done = this.group.status;
         this.listenNewMessage();
         this.listenUpdateMessage();
+        this.listenAddComment();
         this.listenAddConversation();
         this.listenActiveConversation();
         this.listenStatusConversation();
@@ -13785,6 +13799,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 response.data[i].timeCount = 0;
                 response.data[i].isActive = false;
                 response.data[i].showEditor = false;
+                response.data[i].showComment = false;
+                if (response.data[i].comment == null) {
+                    response.data[i].newComment = false;
+                } else {
+                    if (response.data[i].comment.length == 0) {
+                        response.data[i].newComment = false;
+                    } else {
+                        response.data[i].newComment = true;
+                    }
+                }
                 response.data[i].userActive = '';
                 if (response.data[i].type == 0) {
                     _this.conversations.push(response.data[i]);
@@ -13798,6 +13822,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }).catch(function (e) {
             _this.errors.push(e);
         });
+    },
+    updated: function updated() {
+        var i = 0;
+        for (i = 0; i < this.conversations.length; i++) {
+            var maxHeight = this.min_height;
+            $(".conversation-" + i).each(function () {
+                if ($(this).find('.quill-editor').height() > maxHeight) {
+                    maxHeight = $(this).find('.quill-editor').height();
+                }
+                if ($(this).find('.conversation-content>p').height() > maxHeight) {
+                    maxHeight = $(this).find('.conversation-content>p').height();
+                }
+            });
+            $(".conversation-" + i).height(maxHeight);
+        }
     },
 
 
@@ -13815,6 +13854,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.showChat = status;
             this.note_message = false;
         },
+        toggestComment: function toggestComment(cv) {
+            cv.newComment = false;
+            cv.showComment = !cv.showComment;
+        },
         onEditorBlur: function onEditorBlur(quill) {
             console.log('editor blur!', quill);
         },
@@ -13825,28 +13868,34 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             console.log('editor ready!', quill);
         },
         store: function store(cv, type) {
-            axios.post('/conversations', { message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation }).then(function (response) {
+            axios.post('/conversations', { message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation, comment: cv.comment }).then(function (response) {
+                cv.status = 0;
+            });
+        },
+        storeComment: function storeComment(cv, type) {
+            axios.post('/conversation/saveComment', { message: cv.message, group_id: this.group.id, type: type, conversation: cv.conversation, comment: cv.comment }).then(function (response) {
                 cv.status = 0;
             });
         },
         save: function save(cv, type) {
             cv.timeCount = this.timeCost;
         },
-        listenNewMessage: function listenNewMessage() {
+        saveComment: function saveComment(cv, type) {
+            console.log("run Comment");
+            this.storeComment(cv, type);
+        },
+        listenAddComment: function listenAddComment() {
             var _this3 = this;
 
-            Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
-                if (e.type == -1) {
-                    _this3.listMessage.push(e);
-                    _this3.note_message = true;
-                } else if (e.type == 0) {
+            Echo.private('groups.' + this.group.id).listen('AddComment', function (e) {
+                if (e.type == 0) {
                     var i = 0;
                     for (i = 0; i < _this3.conversations.length; i++) {
                         if (_this3.conversations[i].conversation == e.conversation) {
                             _this3.conversations[i].message = e.message;
+                            _this3.conversations[i].comment = e.comment;
+                            _this3.conversations[i].newComment = true;
                             _this3.conversations[i].status = 0;
-                            _this3.conversations[i].timeCount = _this3.timeCost;
-                            _this3.conversations[i].isActive = true;
                         }
                     }
                 } else if (e.type == 1) {
@@ -13854,9 +13903,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this3.conversations.length; i++) {
                         if (_this3.conversations1[i].conversation == e.conversation) {
                             _this3.conversations1[i].message = e.message;
+                            _this3.conversations1[i].comment = e.comment;
+                            _this3.conversations1[i].newComment = true;
                             _this3.conversations1[i].status = 0;
-                            _this3.conversations1[i].timeCount = _this3.timeCost;
-                            _this3.conversations1[i].isActive = true;
                         }
                     }
                 } else if (e.type == 2) {
@@ -13864,18 +13913,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this3.conversations.length; i++) {
                         if (_this3.conversations2[i].conversation == e.conversation) {
                             _this3.conversations2[i].message = e.message;
+                            _this3.conversations2[i].comment = e.comment;
+                            _this3.conversations2[i].newComment = true;
                             _this3.conversations2[i].status = 0;
-                            _this3.conversations2[i].timeCount = _this3.timeCost;
-                            _this3.conversations2[i].isActive = true;
                         }
                     }
                 }
             });
         },
-        listenUpdateMessage: function listenUpdateMessage() {
+        listenNewMessage: function listenNewMessage() {
             var _this4 = this;
 
-            Echo.private('groups.' + this.group.id).listen('UpdateMessage', function (e) {
+            Echo.private('groups.' + this.group.id).listen('NewMessage', function (e) {
                 if (e.type == -1) {
                     _this4.listMessage.push(e);
                     _this4.note_message = true;
@@ -13884,9 +13933,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations[i].conversation == e.conversation) {
                             _this4.conversations[i].message = e.message;
+                            _this4.conversations[i].comment = e.comment;
                             _this4.conversations[i].status = 0;
                             _this4.conversations[i].timeCount = _this4.timeCost;
-                            // this.conversations[i].isActive = true;
+                            _this4.conversations[i].isActive = true;
                         }
                     }
                 } else if (e.type == 1) {
@@ -13894,9 +13944,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations1[i].conversation == e.conversation) {
                             _this4.conversations1[i].message = e.message;
+                            _this4.conversations1[i].comment = e.comment;
                             _this4.conversations1[i].status = 0;
                             _this4.conversations1[i].timeCount = _this4.timeCost;
-                            // this.conversations1[i].isActive = true;
+                            _this4.conversations1[i].isActive = true;
                         }
                     }
                 } else if (e.type == 2) {
@@ -13904,8 +13955,52 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     for (i = 0; i < _this4.conversations.length; i++) {
                         if (_this4.conversations2[i].conversation == e.conversation) {
                             _this4.conversations2[i].message = e.message;
+                            _this4.conversations2[i].comment = e.comment;
                             _this4.conversations2[i].status = 0;
                             _this4.conversations2[i].timeCount = _this4.timeCost;
+                            _this4.conversations2[i].isActive = true;
+                        }
+                    }
+                }
+            });
+        },
+        listenUpdateMessage: function listenUpdateMessage() {
+            var _this5 = this;
+
+            Echo.private('groups.' + this.group.id).listen('UpdateMessage', function (e) {
+                if (e.type == -1) {
+                    _this5.listMessage.push(e);
+                    _this5.note_message = true;
+                } else if (e.type == 0) {
+                    var i = 0;
+                    for (i = 0; i < _this5.conversations.length; i++) {
+                        if (_this5.conversations[i].conversation == e.conversation) {
+                            _this5.conversations[i].message = e.message;
+                            _this5.conversations[i].comment = e.comment;
+                            _this5.conversations[i].status = 0;
+                            _this5.conversations[i].timeCount = _this5.timeCost;
+                            // this.conversations[i].isActive = true;
+                        }
+                    }
+                } else if (e.type == 1) {
+                    var i = 0;
+                    for (i = 0; i < _this5.conversations.length; i++) {
+                        if (_this5.conversations1[i].conversation == e.conversation) {
+                            _this5.conversations1[i].message = e.message;
+                            _this5.conversations1[i].comment = e.comment;
+                            _this5.conversations1[i].status = 0;
+                            _this5.conversations1[i].timeCount = _this5.timeCost;
+                            // this.conversations1[i].isActive = true;
+                        }
+                    }
+                } else if (e.type == 2) {
+                    var i = 0;
+                    for (i = 0; i < _this5.conversations.length; i++) {
+                        if (_this5.conversations2[i].conversation == e.conversation) {
+                            _this5.conversations2[i].message = e.message;
+                            _this5.conversations2[i].comment = e.comment;
+                            _this5.conversations2[i].status = 0;
+                            _this5.conversations2[i].timeCount = _this5.timeCost;
                             // this.conversations2[i].isActive = true;
                         }
                     }
@@ -13913,10 +14008,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         listenAddConversation: function listenAddConversation() {
-            var _this5 = this;
+            var _this6 = this;
 
             Echo.private('groups.' + this.group.id).listen('AddConversation', function (e) {
-                _this5.$snotify.error('A conversation has been created! Refresh to update content!', {
+                _this6.$snotify.error('A conversation has been created! Refresh to update content!', {
                     timeout: 60000,
                     showProgressBar: true,
                     closeOnClick: true,
@@ -13925,83 +14020,83 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         listenActiveConversation: function listenActiveConversation() {
-            var _this6 = this;
+            var _this7 = this;
 
             Echo.private('groups.' + this.group.id).listen('ActiveConversation', function (e) {
-                var self = _this6;
-                console.log(e);
+                var self = _this7;
                 if (e.type == 0) {
-                    _this6.inActiveConversation(e);
-                    _this6.conversations[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations[e.conversation - 1].isActive = true;
-                    _this6.conversations[e.conversation - 1].status = 0;
-                    _this6.conversations[e.conversation - 1].userActive = e.user.name;
-                    clearInterval(_this6.conversations[e.conversation - 1].timeDown);
-                    _this6.conversations[e.conversation - 1].timeDown = setInterval(function () {
+                    _this7.inActiveConversation(e);
+                    _this7.conversations[e.conversation - 1].timeCount = _this7.timeCost;
+                    _this7.conversations[e.conversation - 1].isActive = true;
+                    _this7.conversations[e.conversation - 1].status = 0;
+                    _this7.conversations[e.conversation - 1].userActive = e.user.name;
+                    clearInterval(_this7.conversations[e.conversation - 1].timeDown);
+                    _this7.conversations[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 1) {
-                    _this6.inActiveConversation(e);
-                    _this6.conversations1[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations1[e.conversation - 1].isActive = true;
-                    _this6.conversations1[e.conversation - 1].status = 0;
-                    _this6.conversations1[e.conversation - 1].userActive = e.user.name;
-                    clearInterval(_this6.conversations1[e.conversation - 1].timeDown);
-                    _this6.conversations1[e.conversation - 1].timeDown = setInterval(function () {
+                    _this7.inActiveConversation(e);
+                    _this7.conversations1[e.conversation - 1].timeCount = _this7.timeCost;
+                    _this7.conversations1[e.conversation - 1].isActive = true;
+                    _this7.conversations1[e.conversation - 1].status = 0;
+                    _this7.conversations1[e.conversation - 1].userActive = e.user.name;
+                    clearInterval(_this7.conversations1[e.conversation - 1].timeDown);
+                    _this7.conversations1[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations1[e.conversation - 1]);
                     }, 1000);
                 } else if (e.type == 2) {
-                    _this6.inActiveConversation(e);
-                    _this6.conversations2[e.conversation - 1].timeCount = _this6.timeCost;
-                    _this6.conversations2[e.conversation - 1].isActive = true;
-                    _this6.conversations2[e.conversation - 1].status = 0;
-                    _this6.conversations2[e.conversation - 1].userActive = e.user.name;
-                    clearInterval(_this6.conversations2[e.conversation - 1].timeDown);
-                    _this6.conversations2[e.conversation - 1].timeDown = setInterval(function () {
+                    _this7.inActiveConversation(e);
+                    _this7.conversations2[e.conversation - 1].timeCount = _this7.timeCost;
+                    _this7.conversations2[e.conversation - 1].isActive = true;
+                    _this7.conversations2[e.conversation - 1].status = 0;
+                    _this7.conversations2[e.conversation - 1].userActive = e.user.name;
+                    clearInterval(_this7.conversations2[e.conversation - 1].timeDown);
+                    _this7.conversations2[e.conversation - 1].timeDown = setInterval(function () {
                         self.funcCount(self.conversations2[e.conversation - 1]);
                     }, 1000);
                 }
             });
         },
         listenStatusConversation: function listenStatusConversation() {
-            var _this7 = this;
+            var _this8 = this;
 
             Echo.private('groups.' + this.group.id).listen('ChangeStatusConversation', function (e) {
-                console.log('ChangeStatusConversation');
-                console.log(e.status);
                 if (e.type == 0) {
-                    _this7.conversations[e.conversation - 1].status = e.status;
+                    _this8.conversations[e.conversation - 1].status = e.status;
                 } else if (e.type == 1) {
-                    _this7.conversations1[e.conversation - 1].status = e.status;
+                    _this8.conversations1[e.conversation - 1].status = e.status;
                 } else if (e.type == 2) {
-                    _this7.conversations2[e.conversation - 1].status = e.status;
+                    _this8.conversations2[e.conversation - 1].status = e.status;
                 }
-                _this7.checkStatusGroup();
+                _this8.checkStatusGroup();
             });
         },
         listenAutoSaveConversation: function listenAutoSaveConversation() {
-            var _this8 = this;
+            var _this9 = this;
 
             Echo.private('groups.' + this.group.id).listen('UpdateMessage', function (e) {
                 if (e.type == 0) {
                     var i = 0;
-                    for (i = 0; i < _this8.conversations.length; i++) {
-                        if (_this8.conversations[i].conversation == e.conversation) {
-                            _this8.conversations[i].message = e.message;
+                    for (i = 0; i < _this9.conversations.length; i++) {
+                        if (_this9.conversations[i].conversation == e.conversation) {
+                            _this9.conversations[i].message = e.message;
+                            _this9.conversations[i].comment = e.comment;
                         }
                     }
                 } else if (e.type == 1) {
                     var i = 0;
-                    for (i = 0; i < _this8.conversations.length; i++) {
-                        if (_this8.conversations1[i].conversation == e.conversation) {
-                            _this8.conversations1[i].message = e.message;
+                    for (i = 0; i < _this9.conversations.length; i++) {
+                        if (_this9.conversations1[i].conversation == e.conversation) {
+                            _this9.conversations1[i].message = e.message;
+                            _this9.conversations1[i].comment = e.comment;
                         }
                     }
                 } else if (e.type == 2) {
                     var i = 0;
-                    for (i = 0; i < _this8.conversations.length; i++) {
-                        if (_this8.conversations2[i].conversation == e.conversation) {
-                            _this8.conversations2[i].message = e.message;
+                    for (i = 0; i < _this9.conversations.length; i++) {
+                        if (_this9.conversations2[i].conversation == e.conversation) {
+                            _this9.conversations2[i].message = e.message;
+                            _this9.conversations2[i].comment = e.comment;
                         }
                     }
                 }
@@ -14009,7 +14104,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         funcCount: function funcCount(obj) {
             obj.timeCount -= 1;
-            console.log(obj.timeCount);
             if (obj.timeCount == 0) {
                 obj.isActive = false;
                 obj.userActive = "";
@@ -14040,10 +14134,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         hideEditor: function hideEditor(obj) {
             obj.timeCount -= 1;
-            console.log(obj.isActive);
             if (obj.timeCount == this.timeCost / 2) {
                 if (obj.showEditor) {
-                    axios.post('/conversation/save', { message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation }).then(function (response) {
+                    axios.post('/conversation/save', { message: obj.message, group_id: this.group.id, type: obj.type, conversation: obj.conversation, comment: obj.comment }).then(function (response) {
                         obj.status = 0;
                     });
                 }
@@ -14067,19 +14160,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     if (this.conversations[i].showEditor) {
                         this.conversations[i].status = 0;
                         this.conversations[i].showEditor = false;
-                        axios.post('/conversation/save', { message: this.conversations[i].message, group_id: this.group.id, type: this.conversations[i].type, conversation: this.conversations[i].conversation }).then(function (response) {});
+                        axios.post('/conversation/save', { message: this.conversations[i].message, group_id: this.group.id, type: this.conversations[i].type, conversation: this.conversations[i].conversation, comment: this.conversations[i].comment }).then(function (response) {});
                     }
 
                     if (this.conversations1[i].showEditor) {
                         this.conversations1[i].status = 0;
                         this.conversations1[i].showEditor = false;
-                        axios.post('/conversation/save', { message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation }).then(function (response) {});
+                        axios.post('/conversation/save', { message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation, comment: this.conversations1[i].comment }).then(function (response) {});
                     }
 
                     if (this.conversations2[i].showEditor) {
                         this.conversations2[i].status = 0;
                         this.conversations2[i].showEditor = false;
-                        axios.post('/conversation/save', { message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation }).then(function (response) {});
+                        axios.post('/conversation/save', { message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation, comment: this.conversations2[i].comment }).then(function (response) {});
                     }
                 }
             } else if (this.iuser.type == 1) {
@@ -14088,7 +14181,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     if (this.conversations1[i].showEditor) {
                         this.conversations1[i].status = 0;
                         this.conversations1[i].showEditor = false;
-                        axios.post('/conversation/save', { message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation }).then(function (response) {});
+                        axios.post('/conversation/save', { message: this.conversations1[i].message, group_id: this.group.id, type: this.conversations1[i].type, conversation: this.conversations1[i].conversation, comment: this.conversations1[i].comment }).then(function (response) {});
                     }
                 }
             } else if (this.iuser.type == 2) {
@@ -14097,13 +14190,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     if (this.conversations2[i].showEditor) {
                         this.conversations2[i].status = 0;
                         this.conversations2[i].showEditor = false;
-                        axios.post('/conversation/save', { message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation }).then(function (response) {});
+                        axios.post('/conversation/save', { message: this.conversations2[i].message, group_id: this.group.id, type: this.conversations2[i].type, conversation: this.conversations2[i].conversation, comment: this.conversations2[i].comment }).then(function (response) {});
                     }
                 }
             }
         },
         addConversation: function addConversation() {
-            var _this9 = this;
+            var _this10 = this;
 
             if (this.iuser.type == 0) {
                 axios.post('/group/' + this.group.id + '/addConversation', { group_id: this.group.id, type: this.iuser.type }).then(function (response) {
@@ -14112,24 +14205,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                         response.data[i].showEditor = false;
                         response.data[i].status = 0;
                         if (response.data[i].type == 0) {
-                            _this9.conversations.push(response.data[i]);
+                            _this10.conversations.push(response.data[i]);
                         } else if (response.data[i].type == 1) {
-                            _this9.conversations1.push(response.data[i]);
+                            _this10.conversations1.push(response.data[i]);
                         } else {
-                            _this9.conversations2.push(response.data[i]);
+                            _this10.conversations2.push(response.data[i]);
                         }
                     }
-                    _this9.checkStatusGroup();
+                    _this10.checkStatusGroup();
                 });
             }
         },
         changeStatusConversation: function changeStatusConversation(cv, obj, status) {
-            var _this10 = this;
+            var _this11 = this;
 
             if (cv.isActive || cv.showEditor) return;
             cv.status = 1 - cv.status;
             axios.post('/conversation/' + this.group.id + '/change-status', { cv_id: cv.id, statusType: obj, status: cv.status }).then(function (response) {
-                _this10.checkStatusGroup();
+                _this11.checkStatusGroup();
             });
         },
         checkStatusGroup: function checkStatusGroup() {
@@ -63748,7 +63841,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(0), _vm._v(" "), _vm._l((_vm.conversations), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
+      class: [_vm.defaultClass, 'conversation-' + index, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63770,12 +63863,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 0, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+    }, [_vm._v("D")]) : _vm._e(), _vm._v(" "), _c('div', {
+      class: ['conversation-comment', cv.newComment ? 'new-comment' : '', cv.showComment ? 'show-comment' : ''],
+      on: {
+        "click": function($event) {
+          _vm.toggestComment(cv)
+        }
+      }
+    }, [_vm._v("C")])]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
       staticClass: "user-active",
       domProps: {
         "innerHTML": _vm._s(cv.userActive)
       }
-    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor) || _vm.iuser.type != 0) ? _c('div', {
+    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 && !cv.showEditor && !cv.showComment) || (_vm.iuser.type != 0 && !cv.showComment)) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
@@ -63785,7 +63885,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.onChange(cv, 0)
         }
       }
-    }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 0 && cv.showEditor) ? _c('quill-editor', {
+    }) : _vm._e(), _vm._v(" "), (_vm.iuser.type == 0 && cv.showEditor && !cv.showComment) ? _c('quill-editor', {
       ref: "quillEditorA",
       refInFor: true,
       attrs: {
@@ -63830,12 +63930,36 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         },
         expression: "cv.message"
       }
+    }) : _vm._e(), _vm._v(" "), (cv.showComment) ? _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (cv.comment),
+        expression: "cv.comment"
+      }],
+      staticClass: "comment-content",
+      attrs: {
+        "placeholder": "add comment in here",
+        "contenteditable": ""
+      },
+      domProps: {
+        "value": (cv.comment)
+      },
+      on: {
+        "change": function($event) {
+          _vm.saveComment(cv, 0)
+        },
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          _vm.$set(cv, "comment", $event.target.value)
+        }
+      }
     }) : _vm._e()], 1)
   })], 2), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(1), _vm._v(" "), _vm._l((_vm.conversations1), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
+      class: [_vm.defaultClass, 'conversation-' + index, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63857,12 +63981,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 1, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+    }, [_vm._v("D")]) : _vm._e(), _vm._v(" "), _c('div', {
+      class: ['conversation-comment', cv.newComment ? 'new-comment' : '', cv.showComment ? 'show-comment' : ''],
+      on: {
+        "click": function($event) {
+          _vm.toggestComment(cv)
+        }
+      }
+    }, [_vm._v("C")])]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
       staticClass: "user-active",
       domProps: {
         "innerHTML": _vm._s(cv.userActive)
       }
-    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor) || _vm.iuser.type == 2) ? _c('div', {
+    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 1) && !cv.showEditor && !cv.showComment) || (_vm.iuser.type == 2 && !cv.showComment)) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
@@ -63872,7 +64003,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.onChange(cv, 1)
         }
       }
-    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 1) && cv.showEditor) ? _c('quill-editor', {
+    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 1) && cv.showEditor && !cv.showComment) ? _c('quill-editor', {
       ref: "quillEditorB",
       refInFor: true,
       attrs: {
@@ -63917,12 +64048,36 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         },
         expression: "cv.message"
       }
+    }) : _vm._e(), _vm._v(" "), (cv.showComment) ? _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (cv.comment),
+        expression: "cv.comment"
+      }],
+      staticClass: "comment-content",
+      attrs: {
+        "placeholder": "add comment in here",
+        "contenteditable": ""
+      },
+      domProps: {
+        "value": (cv.comment)
+      },
+      on: {
+        "change": function($event) {
+          _vm.saveComment(cv, 1)
+        },
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          _vm.$set(cv, "comment", $event.target.value)
+        }
+      }
     }) : _vm._e()], 1)
   })], 2), _vm._v(" "), _c('div', {
     staticClass: "panel panel-primary col-sm-4 conversation-panel"
   }, [_vm._m(2), _vm._v(" "), _vm._l((_vm.conversations2), function(cv, index) {
     return _c('div', {
-      class: [_vm.defaultClass, cv.isActive ? _vm.activeClass : '']
+      class: [_vm.defaultClass, 'conversation-' + index, cv.isActive ? _vm.activeClass : '']
     }, [_c('div', {
       staticClass: "group-status"
     }, [_c('div', {
@@ -63944,12 +64099,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.changeStatusConversation(cv, 2, cv.status)
         }
       }
-    }, [_vm._v("D")]) : _vm._e()]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
+    }, [_vm._v("D")]) : _vm._e(), _vm._v(" "), _c('div', {
+      class: ['conversation-comment', cv.newComment ? 'new-comment' : '', cv.showComment ? 'show-comment' : ''],
+      on: {
+        "click": function($event) {
+          _vm.toggestComment(cv)
+        }
+      }
+    }, [_vm._v("C")])]), _vm._v(" "), (cv.userActive.length > 0) ? _c('span', {
       staticClass: "user-active",
       domProps: {
         "innerHTML": _vm._s(cv.userActive)
       }
-    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor) || _vm.iuser.type == 1) ? _c('div', {
+    }) : _vm._e(), _vm._v(" "), (((_vm.iuser.type == 0 || _vm.iuser.type == 2) && !cv.showEditor && !cv.showComment) || (_vm.iuser.type == 1 && !cv.showComment)) ? _c('div', {
       staticClass: "conversation-content",
       domProps: {
         "innerHTML": _vm._s(cv.message)
@@ -63959,7 +64121,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.onChange(cv, 2)
         }
       }
-    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 2) && cv.showEditor) ? _c('quill-editor', {
+    }) : _vm._e(), _vm._v(" "), ((_vm.iuser.type == 0 || _vm.iuser.type == 2) && cv.showEditor && !cv.showComment) ? _c('quill-editor', {
       ref: "quillEditorC",
       refInFor: true,
       attrs: {
@@ -64003,6 +64165,30 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.$set(cv, "message", $$v)
         },
         expression: "cv.message"
+      }
+    }) : _vm._e(), _vm._v(" "), (cv.showComment) ? _c('textarea', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (cv.comment),
+        expression: "cv.comment"
+      }],
+      staticClass: "comment-content",
+      attrs: {
+        "placeholder": "add comment in here",
+        "contenteditable": ""
+      },
+      domProps: {
+        "value": (cv.comment)
+      },
+      on: {
+        "change": function($event) {
+          _vm.saveComment(cv, 2)
+        },
+        "input": function($event) {
+          if ($event.target.composing) { return; }
+          _vm.$set(cv, "comment", $event.target.value)
+        }
       }
     }) : _vm._e()], 1)
   })], 2)])])]), _vm._v(" "), (_vm.showChat == true) ? _c('div', {

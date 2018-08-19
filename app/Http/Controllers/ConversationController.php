@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Group;
 use App\Conversation;
 use App\Common\Helper;
+use App\Events\AddComment;
 use App\Events\NewMessage;
 use App\Events\UpdateMessage;
 use App\Events\AddConversation;
@@ -32,6 +33,7 @@ class ConversationController extends Controller
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
             'conversation' => request('conversation'),
+            'comment' => request('comment'),
         ]);
 
         broadcast(new NewMessage($conversation))->toOthers();
@@ -49,6 +51,7 @@ class ConversationController extends Controller
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
             'conversation' => request('conversation'),
+            'comment' => request('comment'),
         ]);
 
         broadcast(new UpdateMessage($conversation))->toOthers();
@@ -66,9 +69,28 @@ class ConversationController extends Controller
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
             'conversation' => request('conversation'),
+            'comment' => request('comment'),
         ]);
 
         broadcast(new UpdateMessageWithoutActive($conversation))->toOthers();
+
+        return $conversation->load('user');
+    }
+
+    public function saveComment(Request $request)
+    {
+        $conversation = Conversation::create([
+            'message' => request('message'),
+            'group_id' => request('group_id'),
+            'type' => request('type'),
+            'status' => 0,
+            'user_id' => auth()->user()->id,
+            'update_by' => auth()->user()->id,
+            'conversation' => request('conversation'),
+            'comment' => request('comment'),
+        ]);
+
+        broadcast(new AddComment($conversation))->toOthers();
 
         return $conversation->load('user');
     }
@@ -83,7 +105,8 @@ class ConversationController extends Controller
             'type' => 0,
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
-            'conversation' => ($max + 1)
+            'conversation' => ($max + 1),
+            'comment' => ''
         ]);
         $conversation1 = Conversation::create([
             'message' => '',
@@ -91,7 +114,8 @@ class ConversationController extends Controller
             'type' => 1,
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
-            'conversation' => ($max + 1)
+            'conversation' => ($max + 1),
+            'comment' => ''
         ]);
         $conversation2 = Conversation::create([
             'message' => '',
@@ -99,7 +123,8 @@ class ConversationController extends Controller
             'type' => 2,
             'user_id' => auth()->user()->id,
             'update_by' => auth()->user()->id,
-            'conversation' => ($max + 1)
+            'conversation' => ($max + 1),
+            'comment' => ''
         ]);
         $listReturn[] = $conversation->load('user');
         $listReturn[] = $conversation1->load('user');
@@ -129,7 +154,8 @@ class ConversationController extends Controller
                         'group_id' => $group,
                         'type' => $i,
                         'user_id' => auth()->user()->id,
-                        'conversation' => $itemConversation->conversation
+                        'conversation' => $itemConversation->conversation,
+                        'comment' => ''
                     ]);
                     $listReturn[] = $conv->load('user');
                 }
@@ -149,7 +175,8 @@ class ConversationController extends Controller
                 'group_id' => $group,
                 'type' => $id,
                 'user_id' => auth()->user()->id,
-                'conversation' => $conversation
+                'conversation' => $conversation,
+                'comment' => ''
             ]);
             return $conv->load('user');
         }

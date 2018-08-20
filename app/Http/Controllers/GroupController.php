@@ -33,7 +33,8 @@ class GroupController extends Controller
 				$sql .= "FROM groups ";
 				$sql .= "JOIN group_user on groups.id = group_user.group_id ";
 				$sql .= "JOIN users on group_user.user_id = users.id ";
-				$sql .= "GROUP BY groups.id, groups.name, groups.status, groups.created_at";
+                $sql .= "GROUP BY groups.id, groups.name, groups.status, groups.created_at ";
+				$sql .= "ORDER BY created_at desc";
 				$groups = DB::select($sql);
 				// dd($groups);
 			}else{

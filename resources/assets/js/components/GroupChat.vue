@@ -331,6 +331,7 @@
             listenNewMessage() {
                 Echo.private('groups.' + this.group.id)
                     .listen('NewMessage', (e) => {
+                        console.log(e);
                         if(e.type == -1){
                             this.listMessage.push(e);
                             this.note_message = true;
